@@ -5,27 +5,27 @@ Design Document
 
 Sports Management database project
 
-## High Level Entities
+### High Level Entities
 
-* Engine
+#### Engine
 
 For the engine, specify what data structures you will use to represent relations (tables) in RAM. Note that for each relation, in addition to the data, you will also need to store the name and type of each column, and the name and type of the primary key. Also remember that your RDBMS must be generic -- it must NOT know about the schemas you use in your interactive system.
 
-** purpose
-** high level entities 
-** low level design
-*8 benefits/assumptions/risks/issues
+* purpose
+* high level entities 
+* low level design
+* benefits/assumptions/risks/issues
 
-* Parser
+#### Parser
 
 For the parser, explain your approach to parsing an input command, including detecting and dealing with erroneous input (error handling). Note that queries can be recursive, for example, one can do a renaming of a projection of a selection from a cross product. How do you deal with recursive structures? Hint: think of what data structures you have learned about that are recursive. Explain how the parser works together with the engine.
 
-** purpose
-** high level entities 
-** low level design
-*8 benefits/assumptions/risks/issues
+* purpose
+* high level entities 
+* low level design
+* benefits/assumptions/risks/issues
 
-* Interactive System
+#### Interactive System
 
 The interactive system itself will be of your own design, and the domain is open-ended: store, digital library, bank, web forum, warehouse app, auto maintenance shop, etc., but it must meet the following requirements:
 It CANNOT BE one of the following: DVD or any kind of rental app.
@@ -38,8 +38,8 @@ The user experience should somehow be interesting and engaging. This requires su
 
 Include a list of user tasks you want to support in your interactive system, an ER diagram showing what entities and relationships are involved in order to support these user tasks, and an overview of system architecture (diagram(s) + explanation). Provide a rough sketch of the interface of your interactive system, and explain how the interface supports user tasks. Specify a draft of the API between the interactive system and the RDBMS. We will provide you with feedback in case it is too simple or too complex so that you can revise your plan early on.
 
-** purpose
-** high level entities 
-** low level design
-*8 benefits/assumptions/risks/issues
+* purpose
+* high level entities 
+* low level design
+* benefits/assumptions/risks/issues
 
