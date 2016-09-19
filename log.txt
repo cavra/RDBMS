@@ -7,7 +7,7 @@ Met at annex to develop understanding of project and discuss ideas
 Collaborated together on how to approach project
 
 9/18/16
-Collaborated together on all ideas + intro of Design Document
+Collaborated together on ALL ideas + intro of Design Document
 Reed Spivey - Engine/Parse section of Design Document
 Jason Alonzo - Engine/Parser section of Design Document 
 Cory Avra - Interactive System section of Design Document
