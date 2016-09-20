@@ -11,3 +11,36 @@ Collaborated together on ALL ideas + intro of Design Document
 Reed Spivey - Engine/Parse section of Design Document
 Jason Alonzo - Engine/Parser section of Design Document 
 Cory Avra - Interactive System section of Design Document
+
+9/9/16
+Creating Sport, Team, Player classes
+Create a Array of Strings for each class
+HM<String uniqueID, HM<String,String>>
+
+Main:
+created 3 static ArrayLists for player, team, sport
+created a static hashmap of <String, HM<String,String>>
+
+void create_table(String name, String[] args, string[] pk)
+{
+  HM<String, String>
+  _.put(_,_);
+}
+
+void Insert(String[] a, Object o)
+{
+  for(i = 0 ; i < a.size() ; i++)
+  {
+  }
+}
+
+void Show(HM<String, HM<>) 
+{
+  for(Entry<S,S> ; h.EntrySet())
+  {
+   System.out.println(temp.getKey() + temp.getValue());
+  }
+
+
+Player:
+void Show()
