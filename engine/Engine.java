@@ -9,7 +9,7 @@ public class Engine {
 
 	}
 
-	public static void create_table(String table_name, String[] keys, String[] p_keys){
+	public static void createTable(String table_name, String[] keys, String[] p_keys){
 
 		// Check if the table already exists
 		Table temp_table = rdbms_tables_container.get(table_name);
@@ -28,7 +28,20 @@ public class Engine {
 
 	}
 
-	void insert(String table_name, String[] values){
+	public static void dropTable(String table_name){
+		//Check if the table already exists
+		Table temp_table = rdbms_tables_container.get(table_name);
+		if(temp_table != null){
+			//print error message, exit
+		}
+		else {
+			temp_table.deleteTable();
+			rdbms_tables_container.remove(table_name);
+		}
+
+	}
+
+	public static void insertRow(String table_name, String[] values){
 
 		// get the ArrayList from the rdbms_tables_container, if it exists
 		Table temp_table = rdbms_tables_container.get(table_name);
@@ -47,7 +60,50 @@ public class Engine {
 
 	}
 
-	void show(){
+	public static void updateRow(){
 
 	}
+
+	public static void deleteRow(){
+
+	}
+
+	public static void show(){
+
+	}
+
+	public static void selection(){
+
+	}
+
+	public static void projection(){
+
+	}
+
+	public static void setUnion(){
+
+	}
+
+	public static void setDifference(){
+
+	}
+
+	public static void rename(){
+
+	}
+
+	public static void naturalJoin(){
+
+	}
+
+
+	public static void write(){
+
+	}
+
+	public static void close(){
+
+	}
+
+
 }

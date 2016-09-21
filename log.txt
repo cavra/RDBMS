@@ -44,3 +44,17 @@ void Show(HM<String, HM<>)
 
 Player:
 void Show()
+
+
+
+9/21/16
+Created table class
+Completed create table function
+@TODO ID-Table class constructor
+@TODO Work on insert function
+
+
+
+
+
+
