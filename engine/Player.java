@@ -12,7 +12,7 @@ public class Player {
 	// attributes[2] represents jersey_number
 	// attributes[3] represents points_scored
 	
-	Sport(String p_name, String p_age, String j_number, String p_scored){
+	Player(String p_name, String p_age, String j_number, String p_scored){
 		attributes[0] = player_name = p_name;
 		attributes[1] = player_age = p_age;
 		attributes[2] = jersey_number = j_number;

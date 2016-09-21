@@ -14,7 +14,7 @@ public class Team {
 	// attributes[3] represents losses
 	// attributes[4] represents ties
 
-	Sport(String t_name, String loc, String wins, String losses, String ties){
+	Team(String t_name, String loc, String wins, String losses, String ties){
 		team_name = t_name;
 		location = loc;
 		wins = wins;

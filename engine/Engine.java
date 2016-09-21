@@ -1,7 +1,9 @@
+import java.util.*;
 
 public class Engine {
 
-	static Hashmap<String, Hashmap<String, String>> dbms_hashmap = new Hashmap<String, Hashmap<String, String>>();
+	// needs a class? For storing data such as pk?
+	static ArrayList<String, ArrayList<String, String>> rdbms_tables_container = new ArrayList<String, ArrayList<String, String>>();
 
 	static ArrayList<String, String[]> player_list = new ArrayList<String, String[]>();
 	static ArrayList<String, String[]> team_list = new ArrayList<String, String[]>();
@@ -9,32 +11,40 @@ public class Engine {
 
 	public static void main(String[] args){
 
-
 	}
 
-	public static void create_table(String entity, String[] args, String[] pk){
+	public static void create_table(String table_name, String[] keys, String[] p_keys){
 
-		String value = dbms_hashmap.get(entity);
+		// Check if the table already exists
+		String value = rdbms_tables_container.get(table_name);
 		if (value != null) {
-			break;
+			// print error message, exit 
 		}
+		else {
+			// Otherwise, create the new table
+			ArrayList<String, String[]> new_table = new ArrayList<String, String[]>();
 
+			// Add the keys as the top-level entry
+			new_table.add(keys);
 
-		Hashmap<String, String[]> hmap = new HashMap<String, String[]>();
-		for (i = 0; i < args.length - 1; i++) {
-			hmap.put(args[i], "")
+			// Store the created table in the tables container
+			rdbms_tables_container.add(table_name, new_table);
 		}
-		dbms_hashmap.put(entity, hmap)
 
 	}
 
-	void insert(String s, String[] a){
+	void insert(String table_name, String[] values){
 
-		// get the hashmap from the dbms_hashmap using string s as a key
+		// get the ArrayList from the rdbms_tables_container, if it exists
+		String value = rdbms_tables_container.get(table_name);
+		if (value != null) {
+			break; 
+		}
 
-		for (i = 0; i < args.length - 1; i++) {
-			hmap.put(args[i], "")
-		}		
+		table = rdbms_tables_container.get(table_name);
+
+		// Need to make sure the key used here is the primary key
+		table.add(values[0] + values [1], values);
 
 
 	}
