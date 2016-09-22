@@ -46,6 +46,21 @@ Player:
 void Show()
 
 
+<<<<<<< HEAD
 9/21/16
 created table class
 finished create table and insert functions
+=======
+
+9/21/16
+Created table class
+Completed create table function
+@TODO ID-Table class constructor
+@TODO Work on insert function
+
+
+
+
+
+
+>>>>>>> e337fc5dcc78faba4451d0935ae27c7ac4cd171d
