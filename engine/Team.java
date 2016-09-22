@@ -1,3 +1,4 @@
+import java.util.*;
 
 public class Team {
 
@@ -8,7 +9,7 @@ public class Team {
 	String ties;
 	String team_id = location + team_name;
 
-	String team_attributes[] = new String[6];
+	Vector<String> team_attributes = new Vector<String>(6);
 	// team_attributes[0] represents team_id
 	// team_attributes[0] represents team_name
 	// team_attributes[1] represents location
@@ -17,12 +18,12 @@ public class Team {
 	// team_attributes[4] represents ties
 
 	Team(String t_name, String loc, String wins, String losses, String ties){
-		team_attributes[0] = team_id;
-		team_attributes[1] = team_name = t_name;
-		team_attributes[2] = location = loc;
-		team_attributes[3] = wins = wins;
-		team_attributes[4] = losses = losses;
-		team_attributes[5] = ties = ties;
+		team_attributes.add(0, team_id);
+		team_attributes.add(1, team_name); //= t_name;
+		team_attributes.add(2, location); //= loc;
+		team_attributes.add(3, wins); //= wins;
+		team_attributes.add(4, losses); //= losses;
+		team_attributes.add(5, ties); //= ties;
 
 	}
 
