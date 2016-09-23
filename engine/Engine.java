@@ -131,8 +131,41 @@ public class Engine {
 		}
 	}
 
-	public static void naturalJoin(){
+	public static void naturalJoin(String table1, String[] values1, String table2, String[] values2){ // This function finds commonalities between tables and merges them
+		Table temp_table1 = rdbms_tables_container.get(table1); // Creates temporary table for arg1
+		Table temp_table2 = rdbms_tables_container.get(table2);	// Creates temporary table for arg2
+		int table1_width = temp_table1.attribute_table.get(0).size();
+		int table2_width = temp_table2.attribute_table.get(0).size();
+		String[] new_values = new String[temp_table1.attribute_table.size() + temp_table2.attribute_table.size()]; // Creates new array for combined attributes
+		int new_index = 1; // This allows us to increment both for loops
+		for(int i = 1; i < table1_width; i++){ // Puts table1 values in new_values array
+			new_values[i] = temp_table1.attribute_table.get(0).get(i);
+			new_index = i;
 
+		}
+		for(int i = new_index+1; i < (table1_width + table2_width); i++){	// puts table2 values in new_values array AFTER table1 values are inserted
+			new_values[i] = temp_table2.attribute_table.get(0).get(i - table1_width);
+		}
+		Table new_table = new Table((table1+table2), new_values, temp_table1.primary_keys); // Created the new table with combined attributes 
+		for(int j = 0; j < temp_table1.attribute_table.size(); j++){ // Analyzes each row of table1 with each row of table2
+			Vector<String> temp_row = temp_table1.attribute_table.get(j); // Retrieves each vector of table1
+			String temp_pk = temp_row.get(0); // gets the primary id to be compared to the id's of table2
+			for(int k = 0; k < temp_table2.attribute_table.size(); k++){ 
+				// Looks at the first element of each Vector<String> in ArrayList for the primary key
+				Vector<String> temp_row2 = temp_table2.attribute_table.get(k);
+				String temp_pk2 = temp_row2.get(0);
+				if(temp_pk == temp_pk2){ // Compares each primary key of table1 to table2
+					Vector<String> new_vector = new Vector<String>(table1_width+table2_width-1); // new vector to be added to joined table (without the key redundancy)
+					for(int l = 0; l < table1_width; l++){
+						new_vector.add(temp_row.get(l));
+					}
+					for(int m = 1; m < table2_width; m++){
+						new_vector.add(temp_row2.get(m));
+					}
+					new_table.addRow(new_vector); // adds combined vector to new table
+				}
+			}
+		}
 	}
 
 	public static void write(String table_name){

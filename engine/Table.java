@@ -6,10 +6,12 @@ public class Table{
 	String unique_id;
 	Vector<Integer> row_keys;
 	String[] attributes;
+	String[] primary_keys;
 
 	Table(String t_name, String[] attribute_list, String[] p_keys){		// Take an array of attribute names and insert as first row in arraylist
 
-		attributes = attribute_list;
+		attributes = attribute_list.clone();
+		primary_keys = p_keys.clone();
 
 		String[] new_attribute_list = new String[attribute_list.length + 1];
 
@@ -91,21 +93,21 @@ public class Table{
 	}
 
 	public void selection(String attribute, String operator, String qualificator, String table_name, String new_table_name){
-		i = attributes.indexOf(attribute);
+		//i = attributes.indexOf(attribute);
 		// if i == -1, exit
 
-		for (Vector<String> row : attribute_table) {
+		//for (Vector<String> row : attribute_table) {
 
 			// Compare the first element of the row (its id) with the given id
-			if (getOp(operator, row.get(i), qualificator){
+			//if (getOp(operator, row.get(i), qualificator){
 				// add it to a new table
-			}
-		}
+			//}
+		//}
 	}
 
 	public Boolean getOp(String operator, String a, String b){
 		//if ((a.matches("[0-9]+") && (b.matches("[0-9]+")))){
-
+/*
 			switch(operator)
 				case ">": 
 					return (a > b);
@@ -125,7 +127,13 @@ public class Table{
 				case "!=": 
 					return a != b;
 					break;
-		//}
+		//}	*/
+		return true;
 	}
-
 }
+
+
+
+
+
+
