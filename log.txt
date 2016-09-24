@@ -8,7 +8,7 @@ Collaborated together on how to approach project
 
 9/18/16
 Collaborated together on ALL ideas + intro of Design Document
-Reed Spivey - Engine/Parse section of Design Document
+Reed Spivey - Engine/Parser section of Design Document
 Jason Alonzo - Engine/Parser section of Design Document 
 Cory Avra - Interactive System section of Design Document
 
@@ -55,8 +55,16 @@ finished create table and insert functions
 9/21/16
 Created table class
 Completed create table function
+Removed Player, Team, and Sport Class
+DBMS now represented as HashMap<String, ArrayList<Vector<String>>>
 @TODO ID-Table class constructor
 @TODO Work on insert function
+@TODO Reed Spivey - Natural Join, Projection
+      Jason Alonzo - Set Union, Set Difference
+      Cory Avra - Write, Open, Close
+
+9/22/16
+Reed Spivey - Finished Natural Join function
 
 
 
