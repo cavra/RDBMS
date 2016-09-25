@@ -1,6 +1,7 @@
 import java.util.*;
+import java.io.*;
 
-public class Table{
+public class Table implements Serializable{
 	
 	ArrayList<Vector<String>> attribute_table = new ArrayList<Vector<String>>();
 	String unique_id;
@@ -24,14 +25,18 @@ public class Table{
 			}
 		}
 
-		// leave this empty
+		// leave the first index as table name
 		new_attribute_list[0] = t_name;
 
 		// Move all other values over
-		for(int i = 0; i < attribute_list.length; i++){
+		Vector<String> keys_vector = new Vector<String>();
+		for(int i = 0; i < attribute_list.length; i++) {
 			new_attribute_list[i + 1] = attribute_list[i];  // array = {table ID, rest of attributes...}
+			keys_vector.add(new_attribute_list[i+1]);
 		}
 
+		// Set the first row 
+		attribute_table.add(keys_vector);
 
 	}
 
@@ -130,6 +135,43 @@ public class Table{
 		//}	*/
 		return true;
 	}
+
+	public void writeTable(String table_name){
+		try {
+			FileOutputStream file_out = new FileOutputStream("table_data/" + table_name + ".ser");
+			ObjectOutputStream out = new ObjectOutputStream(file_out);
+
+			out.writeObject(attribute_table);
+			out.close();
+			file_out.close();
+			System.out.printf("Serialized data is saved in table_data/" + table_name + ".ser");
+     	}
+     	catch(IOException i) {
+      		i.printStackTrace();
+     	}
+  	}
+
+  	public void readTable(String table_name){
+		try {
+			FileInputStream file_in = new FileInputStream("table_data/" + table_name + ".ser");
+			ObjectInputStream in = new ObjectInputStream(file_in);
+
+			ArrayList<Vector<String>> read_table = new ArrayList<Vector<String>>();
+			read_table = (ArrayList<Vector<String>>) in.readObject(); // warning: [unchecked] unchecked cast
+			in.close();
+			file_in.close();
+		}
+		catch(IOException i) {
+			i.printStackTrace();
+			return;
+		}
+		catch(ClassNotFoundException c) {
+			System.out.println("Table data not found");
+			c.printStackTrace();
+			return;
+		}
+  	}
+
 }
 
 
