@@ -102,9 +102,9 @@ public class Engine {
 	}
 
 	//This function takes in two table and combines them w/o saving duplicates
-	public static void setUnion(String new_table_name, String table1, String values1, String table2, String values2){
-		Table temp_table1 = rdbms_tables_container.get(table1); 
-		Table temp_table2 = rdbms_tables_container.get(table2);	
+	public static void setUnion(String new_table_name, String table_name1, String table_name2){
+		Table temp_table1 = rdbms_tables_container.get(table_name1); 
+		Table temp_table2 = rdbms_tables_container.get(table_name2);	
 		int table1_width = temp_table1.attribute_table.get(0).size();
 		int table2_width = temp_table2.attribute_table.get(0).size();
 		int total_width = table1_width+table2_width;
@@ -139,13 +139,11 @@ public class Engine {
 					union_table.attribute_table.add(temp_table2.attribute_table.get(i));
 				}
 			}	
-
 		}
-
 	}
 
 	//This function takes two tables and subtracts duplicates from the first table
-	public static void setDifference(String new_table_name, String table1, String values1, String table2, String values2){
+	public static void setDifference(String new_table_name, String table1, String table2){
 		Table temp_table1 = rdbms_tables_container.get(table1);//Creates temporary table 1
 		Table temp_table2 = rdbms_tables_container.get(table2);//Creates temporary table 2
 		Table difference_table = new Table(new_table_name, temp_table1.attributes, temp_table1.primary_keys);	
@@ -163,7 +161,7 @@ public class Engine {
 		}
 	}
 
-	public static void crossproduct(String table_name1, String table_name2){
+	public static void crossProduct(String table_name1, String table_name2){
 		Table table1 = rdbms_tables_container.get(table_name1);
 		Table table2 = rdbms_tables_container.get(table_name2);
 
@@ -197,19 +195,21 @@ public class Engine {
 		}
 	}
 
-	public static void rename(String old_table_name, String new_table_name){
+	public static void renameTable(String old_table_name, String new_table_name){
 		// Check if the table already exists
 		Table temp_table = rdbms_tables_container.get(old_table_name);
-		if (temp_table != null){
-			// print error message, exit
+		if (temp_table == null){
+			System.out.println("Error: Cannot rename table; table doesn't exist.");
 		}
 		else {
-			rdbms_tables_container.remove("old_table_name");
+			System.out.println("Renaming table");
+			temp_table.attribute_table.get(0).set(0, new_table_name);
+			rdbms_tables_container.remove(old_table_name);
 			rdbms_tables_container.put(new_table_name, temp_table);
 		}
 	}
 
-	public static void naturalJoin(String table1, String[] values1, String table2, String[] values2){ // This function finds commonalities between tables and merges them
+	public static void naturalJoin(String table1, String table2){ // This function finds commonalities between tables and merges them
 		Table temp_table1 = rdbms_tables_container.get(table1); // Creates temporary table for arg1
 		Table temp_table2 = rdbms_tables_container.get(table2);	// Creates temporary table for arg2
 		int table1_width = temp_table1.attribute_table.get(0).size();
@@ -246,5 +246,14 @@ public class Engine {
 		}
 	}
 
+	public static void writeTable(String table_name){
+		Table temp_table = rdbms_tables_container.get(table_name);
+		temp_table.writeTable();
+	}
 	
+	public static void readTable(String table_name){
+		Table temp_table = rdbms_tables_container.get(table_name);
+		temp_table.readTable();
+	}
+
 }

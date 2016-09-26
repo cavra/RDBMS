@@ -5,19 +5,32 @@ public class TestList {
 	public void callAll() {
 
 		// All functions should be called here
-		createTable();
+		createTable1();
 		insertRow();
-		show();
+		show("Test Table");
 
 		deleteRow();
 		updateRow();
-		show();
+		show("Test Table");
 
-		dropTable();
-		show();
+		//dropTable();
+		//renameTable();
+		//show("New Test Table");
+
+		// None of these work
+		//selection();
+		//projection();
+		//naturalJoin();
+		//setUnion();
+		//setDifference();
+		//crossProduct();
+
+		writeTable();
+		readTable();
+
 	}
 
-	public void createTable() {
+	public void createTable1() {
 
 		String[] keys = {"name", "age", "jersey number"};
 		String[] p_keys = {"age", "jersey number"};
@@ -25,9 +38,22 @@ public class TestList {
 		Engine.createTable("Test Table", keys, p_keys);
 	}
 
+	public void createTable2() {
+
+		String[] keys = {"name", "age", "sport"};
+		String[] p_keys = {"age", "sport"};
+
+		Engine.createTable("Other Table", keys, p_keys);
+	}
+
 	public void dropTable() {
 		Engine.dropTable("Test Table");
 	}
+
+	public void renameTable() {
+		Engine.renameTable("Test Table", "New Test Table");
+	}
+
 
 	public void insertRow() {
 
@@ -50,8 +76,40 @@ public class TestList {
 		Engine.updateRow("Test Table", "2107", values);
 	}
 
-	public void show() {
-		Engine.show("Test Table");
+	public void show(String table_name) {
+		Engine.show(table_name);
+	}
+
+	public void selection(String table_name) {
+		Engine.selection(table_name);
+	}
+
+	public void projection(String table_name) {
+		Engine.projection(table_name);
+	}
+
+	public void naturalJoin(){
+		Engine.naturalJoin("Test Table", "Other Table");
+	}
+
+	public void setUnion(){
+		Engine.setUnion("Set Union Table", "Test Table", "Other Table");
+	}
+
+	public void setDifference(){
+		Engine.setDifference("Set Union Table", "Test Table", "Other Table");
+	}
+
+	public void crossProduct(){
+		Engine.crossProduct("Test Table", "Other Table");
+	}
+
+	public void writeTable(){
+		Engine.writeTable("Test Table");
+	}
+
+	public void readTable(){
+		Engine.readTable("Test Table");
 	}
 
  }

@@ -4,7 +4,6 @@ import java.io.*;
 public class Table implements Serializable{
 	
 	ArrayList<Vector<String>> attribute_table = new ArrayList<Vector<String>>();
-	String unique_id;
 	Vector<Integer> p_key_indices = new Vector<Integer>();
 	String[] attributes;
 	String[] primary_keys;
@@ -48,7 +47,6 @@ public class Table implements Serializable{
 		String p_key = "";
 
 		for (Integer i : p_key_indices) {
-
 			// Iterative and concatenate it with all elements of the array
 			p_key += values[i];
 		}
@@ -64,7 +62,7 @@ public class Table implements Serializable{
 		Vector<String> row = getRow(row_id);
 		if (row.size() != 0){
 			attribute_table.remove(row); // not working
-			System.out.println("Removed" + row);
+			System.out.println("Deleted " + row);
 		}
 		else{
 			System.out.println("Error: Row doesn't exist. Failed to delete.");
@@ -196,7 +194,7 @@ public class Table implements Serializable{
 			out.writeObject(attribute_table);
 			out.close();
 			file_out.close();
-			System.out.printf("Serialized data is saved in table_data/" + table_name + ".ser");
+			System.out.println("Serialized data is saved in table_data/" + table_name + ".ser");
      	}
      	catch(IOException i) {
       		i.printStackTrace();
