@@ -280,7 +280,6 @@ public class Engine {
 				union_table.addRow(temp_row);
 			}
 		}
-
 		// Loop through table 2 and record all non-duplicates
 		for(int i = 1; i < table2.attribute_table.size(); i++) {
 
@@ -458,11 +457,14 @@ public static void writeTable(String table_name){
 
   	public static void readTable(String table_name){
 		try {
+
+			Table read_table = null;
+
 			FileInputStream file_in = new FileInputStream("table_data/" + table_name + ".ser");
 			ObjectInputStream in = new ObjectInputStream(file_in);
 
 			// Read in the .ser data to a new Table object
-			Table read_table = (Table)in.readObject(); // warning: [unchecked] unchecked cast
+			read_table = (Table)in.readObject(); // warning: [unchecked] unchecked cast
 			in.close();
 			file_in.close();
 

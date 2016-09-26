@@ -6,7 +6,7 @@ public class TestList {
 
 		// All functions should be called here
 		// Feel free to uncomment as you please
-/*		createTable1();
+		createTable1();
 		createTable2();
 		createTable3();
 		insertRow1();
@@ -35,10 +35,10 @@ public class TestList {
 		show("Set Difference Table");
 		crossProduct();
 		show("CP Table");
-*/
+
 		writeTable();
 		readTable();
-		//show("Test Table");
+		show("Test Table");
 
 	}
 
