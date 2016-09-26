@@ -23,10 +23,11 @@ public class TestList {
 		//selection();
 		//projection();
 		//naturalJoin();
-		//setUnion();
-		setDifference();
+		setUnion();
+		show("Set Union Table");
+		//setDifference();
+		//show("Set Difference Table");
 		//crossProduct();
-		show("Set Difference Table");
 
 		//writeTable();
 		//readTable();
@@ -74,10 +75,10 @@ public class TestList {
 		String[] values1 = {"Jackson1", "21", "07"};
 		Engine.insertRow("Other Table", values1);
 
-		String[] values2 =  {"Jackson12", "20", "42"};
+		String[] values2 =  {"Jackson12", "100", "02"};
 		Engine.insertRow("Other Table", values2);
 
-		String[] values3 = {"Jackson13", "24", "13"};
+		String[] values3 = {"Jackson13", "200", "05"};
 		Engine.insertRow("Other Table", values3);
 	}
 

@@ -155,43 +155,36 @@ public class Engine {
 // ==========================================================================================================================
 
 	public static void setUnion(String new_table_name, String table_name1, String table_name2){
-		Table temp_table1 = rdbms_tables_container.get(table_name1); 
-		Table temp_table2 = rdbms_tables_container.get(table_name2);	
-		int table1_width = temp_table1.attribute_table.get(0).size();
-		int table2_width = temp_table2.attribute_table.get(0).size();
-		int total_width = table1_width+table2_width;
-		String[] new_values = new String[temp_table1.attribute_table.size() + temp_table2.attribute_table.size()]; // Creates new array for combined attributes
-		int new_index = 1; // This allows us to increment both for loops
-		for(int i = 1; i < table1_width ; i++)//Add table1 attributes to array
-		{
-			new_values[i] = temp_table1.attribute_table.get(0).get(i);
-			new_index = i;
+		Table temp_table1 = rdbms_tables_container.get(table_name1); //Get table1
+		Table temp_table2 = rdbms_tables_container.get(table_name2); //Get table2
+		Table union_table = new Table(new_table_name, temp_table1.attributes, temp_table1.primary_keys);	
+		
+		for(int i = 1; i < temp_table1.attribute_table.size(); i++) {
+
+			Vector<String> temp_row = temp_table1.attribute_table.get(i);
+
+			if(union_table.getRow(temp_row.get(0)).size() != 0) {
+				System.out.println(temp_row.get(0) + " was not added");
+			}
+			else {
+				System.out.println(temp_row.get(0) + " was added");
+				union_table.addRow(temp_row);
+			}
 		}
-		for(int i = new_index; i < total_width ; i++) //Add table2 attributes to array
-		{
-			new_values[i] = temp_table2.attribute_table.get(0).get(i-table1_width);
+
+		for(int i = 1; i < temp_table2.attribute_table.size(); i++) {
+
+			Vector<String> temp_row = temp_table2.attribute_table.get(i);
+
+			if(union_table.getRow(temp_row.get(0)).size() != 0) {
+				System.out.println(temp_row.get(0) + " was not added");
+			}
+			else {
+				System.out.println(temp_row.get(0) + " was added");
+				union_table.addRow(temp_row);
+			}
 		}
-		Table union_table = new Table(new_table_name, new_values, temp_table1.primary_keys);//Table of combined attributes
-		int index = 1;
-		while(index<temp_table1.attribute_table.size())//Adding attributes of table1 to union_table
-		{
-			union_table.attribute_table.add(temp_table1.attribute_table.get(index));
-			index++;
-		}
-		for(int i = 1; i<temp_table2.attribute_table.size(); i++)//Checking for duplicate attributes and removing them
-		{
-			for(int j = 1; j<temp_table1.attribute_table.size(); j++)
-			{
-				if(temp_table2.attribute_table.get(i).get(0) == temp_table1.attribute_table.get(i).get(0))
-				{
-					continue;
-				}
-				else
-				{
-					union_table.attribute_table.add(temp_table2.attribute_table.get(i));
-				}
-			}	
-		}
+		rdbms_tables_container.put(new_table_name, union_table);
 	}
 	
 // ==========================================================================================================================
@@ -210,7 +203,6 @@ public class Engine {
 
 			if(temp_table2.getRow(temp_row1.get(0)).size() != 0 || difference_table.getRow(temp_row1.get(0)).size() != 0) {
 				System.out.println(temp_row1.get(0) + " was not added");
-				//continue;
 			}
 			else {
 				System.out.println(temp_row1.get(0) + " was added");
