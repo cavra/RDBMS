@@ -29,7 +29,7 @@ Engine Functionality:
 
 Style:
 
-- [ ] Program follows typical Java convention as far as we are aware
+- [x] Program follows typical Java convention as far as we are aware
 - [x] Program is well documented with clear, concise comments
 
 ## Notes
