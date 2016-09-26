@@ -3,8 +3,13 @@ import java.util.*;
 public class TestList {
 
 	public void callAll() {
+
+		// All functions should be called here
 		createTable();
 		insertRow();
+		show();
+
+		updateRow();
 		show();
 	}
 
@@ -26,6 +31,11 @@ public class TestList {
 
 		String[] values3 = {"Jingle", "24", "13"};
 		Engine.insertRow("Test Table", values3);
+	}
+
+	public void updateRow() {
+		String[] values = {"Jimmy", "20", "01"};
+		Engine.updateRow("Test Table", "2107", values);
 	}
 
 	public void show() {

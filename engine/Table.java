@@ -5,7 +5,7 @@ public class Table implements Serializable{
 	
 	ArrayList<Vector<String>> attribute_table = new ArrayList<Vector<String>>();
 	String unique_id;
-	Vector<Integer> row_keys = new Vector<Integer>();
+	Vector<Integer> p_key_indices = new Vector<Integer>();
 	String[] attributes;
 	String[] primary_keys;
 	String table_name;
@@ -16,30 +16,26 @@ public class Table implements Serializable{
 		attributes = attribute_list.clone();
 		primary_keys = p_keys.clone();
 
-		String[] new_attribute_list = new String[attribute_list.length + 1];
-
 		// Record the indexes of the primary keys in the attribute list
-		for (int i = 0; i < attribute_list.length - 1; i++){
-			for (int j = 0; j < p_keys.length - 1; j++){
+		for (int i = 0; i < attribute_list.length; i++){
+			for (int j = 0; j < p_keys.length; j++){
 				if (attribute_list[i] == p_keys[j]) {
-					row_keys.add(i);
+					p_key_indices.add(i);
 				}
 			}
 		}
 
 		// leave the first index as table name
-		new_attribute_list[0] = t_name;
-
-		// Move all other values over
 		Vector<String> keys_vector = new Vector<String>();
+		keys_vector.add(t_name);
+
+		// Copy all the attributes to the vector
 		for(int i = 0; i < attribute_list.length; i++) {
-			new_attribute_list[i + 1] = attribute_list[i];  // array = {table ID, rest of attributes...}
-			keys_vector.add(new_attribute_list[i+1]);
+			keys_vector.add(attribute_list[i]);
 		}
 
 		// Set the first row 
 		attribute_table.add(keys_vector);
-
 	}
 
 	public void deleteTable(){
@@ -48,12 +44,14 @@ public class Table implements Serializable{
 
 	public String getPKey(String[] values){
 
+		// Set the initial string as empty
 		String p_key = "";
 
-		for (Integer index : row_keys) {
-			p_key += values[index];
-		}
+		for (Integer i : p_key_indices) {
 
+			// Iterative and concatenate it with all elements of the array
+			p_key += values[i];
+		}
 		return p_key;
 	}
 
@@ -65,11 +63,11 @@ public class Table implements Serializable{
 		
 		// Get the row, if it exists
 		Vector<String> row = getRow(row_id);
-		if (row.size() != 0){
+		if (row.size() == 0){
 			attribute_table.remove(row);
 		}
 		else{
-			// row does not exist, exit
+			System.out.println("Error: Row doesn't exist. Failed to delete.");
 		}
 	}
 
@@ -91,11 +89,9 @@ public class Table implements Serializable{
 	}
 
 	public void show(){
-		for (int i = 0; i < attribute_table.size(); i++){
-			for (int j = 0; j < attribute_table.get(0).size(); j++){
-				System.out.print(j + "\t");
-			}
-			System.out.println("");
+		// Iterate through each row
+		for (Vector<String> row : attribute_table) {
+			System.out.println(row);
 		}
 	}
 
@@ -110,6 +106,42 @@ public class Table implements Serializable{
 				addRow(row);
 			}
 		}
+	}
+
+	// This function creates a new table composed of a subset of attributes of a given table
+	public Table projection(String new_table_name, String[] new_attr){
+		Table new_table = new Table(new_table_name, new_attr, this.primary_keys);
+		Vector<Integer> indicies = this.getIndicies(new_attr);
+
+		for(int i = 1; i < attribute_table.size(); i++){
+			Vector<String> temp_vector = attribute_table.get(i);
+			Vector<String> temp_row = new Vector<String>();
+			temp_row.add(temp_vector.get(0));
+
+			for(int temp_index : indicies){
+				temp_row.add(temp_vector.get(temp_index));
+			}
+
+		new_table.addRow(temp_row);
+		}
+
+
+		return new_table;
+	}
+
+	// This is a helper function that returns a vector of indicies (for a given subset
+	// of attributes) to allow for easy location of data. 
+	public Vector<Integer> getIndicies(String[] new_attr){
+		Vector<Integer> indicies_list = new Vector<Integer>();
+
+		for (int i = 1; i < attributes.length; i++){
+			for (int j = 1; j < new_attr.length; j++){
+				if (attributes[i] == new_attr[j]) {
+					indicies_list.add(i);
+				}
+			}
+		}
+		return indicies_list;
 	}
 
 	public Boolean getOp(String operator, String a, String b){

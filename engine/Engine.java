@@ -17,7 +17,7 @@ public class Engine {
 		// Check if the table already exists
 		Table temp_table = rdbms_tables_container.get(table_name);
 		if (temp_table != null){
-			// print error message, exit
+			System.out.println("Error: Table already exists. Failed to create.");
 		}
 		else {
 			// Otherwise, create the new table
@@ -32,8 +32,8 @@ public class Engine {
 	public static void dropTable(String table_name){
 		// Check if the table already exists
 		Table temp_table = rdbms_tables_container.get(table_name);
-		if(temp_table != null){
-			// print error message, exit
+		if(temp_table == null){
+			System.out.println("Error: Table doesn't exist. Failed to drop.");
 		}
 		else {
 			temp_table.deleteTable();
@@ -43,10 +43,10 @@ public class Engine {
 
 	public static void insertRow(String table_name, String[] values){
 
-		// get the ArrayList from the rdbms_tables_container, if it exists
+		// get the table (ArrayList) from the rdbms_tables_container, if it exists
 		Table temp_table = rdbms_tables_container.get(table_name);
-		if (temp_table != null) {
-			// Print error message and quit
+		if (temp_table == null) {
+			System.out.println("Error: Table doesn't exist, failed to insert row.");
 		}
 		// NEED TO PUT IN A CASE TO CHECK THE VALUES GIVEN WITH VALUES OF GIVEN TABLE
 		else{
@@ -68,21 +68,14 @@ public class Engine {
 		// Check if the table and row exist
 		Table temp_table = rdbms_tables_container.get(table_name);
 		Vector<String> temp_row = temp_table.getRow(row_id);
-		if (temp_table != null && temp_row.size() != 0) {
-			// Print error message and quit
+		if (temp_table == null && temp_row.size() == 0) {
+			System.out.println("Error: Table and/or row don't exist. Failed to update.");
 		}
 		else{
 
-			// delete the old row
+			// delete the old row and create a new one
 			deleteRow(table_name, row_id);
-
-			// create a new one
-			Vector<String> new_values = new Vector<String>(); // used to put unique id in the new_values[0]
-			new_values.add(values[0] + values[1]); // Creates a new key based on given primary key 
-			for(int i = 1; i < values.length + 1; i++){	// rest of the values moved over 1 to the right.
-				new_values.add(values[i-1]);
-			}
-			temp_table.addRow(new_values);
+			insertRow(table_name, values);
 		}
 
 	}
@@ -92,7 +85,7 @@ public class Engine {
 		// Check if the table exists
 		Table temp_table = rdbms_tables_container.get(table_name);
 		if (temp_table == null) {
-			// Print error message and quit
+			System.out.println("Error: Table doesn't exist. Failed to delete row.");
 		}
 		else{
 			temp_table.deleteRow(row_id);
@@ -104,23 +97,74 @@ public class Engine {
 		Table temp_table = rdbms_tables_container.get(table_name);
 		if (temp_table == null) {
 			System.out.println("Error: Cannot show table; table doesn't exist.");
-			// Print error message and quit
 		}
 		else{
 			temp_table.show();
 		}
 	}
 
-	public static void projection(){
+//This function takes in two table and combines them w/o saving duplicates
+	public static void setUnion(String new_table_name, String table1, String values1, String table2, String values2)
+	{
+		Table temp_table1 = rdbms_tables_container.get(table1); 
+		Table temp_table2 = rdbms_tables_container.get(table2);	
+		int table1_width = temp_table1.attribute_table.get(0).size();
+		int table2_width = temp_table2.attribute_table.get(0).size();
+		int total_width = table1_width+table2_width;
+		String[] new_values = new String[temp_table1.attribute_table.size() + temp_table2.attribute_table.size()]; // Creates new array for combined attributes
+		int new_index = 1; // This allows us to increment both for loops
+		for(int i = 1; i < table1_width ; i++)//Add table1 attributes to array
+		{
+			new_values[i] = temp_table1.attribute_table.get(0).get(i);
+			new_index = i;
+		}
+		for(int i = new_index; i < total_width ; i++) //Add table2 attributes to array
+		{
+			new_values[i] = temp_table2.attribute_table.get(0).get(i-table1_width);
+		}
+		Table union_table = new Table(new_table_name, new_values, temp_table1.primary_keys);//Table of combined attributes
+		int index = 1;
+		while(index<temp_table1.attribute_table.size())//Adding attributes of table1 to union_table
+		{
+			union_table.attribute_table.add(temp_table1.attribute_table.get(index));
+			index++;
+		}
+		for(int i = 1; i<temp_table2.attribute_table.size(); i++)//Checking for duplicate attributes and removing them
+		{
+			for(int j = 1; j<temp_table1.attribute_table.size(); j++)
+			{
+				if(temp_table2.attribute_table.get(i).get(0) == temp_table1.attribute_table.get(i).get(0))
+				{
+					continue;
+				}
+				else
+				{
+					union_table.attribute_table.add(temp_table2.attribute_table.get(i));
+				}
+			}	
+
+		}
 
 	}
 
-	public static void setUnion(){
-
-	}
-
-	public static void setDifference(){
-
+	//This function takes two tables and subtracts duplicates from the first table
+	public static void setDifference(String new_table_name, String table1, String values1, String table2, String values2)
+	{
+		Table temp_table1 = rdbms_tables_container.get(table1);//Creates temporary table 1
+		Table temp_table2 = rdbms_tables_container.get(table2);//Creates temporary table 2
+		Table difference_table = new Table(new_table_name, temp_table1.attributes, temp_table1.primary_keys);	
+		for(int i = 1; i<temp_table1.attribute_table.size(); i++)
+		{
+			Vector<String> temp = temp_table1.attribute_table.get(i);
+			for(int j = 1;j<temp_table2.attribute_table.size(); j++)
+			{
+				Vector<String> temp2 = temp_table2.attribute_table.get(i);
+				if(temp.get(0) == temp2.get(0))
+					continue;
+				else
+					difference_table.attribute_table.add(temp);
+		}
+		}
 	}
 
 	public static void crossproduct(String table_name1, String table_name2){
