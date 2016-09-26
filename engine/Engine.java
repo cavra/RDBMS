@@ -2,11 +2,12 @@ import java.util.*;
 
 public class Engine {
 
-	static HashMap<String, Table> rdbms_tables_container = new HashMap<String, Table>(); //This represents our entire database
-	// This hashmap stores Tables, which are basically arrayLists, which contain vectors
+	// This hashmap stores Tables, which are arrayLists containing vectors
+	static HashMap<String, Table> rdbms_tables_container = new HashMap<String, Table>(); 
 
 	public static void main(String[] args){
 
+		// Call the test class
 		TestList new_test_list = new TestList();
 		new_test_list.callAll();
 
@@ -24,12 +25,13 @@ public class Engine {
 			System.out.println("Error: Table already exists. Failed to create.");
 		}
 		else {
-			// Otherwise, create the new table
 			// Returns a table initialized with ID and wanted attributes
 			Table new_table = new Table(table_name, attributes, p_keys); 
 
 			// Store the created table in the tables container
 			rdbms_tables_container.put(table_name, new_table);
+
+			System.out.println("Created table: " + table_name);
 		}
 	}
 	
@@ -39,15 +41,16 @@ public class Engine {
 // ==========================================================================================================================
 
 	public static void dropTable(String table_name){
-		// Check if the table already exists
+
+		// Check if the table exists
 		Table temp_table = rdbms_tables_container.get(table_name);
 		if(temp_table == null){
 			System.out.println("Error: Table doesn't exist. Failed to drop.");
 		}
 		else {
-			System.out.println("Dropped table: " + table_name);
 			temp_table.deleteTable();
 			rdbms_tables_container.remove(table_name);
+			System.out.println("Dropped table: " + table_name);
 		}
 	}
 	
@@ -58,12 +61,12 @@ public class Engine {
 
 	public static void insertRow(String table_name, String[] values){
 
-		// get the table (ArrayList) from the rdbms_tables_container, if it exists
+		// Check if the table exists
 		Table temp_table = rdbms_tables_container.get(table_name);
 		if (temp_table == null) {
 			System.out.println("Error: Table doesn't exist, failed to insert row.");
 		}
-		// NEED TO PUT IN A CASE TO CHECK THE VALUES GIVEN WITH VALUES OF GIVEN TABLE
+		// @TODO NEED TO PUT IN A CASE TO CHECK THE VALUES GIVEN WITH VALUES OF GIVEN TABLE
 		else{
 			Vector<String> new_values = new Vector<String>(); // used to put unique id in the new_values[0]
 
@@ -71,10 +74,12 @@ public class Engine {
 			String p_key = temp_table.getPKey(values);
 			new_values.add(p_key); 
 
-			for(int i = 1; i < values.length + 1; i++){	// rest of the values moved over 1 to the right.
+			// Add the rest of the values
+			for(int i = 1; i < values.length + 1; i++){
 				new_values.add(values[i-1]);
 			}
 			temp_table.addRow(new_values);
+			System.out.println("Inserted row into table: " + table_name);
 		}
 	}
 	
@@ -93,8 +98,8 @@ public class Engine {
 		}
 		else{
 			temp_table.updateRow(table_name, row_id, values);
+			System.out.println("Updated row in table: " + table_name);
 		}
-
 	}
 	
 // ==========================================================================================================================
@@ -112,6 +117,7 @@ public class Engine {
 		}
 		else{
 			temp_table.deleteRow(row_id);
+			System.out.println("Deleted row in table: " + table_name);
 		}
 	}
 	
@@ -131,6 +137,7 @@ public class Engine {
 			temp_table.attribute_table.get(0).set(0, new_table_name);
 			rdbms_tables_container.remove(old_table_name);
 			rdbms_tables_container.put(new_table_name, temp_table);
+			System.out.println("Renamed " + table_name + " to " + new_table_name);
 		}
 	}
 
@@ -271,21 +278,27 @@ public class Engine {
 // entities, making sure to combine the attributes of each table.
 // ===========================================================================================================================
 
-	public static void naturalJoin(String table1, String table2){ // This function finds commonalities between tables and merges them
-		Table temp_table1 = rdbms_tables_container.get(table1); // Creates temporary table for arg1
-		Table temp_table2 = rdbms_tables_container.get(table2);	// Creates temporary table for arg2
+	public static void naturalJoin(String table1, String table2){ 
+		Table temp_table1 = rdbms_tables_container.get(table1);
+		Table temp_table2 = rdbms_tables_container.get(table2);
 		int table1_width = temp_table1.attribute_table.get(0).size();
 		int table2_width = temp_table2.attribute_table.get(0).size();
-		String[] new_values = new String[temp_table1.attributes.length + temp_table2.attributes.length]; // Creates new array for combined attributes
+		String[] new_values = new String[temp_table1.attributes.length + temp_table2.attributes.length]; 
 		
-		for(int i = 0; i < table1_width - 1; i++){ // Puts table1 values in new_values array
+		// Puts table1 values in new_values array
+		for(int i = 0; i < table1_width - 1; i++){ 
 			new_values[i] = temp_table1.attribute_table.get(0).get(i+1);
 		}
-		for(int i = 0; i < table2_width - 1; i++){	// puts table2 values in new_values array AFTER table1 values are inserted
+
+		// Puts table2 values in new_values array AFTER table1 values are inserted
+		for(int i = 0; i < table2_width - 1; i++){	
 			new_values[i + table1_width - 1] = temp_table2.attribute_table.get(0).get(i+1);
 		}
 
-		Table new_table = new Table((table1+table2), new_values, temp_table1.primary_keys); // Created the new table with combined attributes 
+		// Create the new table with combined attributes 
+		Table new_table = new Table((table1+table2), new_values, temp_table1.primary_keys); 
+
+		// Iterate through all values of both tables and store them in the new table
 		for(int j = 0; j < temp_table1.attribute_table.size(); j++){ // Analyzes each row of table1 with each row of table2
 			Vector<String> temp_row = temp_table1.attribute_table.get(j); // Retrieves each vector of table1
 			String temp_pk = temp_row.get(0); // gets the primary id to be compared to the id's of table2
@@ -308,11 +321,19 @@ public class Engine {
 		rdbms_tables_container.put(table1+table2, new_table);
 	}
 
+// ===========================================================================================================================
+// The function below writes a table's data to a .ser file to save it
+// ===========================================================================================================================
+
 	public static void writeTable(String table_name){
 		Table temp_table = rdbms_tables_container.get(table_name);
 		temp_table.writeTable();
 	}
 	
+// ===========================================================================================================================
+// The function below reads a table's data from a .ser file to load it
+// ===========================================================================================================================
+
 	public static void readTable(String table_name){
 		Table temp_table = rdbms_tables_container.get(table_name);
 		temp_table.readTable();
