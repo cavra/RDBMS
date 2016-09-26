@@ -25,7 +25,7 @@ Engine Functionality:
 - [x] Cross Product
 - [x] Natural Join
 - [x] Write Table
-- [ ] Save Table
+- [x] Read Table
 
 Style:
 
