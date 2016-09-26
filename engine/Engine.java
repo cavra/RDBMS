@@ -199,22 +199,25 @@ public class Engine {
 // The results are then added to a newly created table.
 // ==========================================================================================================================
 
-	public static void setDifference(String new_table_name, String table1, String table2){
-		Table temp_table1 = rdbms_tables_container.get(table1);//Creates temporary table 1
-		Table temp_table2 = rdbms_tables_container.get(table2);//Creates temporary table 2
+	public static void setDifference(String new_table_name, String table_name1, String table_name2){
+		Table temp_table1 = rdbms_tables_container.get(table_name1); //Get table1
+		Table temp_table2 = rdbms_tables_container.get(table_name2); //Get table2
 		Table difference_table = new Table(new_table_name, temp_table1.attributes, temp_table1.primary_keys);	
-		for(int i = 1; i<temp_table1.attribute_table.size(); i++)
-		{
-			Vector<String> temp = temp_table1.attribute_table.get(i);
-			for(int j = 1;j<temp_table2.attribute_table.size(); j++)
-			{
-				Vector<String> temp2 = temp_table2.attribute_table.get(i);
-				if(temp.get(0) == temp2.get(0))
-					continue;
-				else
-					difference_table.attribute_table.add(temp);
+		
+		for(int i = 1; i < temp_table1.attribute_table.size(); i++) {
+
+			Vector<String> temp_row1 = temp_table1.attribute_table.get(i);
+
+			if(temp_table2.getRow(temp_row1.get(0)).size() != 0 || difference_table.getRow(temp_row1.get(0)).size() != 0) {
+				System.out.println(temp_row1.get(0) + " was not added");
+				//continue;
+			}
+			else {
+				System.out.println(temp_row1.get(0) + " was added");
+				difference_table.addRow(temp_row1);
 			}
 		}
+		rdbms_tables_container.put(new_table_name, difference_table);
 	}
 	
 // ==========================================================================================================================

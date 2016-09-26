@@ -11,9 +11,9 @@ public class TestList {
 		insertRow2();
 		show("Test Table");
 
-		deleteRow();
-		updateRow();
-		show("Test Table");
+		//deleteRow();
+		//updateRow();
+		//show("Test Table");
 
 		//dropTable();
 		//renameTable();
@@ -24,11 +24,11 @@ public class TestList {
 		//projection();
 		//naturalJoin();
 		//setUnion();
-		//setDifference();
+		setDifference();
 		//crossProduct();
-		//show("Test TableOther Table");
+		show("Set Difference Table");
 
-		writeTable();
+		//writeTable();
 		//readTable();
 	}
 
@@ -59,7 +59,7 @@ public class TestList {
 
 	public void insertRow1() {
 
-		String[] values1 = {"John", "21", "07"};
+		String[] values1 = {"Matt", "90", "01"};
 		Engine.insertRow("Test Table", values1);
 
 		String[] values2 =  {"Jacob", "20", "42"};
@@ -111,7 +111,7 @@ public class TestList {
 	}
 
 	public void setDifference(){
-		Engine.setDifference("Set Union Table", "Test Table", "Other Table");
+		Engine.setDifference("Set Difference Table", "Test Table", "Other Table");
 	}
 
 	public void crossProduct(){

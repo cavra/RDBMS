@@ -139,7 +139,7 @@ public class Table implements Serializable{
 		//System.out.println("Error: Row doesn't exist. Cannot get.");
 		return empty_row;
 	}
-	
+
 // ==========================================================================================================================
 // This function below simply iterates through the given tables and prints out
 // all of the data within the attribute table.
