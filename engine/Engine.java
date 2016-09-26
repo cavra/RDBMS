@@ -168,19 +168,5 @@ public class Engine {
 		}
 	}
 
-	public static void write(String table_name){
-
-		// This currently writes the WHOLE database, need to fix it to just write a single table?
-        /*File file = new File("info.txt");
-        FileOutputStream f = new FileOutputStream(file);
-        ObjectOutputStream s = new ObjectOutputStream(f);
-        s.writeObject(fileObj);
-        s.close();*/
-	}
-
-	public static void close(String table_name){
-
-	}
-
-
+	
 }
