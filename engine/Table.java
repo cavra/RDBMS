@@ -60,14 +60,30 @@ public class Table implements Serializable{
 	}
 
 	public void deleteRow(String row_id){
-		
 		// Get the row, if it exists
 		Vector<String> row = getRow(row_id);
-		if (row.size() == 0){
-			attribute_table.remove(row);
+		if (row.size() != 0){
+			attribute_table.remove(row); // not working
+			System.out.println("Removed" + row);
 		}
 		else{
 			System.out.println("Error: Row doesn't exist. Failed to delete.");
+		}
+	}
+
+	public void updateRow(String table_name, String row_id, String[] values){
+		// Get the row, if it exists
+		Vector<String> row = getRow(row_id);
+		if (row.size() != 0){
+			row.removeAllElements();
+
+			row.add(getPKey(values));
+			for(int i = 0; i < values.length; i++) {
+				row.add(values[i]);
+			}
+		}
+		else{
+			System.out.println("Error: Row doesn't exist. Failed to update.");
 		}
 	}
 
@@ -78,13 +94,14 @@ public class Table implements Serializable{
 		for (Vector<String> row : attribute_table) {
 
 			// Compare the first element of the row (its id) with the given id
-			if (row.get(0) == row_id){
+			if (row.firstElement().equals(row_id)){
 				return row;
 			}
 		}
 
 		// If the row was not found, return an empty array
 		Vector<String> empty_row = new Vector<String>(0);
+		//System.out.println("Error: Row doesn't exist. Cannot get.");
 		return empty_row;
 	}
 

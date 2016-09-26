@@ -36,6 +36,7 @@ public class Engine {
 			System.out.println("Error: Table doesn't exist. Failed to drop.");
 		}
 		else {
+			System.out.println("Dropped table: " + table_name);
 			temp_table.deleteTable();
 			rdbms_tables_container.remove(table_name);
 		}
@@ -72,10 +73,7 @@ public class Engine {
 			System.out.println("Error: Table and/or row don't exist. Failed to update.");
 		}
 		else{
-
-			// delete the old row and create a new one
-			deleteRow(table_name, row_id);
-			insertRow(table_name, values);
+			temp_table.updateRow(table_name, row_id, values);
 		}
 
 	}
@@ -103,9 +101,8 @@ public class Engine {
 		}
 	}
 
-//This function takes in two table and combines them w/o saving duplicates
-	public static void setUnion(String new_table_name, String table1, String values1, String table2, String values2)
-	{
+	//This function takes in two table and combines them w/o saving duplicates
+	public static void setUnion(String new_table_name, String table1, String values1, String table2, String values2){
 		Table temp_table1 = rdbms_tables_container.get(table1); 
 		Table temp_table2 = rdbms_tables_container.get(table2);	
 		int table1_width = temp_table1.attribute_table.get(0).size();
@@ -148,8 +145,7 @@ public class Engine {
 	}
 
 	//This function takes two tables and subtracts duplicates from the first table
-	public static void setDifference(String new_table_name, String table1, String values1, String table2, String values2)
-	{
+	public static void setDifference(String new_table_name, String table1, String values1, String table2, String values2){
 		Table temp_table1 = rdbms_tables_container.get(table1);//Creates temporary table 1
 		Table temp_table2 = rdbms_tables_container.get(table2);//Creates temporary table 2
 		Table difference_table = new Table(new_table_name, temp_table1.attributes, temp_table1.primary_keys);	

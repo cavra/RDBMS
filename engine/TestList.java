@@ -9,7 +9,11 @@ public class TestList {
 		insertRow();
 		show();
 
+		deleteRow();
 		updateRow();
+		show();
+
+		dropTable();
 		show();
 	}
 
@@ -19,6 +23,10 @@ public class TestList {
 		String[] p_keys = {"age", "jersey number"};
 
 		Engine.createTable("Test Table", keys, p_keys);
+	}
+
+	public void dropTable() {
+		Engine.dropTable("Test Table");
 	}
 
 	public void insertRow() {
@@ -31,6 +39,10 @@ public class TestList {
 
 		String[] values3 = {"Jingle", "24", "13"};
 		Engine.insertRow("Test Table", values3);
+	}
+
+	public void deleteRow() {
+		Engine.deleteRow("Test Table", "2413");
 	}
 
 	public void updateRow() {
