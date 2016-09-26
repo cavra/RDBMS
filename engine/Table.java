@@ -5,7 +5,7 @@ public class Table implements Serializable{
 	
 	ArrayList<Vector<String>> attribute_table = new ArrayList<Vector<String>>();
 	String unique_id;
-	Vector<Integer> row_keys;
+	Vector<Integer> row_keys = new Vector<Integer>();
 	String[] attributes;
 	String[] primary_keys;
 	String table_name;
@@ -19,8 +19,8 @@ public class Table implements Serializable{
 		String[] new_attribute_list = new String[attribute_list.length + 1];
 
 		// Record the indexes of the primary keys in the attribute list
-		for (int i = 0; i < attribute_list.length; i++){
-			for (int j = 0; j < p_keys.length; j++){
+		for (int i = 0; i < attribute_list.length - 1; i++){
+			for (int j = 0; j < p_keys.length - 1; j++){
 				if (attribute_list[i] == p_keys[j]) {
 					row_keys.add(i);
 				}

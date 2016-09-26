@@ -7,6 +7,9 @@ public class Engine {
 
 	public static void main(String[] args){
 
+		TestList new_test_list = new TestList();
+		new_test_list.callAll();
+
 	}
 
 	public static void createTable(String table_name, String[] attributes, String[] p_keys){
@@ -88,7 +91,7 @@ public class Engine {
 
 		// Check if the table exists
 		Table temp_table = rdbms_tables_container.get(table_name);
-		if (temp_table != null) {
+		if (temp_table == null) {
 			// Print error message and quit
 		}
 		else{
@@ -99,7 +102,8 @@ public class Engine {
 	public static void show(String table_name){
 		// Check if the table exists
 		Table temp_table = rdbms_tables_container.get(table_name);
-		if (temp_table != null) {
+		if (temp_table == null) {
+			System.out.println("Error: Cannot show table; table doesn't exist.");
 			// Print error message and quit
 		}
 		else{
