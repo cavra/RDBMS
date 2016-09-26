@@ -81,11 +81,11 @@ public class TestList {
 	}
 
 	public void selection(String table_name) {
-		Engine.selection(table_name);
+		//Engine.selection(table_name);
 	}
 
 	public void projection(String table_name) {
-		Engine.projection(table_name);
+		//Engine.projection(table_name);
 	}
 
 	public void naturalJoin(){
