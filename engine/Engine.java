@@ -12,6 +12,10 @@ public class Engine {
 
 	}
 
+// ==========================================================================================================================
+// This function below takes input from the parser and creates essentially an empty table 
+// ==========================================================================================================================
+
 	public static void createTable(String table_name, String[] attributes, String[] p_keys){
 
 		// Check if the table already exists
@@ -28,6 +32,11 @@ public class Engine {
 			rdbms_tables_container.put(table_name, new_table);
 		}
 	}
+	
+// ==========================================================================================================================
+// This function below takes in the name of an existing table in the database and removes it.
+// Does this by calling a deleteTable function which is self explanatory.
+// ==========================================================================================================================
 
 	public static void dropTable(String table_name){
 		// Check if the table already exists
@@ -41,6 +50,11 @@ public class Engine {
 			rdbms_tables_container.remove(table_name);
 		}
 	}
+	
+// ==========================================================================================================================
+// This function below takes in a table and an array of values. It uses this data to create a 
+// Vector<String> row and adds it to the given table.
+// ==========================================================================================================================
 
 	public static void insertRow(String table_name, String[] values){
 
@@ -63,6 +77,11 @@ public class Engine {
 			temp_table.addRow(new_values);
 		}
 	}
+	
+// ==========================================================================================================================
+// This function is very straightforward. It checks to see if the given table exists.
+// Then, calls the non static updateRow function which is used to change the data.
+// ==========================================================================================================================
 
 	public static void updateRow(String table_name, String row_id, String[] values){
 
@@ -77,6 +96,12 @@ public class Engine {
 		}
 
 	}
+	
+// ==========================================================================================================================
+// This function below is very straighforward. It checks to see if the given table exists. 
+// If it does, the function then calls the non static deleteRow function to remove that set
+// of data.
+// ==========================================================================================================================
 
 	public static void deleteRow(String table_name, String row_id){
 
@@ -89,6 +114,11 @@ public class Engine {
 			temp_table.deleteRow(row_id);
 		}
 	}
+	
+// ==========================================================================================================================
+// This function below is very straighforward. It first checks to see if the given table exists.
+// Then, essentially calls the nonstatic show method which then prints off the data in a given table.
+// ==========================================================================================================================
 
 	public static void show(String table_name){
 		// Check if the table exists
@@ -100,8 +130,11 @@ public class Engine {
 			temp_table.show();
 		}
 	}
+	
+// ==========================================================================================================================
+// This function below takes in two tables and combines the data while removing duplicates (redundancies).
+// ==========================================================================================================================
 
-	//This function takes in two table and combines them w/o saving duplicates
 	public static void setUnion(String new_table_name, String table_name1, String table_name2){
 		Table temp_table1 = rdbms_tables_container.get(table_name1); 
 		Table temp_table2 = rdbms_tables_container.get(table_name2);	
@@ -141,8 +174,12 @@ public class Engine {
 			}	
 		}
 	}
+	
+// ==========================================================================================================================
+// This function below takes in two tables and removes duplicates from the first parameter in the equation.
+// The results are then added to a newly created table.
+// ==========================================================================================================================
 
-	//This function takes two tables and subtracts duplicates from the first table
 	public static void setDifference(String new_table_name, String table1, String table2){
 		Table temp_table1 = rdbms_tables_container.get(table1);//Creates temporary table 1
 		Table temp_table2 = rdbms_tables_container.get(table2);//Creates temporary table 2
@@ -157,9 +194,13 @@ public class Engine {
 					continue;
 				else
 					difference_table.attribute_table.add(temp);
-		}
+			}
 		}
 	}
+	
+// ==========================================================================================================================
+// This function below takes in two sets of data and returns every combination of sets, in a newly created table.
+// ==========================================================================================================================
 
 	public static void crossProduct(String table_name1, String table_name2){
 		Table table1 = rdbms_tables_container.get(table_name1);
@@ -194,6 +235,11 @@ public class Engine {
 			rdbms_tables_container.put(cp_table_name, cp_table);
 		}
 	}
+	
+// ===========================================================================================================================
+// This function below is very straightforward. It simply, removes the table from the DBMS,
+// adds it back with a new key.
+// ===========================================================================================================================
 
 	public static void renameTable(String old_table_name, String new_table_name){
 		// Check if the table already exists
@@ -208,6 +254,12 @@ public class Engine {
 			rdbms_tables_container.put(new_table_name, temp_table);
 		}
 	}
+	
+// ===========================================================================================================================
+// This function below takes two tables and their corresponding values in as input. From there,
+// it finds the ID's that the tables' have in common. With that, creates a new table with those common
+// entities, making sure to combine the attributes of each table.
+// ===========================================================================================================================
 
 	public static void naturalJoin(String table1, String table2){ // This function finds commonalities between tables and merges them
 		Table temp_table1 = rdbms_tables_container.get(table1); // Creates temporary table for arg1
