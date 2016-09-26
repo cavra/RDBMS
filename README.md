@@ -33,4 +33,4 @@ Style:
 - [x] Program is well documented with clear, concise comments
 
 ## Notes
-This assignment is only partially complete. As of right now, all we have is the engine. 
+This assignment is only partially complete. As of right now, all we have is the engine. Furthermore, we were unable to get JUnit, our testing framework, to work. So in the meantime, we have some sample tests in TestList.java. We will hope to have that fixed ASAP.
