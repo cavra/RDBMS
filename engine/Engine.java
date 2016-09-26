@@ -159,6 +159,7 @@ public class Engine {
 		Table temp_table2 = rdbms_tables_container.get(table_name2); //Get table2
 		Table union_table = new Table(new_table_name, temp_table1.attributes, temp_table1.primary_keys);	
 		
+		// Loop through table 1 and record all non-duplicates
 		for(int i = 1; i < temp_table1.attribute_table.size(); i++) {
 
 			Vector<String> temp_row = temp_table1.attribute_table.get(i);
@@ -172,6 +173,7 @@ public class Engine {
 			}
 		}
 
+		// Loop through table 2 and record all non-duplicates
 		for(int i = 1; i < temp_table2.attribute_table.size(); i++) {
 
 			Vector<String> temp_row = temp_table2.attribute_table.get(i);
@@ -197,6 +199,7 @@ public class Engine {
 		Table temp_table2 = rdbms_tables_container.get(table_name2); //Get table2
 		Table difference_table = new Table(new_table_name, temp_table1.attributes, temp_table1.primary_keys);	
 		
+		// Loop through the first table and record all unique entries
 		for(int i = 1; i < temp_table1.attribute_table.size(); i++) {
 
 			Vector<String> temp_row1 = temp_table1.attribute_table.get(i);
@@ -216,37 +219,43 @@ public class Engine {
 // This function below takes in two sets of data and returns every combination of sets, in a newly created table.
 // ==========================================================================================================================
 
-	public static void crossProduct(String table_name1, String table_name2){
+	public static void crossProduct(String new_table_name, String table_name1, String table_name2){
 		Table table1 = rdbms_tables_container.get(table_name1);
 		Table table2 = rdbms_tables_container.get(table_name2);
 
 		// Check that both tables exist
-		if (table1 != null && table2 != null){
-			// print error message, exit
+		if (table1 == null|| table2 == null){
+			System.out.println("Error: Cannot cross product tables; one doesn't exist.");
 		}
 		else {
 			// Create a new table with the combined data
-			String cp_table_name = "Cross Product of " + table_name1 + " and " + table_name2;
 			List<String> cp_table_attributes = new ArrayList<String>(table1.attributes.length + table2.attributes.length);
 		    Collections.addAll(cp_table_attributes, table1.attributes);
 		    Collections.addAll(cp_table_attributes, table2.attributes);
 		    String[] cp_table_attributes_arr = cp_table_attributes.toArray(new String[cp_table_attributes.size()]);
 		    String[] cp_p_keys = table1.primary_keys;
 
-			Table cp_table = new Table(cp_table_name, cp_table_attributes_arr, cp_p_keys);
+			Table cp_table = new Table(new_table_name, cp_table_attributes_arr, cp_p_keys);
 
 			// Insert each row combined with each other row
-			for (Vector<String> row1 : table1.attribute_table) {
-				for (Vector<String> row2 : table2.attribute_table) {
+
+			// Loop through the first and second table and record all combined entries
+			for(int i = 1; i < table1.attribute_table.size(); i++) {
+				Vector<String> row1 = table1.attribute_table.get(i);
+				for(int j = 1; j < table2.attribute_table.size(); j++) {
+					Vector<String> row2 = table2.attribute_table.get(j);
+
+					Vector row2_copy = new Vector(row2);
+					row2_copy.remove(0);
 					Vector<String> combined_row = new Vector<String>();
 					combined_row.addAll(row1);
-					combined_row.addAll(row2);
+					combined_row.addAll(row2_copy);
 					cp_table.addRow(combined_row);
 				}
 			}
 
 			// Store the created table in the tables container
-			rdbms_tables_container.put(cp_table_name, cp_table);
+			rdbms_tables_container.put(new_table_name, cp_table);
 		}
 	}
 	

@@ -23,11 +23,12 @@ public class TestList {
 		//selection();
 		//projection();
 		//naturalJoin();
-		setUnion();
-		show("Set Union Table");
+		//setUnion();
+		//show("Set Union Table");
 		//setDifference();
 		//show("Set Difference Table");
-		//crossProduct();
+		crossProduct();
+		show("CP Table");
 
 		//writeTable();
 		//readTable();
@@ -116,7 +117,7 @@ public class TestList {
 	}
 
 	public void crossProduct(){
-		Engine.crossProduct("Test Table", "Other Table");
+		Engine.crossProduct("CP Table", "Test Table", "Other Table");
 	}
 
 	public void writeTable(){
