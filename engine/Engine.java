@@ -115,6 +115,25 @@ public class Engine {
 		}
 	}
 	
+// ===========================================================================================================================
+// This function below is very straightforward. It simply, removes the table from the DBMS,
+// adds it back with a new key.
+// ===========================================================================================================================
+
+	public static void renameTable(String old_table_name, String new_table_name){
+		// Check if the table already exists
+		Table temp_table = rdbms_tables_container.get(old_table_name);
+		if (temp_table == null){
+			System.out.println("Error: Cannot rename table; table doesn't exist.");
+		}
+		else {
+			System.out.println("Renaming table");
+			temp_table.attribute_table.get(0).set(0, new_table_name);
+			rdbms_tables_container.remove(old_table_name);
+			rdbms_tables_container.put(new_table_name, temp_table);
+		}
+	}
+
 // ==========================================================================================================================
 // This function below is very straighforward. It first checks to see if the given table exists.
 // Then, essentially calls the nonstatic show method which then prints off the data in a given table.
@@ -237,25 +256,6 @@ public class Engine {
 	}
 	
 // ===========================================================================================================================
-// This function below is very straightforward. It simply, removes the table from the DBMS,
-// adds it back with a new key.
-// ===========================================================================================================================
-
-	public static void renameTable(String old_table_name, String new_table_name){
-		// Check if the table already exists
-		Table temp_table = rdbms_tables_container.get(old_table_name);
-		if (temp_table == null){
-			System.out.println("Error: Cannot rename table; table doesn't exist.");
-		}
-		else {
-			System.out.println("Renaming table");
-			temp_table.attribute_table.get(0).set(0, new_table_name);
-			rdbms_tables_container.remove(old_table_name);
-			rdbms_tables_container.put(new_table_name, temp_table);
-		}
-	}
-	
-// ===========================================================================================================================
 // This function below takes two tables and their corresponding values in as input. From there,
 // it finds the ID's that the tables' have in common. With that, creates a new table with those common
 // entities, making sure to combine the attributes of each table.
@@ -266,16 +266,15 @@ public class Engine {
 		Table temp_table2 = rdbms_tables_container.get(table2);	// Creates temporary table for arg2
 		int table1_width = temp_table1.attribute_table.get(0).size();
 		int table2_width = temp_table2.attribute_table.get(0).size();
-		String[] new_values = new String[temp_table1.attribute_table.size() + temp_table2.attribute_table.size()]; // Creates new array for combined attributes
-		int new_index = 1; // This allows us to increment both for loops
-		for(int i = 1; i < table1_width; i++){ // Puts table1 values in new_values array
-			new_values[i] = temp_table1.attribute_table.get(0).get(i);
-			new_index = i;
+		String[] new_values = new String[temp_table1.attributes.length + temp_table2.attributes.length]; // Creates new array for combined attributes
+		
+		for(int i = 0; i < table1_width - 1; i++){ // Puts table1 values in new_values array
+			new_values[i] = temp_table1.attribute_table.get(0).get(i+1);
+		}
+		for(int i = 0; i < table2_width - 1; i++){	// puts table2 values in new_values array AFTER table1 values are inserted
+			new_values[i + table1_width - 1] = temp_table2.attribute_table.get(0).get(i+1);
+		}
 
-		}
-		for(int i = new_index+1; i < (table1_width + table2_width); i++){	// puts table2 values in new_values array AFTER table1 values are inserted
-			new_values[i] = temp_table2.attribute_table.get(0).get(i - table1_width);
-		}
 		Table new_table = new Table((table1+table2), new_values, temp_table1.primary_keys); // Created the new table with combined attributes 
 		for(int j = 0; j < temp_table1.attribute_table.size(); j++){ // Analyzes each row of table1 with each row of table2
 			Vector<String> temp_row = temp_table1.attribute_table.get(j); // Retrieves each vector of table1
@@ -296,6 +295,7 @@ public class Engine {
 				}
 			}
 		}
+		rdbms_tables_container.put(table1+table2, new_table);
 	}
 
 	public static void writeTable(String table_name){

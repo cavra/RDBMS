@@ -6,7 +6,9 @@ public class TestList {
 
 		// All functions should be called here
 		createTable1();
-		insertRow();
+		createTable2();
+		insertRow1();
+		insertRow2();
 		show("Test Table");
 
 		deleteRow();
@@ -24,10 +26,10 @@ public class TestList {
 		//setUnion();
 		//setDifference();
 		//crossProduct();
+		//show("Test TableOther Table");
 
 		writeTable();
-		readTable();
-
+		//readTable();
 	}
 
 	public void createTable1() {
@@ -40,8 +42,8 @@ public class TestList {
 
 	public void createTable2() {
 
-		String[] keys = {"name", "age", "sport"};
-		String[] p_keys = {"age", "sport"};
+		String[] keys = {"name", "age", "jersey number"};
+		String[] p_keys = {"age", "jersey number"};
 
 		Engine.createTable("Other Table", keys, p_keys);
 	}
@@ -55,7 +57,7 @@ public class TestList {
 	}
 
 
-	public void insertRow() {
+	public void insertRow1() {
 
 		String[] values1 = {"John", "21", "07"};
 		Engine.insertRow("Test Table", values1);
@@ -65,6 +67,18 @@ public class TestList {
 
 		String[] values3 = {"Jingle", "24", "13"};
 		Engine.insertRow("Test Table", values3);
+	}
+
+	public void insertRow2() {
+
+		String[] values1 = {"Jackson1", "21", "07"};
+		Engine.insertRow("Other Table", values1);
+
+		String[] values2 =  {"Jackson12", "20", "42"};
+		Engine.insertRow("Other Table", values2);
+
+		String[] values3 = {"Jackson13", "24", "13"};
+		Engine.insertRow("Other Table", values3);
 	}
 
 	public void deleteRow() {
