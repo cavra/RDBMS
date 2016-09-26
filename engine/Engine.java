@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 
 public class Engine {
 
@@ -437,7 +438,7 @@ public class Engine {
 // The function below writes a table's data to a .ser file to save it
 // ===========================================================================================================================
 
-/*public void writeTable(String table_name){
+public static void writeTable(String table_name){
 		try {
 			Table table = rdbms_tables_container.get(table_name);
 
@@ -452,21 +453,24 @@ public class Engine {
      	catch(IOException i) {
       		i.printStackTrace();
      	}
-  	}*/
+  	}
   	
 // ==========================================================================================================================
 // This function below reads through a file and inputs the data. This is important so that the
 // data is not last between sessions.
 // ==========================================================================================================================
 
-  	/*public void readTable(String table_name){
+  	public static void readTable(String table_name){
 		try {
 			FileInputStream file_in = new FileInputStream("table_data/" + table_name + ".ser");
 			ObjectInputStream in = new ObjectInputStream(file_in);
 
-			Table read_table = in.readObject(); // warning: [unchecked] unchecked cast
+			Table read_table = (Table)in.readObject(); // warning: [unchecked] unchecked cast
 			in.close();
 			file_in.close();
+
+			// Store the created table in the tables container
+			rdbms_tables_container.put(table_name, read_table);
 		}
 		catch(IOException i) {
 			i.printStackTrace();
@@ -477,5 +481,5 @@ public class Engine {
 			c.printStackTrace();
 			return;
 		}
-  	}*/
+  	}
 }

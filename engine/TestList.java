@@ -5,11 +5,11 @@ public class TestList {
 	public void callAll() {
 
 		// All functions should be called here
-		createTable1();
+		//createTable1();
 		//createTable2();
-		insertRow1();
+		//insertRow1();
 		//insertRow2();
-		show("Test Table");
+		//show("Test Table");
 
 		//deleteRow();
 		//updateRow();
@@ -33,7 +33,9 @@ public class TestList {
 		//show("CP Table");
 
 		//writeTable();
-		//readTable();
+		readTable();
+		show("Test Table");
+
 	}
 
 	public void createTable1() {
@@ -124,11 +126,11 @@ public class TestList {
 	}
 
 	public void writeTable(){
-		//Engine.writeTable("Test Table");
+		Engine.writeTable("Test Table");
 	}
 
 	public void readTable(){
-		//Engine.readTable("Test Table");
+		Engine.readTable("Test Table");
 	}
 
  }
