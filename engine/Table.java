@@ -18,7 +18,6 @@ public class Table implements Serializable{
 // ==========================================================================================================================
 
 	Table(String t_name, String[] attribute_list, String[] p_keys){		// Take an array of attribute names and insert as first row in arraylist
-
 		table_name = t_name;
 		attributes = attribute_list.clone();
 		primary_keys = p_keys.clone();
@@ -32,7 +31,7 @@ public class Table implements Serializable{
 			}
 		}
 
-		// leave the first index as table name
+		// Leave the first index as table name
 		Vector<String> keys_vector = new Vector<String>();
 		keys_vector.add(t_name);
 
@@ -52,21 +51,21 @@ public class Table implements Serializable{
 // ==========================================================================================================================
 
 	public void deleteTable(){
+		// Java's garbage collector will take care of the rest
 		attribute_table = null;
 	}
-	
+
 // ==========================================================================================================================
 // This function below takes in a string of values and uses the primary key indices ti
 // find the data needed to create a unique primary key.
 // ==========================================================================================================================
 
 	public String getPKey(String[] values){
-
 		// Set the initial string as empty
 		String p_key = "";
 
+		// Iterate and concatenate it with all elements of the array
 		for (Integer i : p_key_indices) {
-			// Iterative and concatenate it with all elements of the array
 			p_key += values[i];
 		}
 		return p_key;
@@ -86,15 +85,8 @@ public class Table implements Serializable{
 // ==========================================================================================================================
 
 	public void deleteRow(String row_id){
-		// Get the row, if it exists
 		Vector<String> row = getRow(row_id);
-		if (row.size() != 0){
-			attribute_table.remove(row); // not working
-			System.out.println("Deleted " + row);
-		}
-		else{
-			System.out.println("Error: Row doesn't exist. Failed to delete.");
-		}
+			attribute_table.remove(row);
 	}
 	
 // ==========================================================================================================================
@@ -102,19 +94,14 @@ public class Table implements Serializable{
 // parameter to create a new row with the updated values.
 // ==========================================================================================================================
 
-	public void updateRow(String table_name, String row_id, String[] values){
-		// Get the row, if it exists
-		Vector<String> row = getRow(row_id);
-		if (row.size() != 0){
-			row.removeAllElements();
+	public void updateRow(String row_id, String[] values){
+	// Get the row, if it exists
+	Vector<String> row = getRow(row_id);
+		row.removeAllElements();
 
-			row.add(getPKey(values));
-			for(int i = 0; i < values.length; i++) {
-				row.add(values[i]);
-			}
-		}
-		else{
-			System.out.println("Error: Row doesn't exist. Failed to update.");
+		row.add(getPKey(values));
+		for(int i = 0; i < values.length; i++) {
+			row.add(values[i]);
 		}
 	}
 	
@@ -124,7 +111,6 @@ public class Table implements Serializable{
 // ==========================================================================================================================
 
 	public Vector<String> getRow(String row_id){ //row_id is just the first element of the specified row
-		
 		// Search each row in the table
 		for (Vector<String> row : attribute_table) {
 
