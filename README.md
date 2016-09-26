@@ -25,11 +25,11 @@ Engine Functionality:
 - [x] Cross Product
 - [x] Natural Join
 - [x] Write Table
-- [] Save Table
+- [ ] Save Table
 
 Style:
 
-- [] Program follows convention linked above as far as we are aware
+- [ ] Program follows convention linked above as far as we are aware
 - [x] Program is well documented with clear, concise comments
 
 ## Notes
