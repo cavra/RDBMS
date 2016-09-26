@@ -119,6 +119,40 @@ public class Engine {
 
 	}
 
+	public static void crossproduct(String table_name1, String table_name2){
+		Table table1 = rdbms_tables_container.get(table_name1);
+		Table table2 = rdbms_tables_container.get(table_name2);
+
+		// Check that both tables exist
+		if (table1 != null && table2 != null){
+			// print error message, exit
+		}
+		else {
+			// Create a new table with the combined data
+			String cp_table_name = "Cross Product of " + table_name1 + " and " + table_name2;
+			List<String> cp_table_attributes = new ArrayList<String>(table1.attributes.length + table2.attributes.length);
+		    Collections.addAll(cp_table_attributes, table1.attributes);
+		    Collections.addAll(cp_table_attributes, table2.attributes);
+		    String[] cp_table_attributes_arr = cp_table_attributes.toArray(new String[cp_table_attributes.size()]);
+		    String[] cp_p_keys = table1.primary_keys;
+
+			Table cp_table = new Table(cp_table_name, cp_table_attributes_arr, cp_p_keys);
+
+			// Insert each row combined with each other row
+			for (Vector<String> row1 : table1.attribute_table) {
+				for (Vector<String> row2 : table2.attribute_table) {
+					Vector<String> combined_row = new Vector<String>();
+					combined_row.addAll(row1);
+					combined_row.addAll(row2);
+					cp_table.addRow(combined_row);
+				}
+			}
+
+			// Store the created table in the tables container
+			rdbms_tables_container.put(cp_table_name, cp_table);
+		}
+	}
+
 	public static void rename(String old_table_name, String new_table_name){
 		// Check if the table already exists
 		Table temp_table = rdbms_tables_container.get(old_table_name);

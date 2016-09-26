@@ -8,9 +8,11 @@ public class Table implements Serializable{
 	Vector<Integer> row_keys;
 	String[] attributes;
 	String[] primary_keys;
+	String table_name;
 
 	Table(String t_name, String[] attribute_list, String[] p_keys){		// Take an array of attribute names and insert as first row in arraylist
 
+		table_name = t_name;
 		attributes = attribute_list.clone();
 		primary_keys = p_keys.clone();
 
@@ -137,7 +139,7 @@ public class Table implements Serializable{
 		return true;
 	}
 
-	public void writeTable(String table_name){
+	public void writeTable(){
 		try {
 			FileOutputStream file_out = new FileOutputStream("table_data/" + table_name + ".ser");
 			ObjectOutputStream out = new ObjectOutputStream(file_out);
@@ -152,7 +154,7 @@ public class Table implements Serializable{
      	}
   	}
 
-  	public void readTable(String table_name){
+  	public void readTable(){
 		try {
 			FileInputStream file_in = new FileInputStream("table_data/" + table_name + ".ser");
 			ObjectInputStream in = new ObjectInputStream(file_in);
