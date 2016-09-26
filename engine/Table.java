@@ -9,6 +9,14 @@ public class Table implements Serializable{
 	String[] primary_keys;
 	String table_name;
 
+// ==========================================================================================================================
+// The function below is the constructor for the Table Class. It assigns each table object a:
+// attribute table (holds all data within the table), primary keys indices vector
+// (holds the indicies of each attribute used to identity each entity), an array of the given
+// attributes, an array of the primary key's used by each corresponding entity, nad lastly a
+// table name.
+// ==========================================================================================================================
+
 	Table(String t_name, String[] attribute_list, String[] p_keys){		// Take an array of attribute names and insert as first row in arraylist
 
 		table_name = t_name;
@@ -36,10 +44,21 @@ public class Table implements Serializable{
 		// Set the first row 
 		attribute_table.add(keys_vector);
 	}
+	
+// ==========================================================================================================================
+// This function below is very simple. It essentially just sets the table to NULL. 
+// This approach was used because the java garbage collector will come and remove 
+// all unreferenced data.
+// ==========================================================================================================================
 
 	public void deleteTable(){
 		attribute_table = null;
 	}
+	
+// ==========================================================================================================================
+// This function below takes in a string of values and uses the primary key indices ti
+// find the data needed to create a unique primary key.
+// ==========================================================================================================================
 
 	public String getPKey(String[] values){
 
@@ -52,10 +71,19 @@ public class Table implements Serializable{
 		}
 		return p_key;
 	}
+	
+// ==========================================================================================================================
+// This function below essentially just adds the specified row to the attribute table (member).
+// ==========================================================================================================================
 
 	public void addRow(Vector<String> new_row){
 		attribute_table.add(new_row);
 	}
+	
+// ==========================================================================================================================
+// This function below checks to see if the row exists and calls the built in remove function
+// implemented in the ArrayList class.
+// ==========================================================================================================================
 
 	public void deleteRow(String row_id){
 		// Get the row, if it exists
@@ -68,6 +96,11 @@ public class Table implements Serializable{
 			System.out.println("Error: Row doesn't exist. Failed to delete.");
 		}
 	}
+	
+// ==========================================================================================================================
+// This function below first checks to see if the data exists. Next, it uses the values
+// parameter to create a new row with the updated values.
+// ==========================================================================================================================
 
 	public void updateRow(String table_name, String row_id, String[] values){
 		// Get the row, if it exists
@@ -84,8 +117,12 @@ public class Table implements Serializable{
 			System.out.println("Error: Row doesn't exist. Failed to update.");
 		}
 	}
+	
+// ==========================================================================================================================
+// This function below searches the table for a row. If found, it is returned.
+// Otherwise, it returns an empty Vector<String>.
+// ==========================================================================================================================
 
-	// Searches the table for a row, returns empty array if not found
 	public Vector<String> getRow(String row_id){ //row_id is just the first element of the specified row
 		
 		// Search each row in the table
@@ -102,6 +139,11 @@ public class Table implements Serializable{
 		//System.out.println("Error: Row doesn't exist. Cannot get.");
 		return empty_row;
 	}
+	
+// ==========================================================================================================================
+// This function below simply iterates through the given tables and prints out
+// all of the data within the attribute table.
+// ==========================================================================================================================
 
 	public void show(){
 		// Iterate through each row
@@ -109,6 +151,11 @@ public class Table implements Serializable{
 			System.out.println(row);
 		}
 	}
+
+// ==========================================================================================================================
+// This function is used to return the data that meets a given condition,
+// from a given table. 
+// ==========================================================================================================================
 
 	public void selection(String attribute, String operator, String qualificator, String table_name, String new_table_name){
 		int i = (Arrays.asList(attributes).indexOf(attribute));
@@ -122,8 +169,11 @@ public class Table implements Serializable{
 			}
 		}
 	}
+	
+// ==========================================================================================================================
+// This function creates a new table composed of a subset of attributes of a given table
+// ==========================================================================================================================
 
-	// This function creates a new table composed of a subset of attributes of a given table
 	public Table projection(String new_table_name, String[] new_attr){
 		Table new_table = new Table(new_table_name, new_attr, this.primary_keys);
 		Vector<Integer> indicies = this.getIndicies(new_attr);
@@ -143,9 +193,12 @@ public class Table implements Serializable{
 
 		return new_table;
 	}
+	
+// ==========================================================================================================================
+// This is a helper function that returns a vector of indicies (for a given subset
+// of attributes) to allow for easy location of data. 
+// ==========================================================================================================================
 
-	// This is a helper function that returns a vector of indicies (for a given subset
-	// of attributes) to allow for easy location of data. 
 	public Vector<Integer> getIndicies(String[] new_attr){
 		Vector<Integer> indicies_list = new Vector<Integer>();
 
@@ -158,6 +211,11 @@ public class Table implements Serializable{
 		}
 		return indicies_list;
 	}
+	
+// ==========================================================================================================================
+// This function below is used to take in an operator as a string and
+// return the given operation in executable form.
+// ==========================================================================================================================
 
 	public Boolean getOp(String operator, String a, String b){
 		if ((a.matches("[0-9]+") && (b.matches("[0-9]+")))){
@@ -185,6 +243,10 @@ public class Table implements Serializable{
 		}	
 		return true;
 	}
+	
+// ==========================================================================================================================
+// This function below takes all of the data and writes it to a serial file.
+// ==========================================================================================================================
 
 	public void writeTable(){
 		try {
@@ -200,6 +262,11 @@ public class Table implements Serializable{
       		i.printStackTrace();
      	}
   	}
+  	
+// ==========================================================================================================================
+// This function below reads through a file and inputs the data. This is important so that the
+// data is not last between sessions.
+// ==========================================================================================================================
 
   	public void readTable(){
 		try {
