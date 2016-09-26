@@ -230,7 +230,7 @@ public class Engine {
 		}
 		else{
 			Table projection_table = new Table(new_table_name, new_attr, table.primary_keys);
-			Vector<Integer> indicies = getIndicies(table, new_attr);
+			Vector<Integer> indicies = getIndices(table, new_attr);
 
 			for(int i = 1; i < table.attribute_table.size(); i++){
 				Vector<String> row = table.attribute_table.get(i);
@@ -256,7 +256,7 @@ public class Engine {
 // of attributes) to allow for easy location of data. 
 // ==========================================================================================================================
 
-	public static Vector<Integer> getIndicies(Table table, String[] new_attr){
+	public static Vector<Integer> getIndices(Table table, String[] new_attr){
 		Vector<Integer> indicies_list = new Vector<Integer>();
 
 		for (int i = 0; i < table.attributes.length; i++){
