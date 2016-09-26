@@ -1,5 +1,36 @@
-RDBMS
+# CSCE-315 Group Project 1 - RDBMS
 
-Team Project #1
+**RDBMS** is the second programming assignment for CSCE 315 at Texas A&M, compromising of 3 parts: an engine, a parser, and an interactive system. See the DesignDocuments.pdf for detailed designs. Compare log.txt with the commit history for a detailed list of our meetings and productivity.
 
-Log and Design Documents are in their own respective files
+## Instructions
+Compile the program with the makefile, then execute the test code with 
+
+$ java Engine
+
+## Stories
+
+Engine Functionality: 
+
+- [x] Create Table
+- [x] Drop Table
+- [x] Insert Row
+- [x] Update Row
+- [x] Delete Row
+- [x] Rename Table
+- [x] Show
+- [x] Selection
+- [x] Projection
+- [x] Set Union
+- [x] Set Difference
+- [x] Cross Product
+- [x] Natural Join
+- [x] Write Table
+- [] Save Table
+
+Style:
+
+- [] Program follows convention linked above as far as we are aware
+- [x] Program is well documented with clear, concise comments
+
+## Notes
+This assignment is only partially complete. As of right now, all we have is the engine. 
