@@ -237,18 +237,24 @@ public class Engine {
 
 			Table cp_table = new Table(new_table_name, cp_table_attributes_arr, cp_p_keys);
 
-			// Insert each row combined with each other row
-
 			// Loop through the first and second table and record all combined entries
 			for(int i = 1; i < table1.attribute_table.size(); i++) {
 				Vector<String> row1 = table1.attribute_table.get(i);
 				for(int j = 1; j < table2.attribute_table.size(); j++) {
 					Vector<String> row2 = table2.attribute_table.get(j);
 
+					// Copy the vectors so we can change them
+					Vector row1_copy = new Vector(row1);
 					Vector row2_copy = new Vector(row2);
+
+					// Get the new key
+					String new_key = (String)row1_copy.get(0) + (String)row2_copy.get(0);
+					row1_copy.set(0, new_key);
 					row2_copy.remove(0);
+
+					// Combine their elements
 					Vector<String> combined_row = new Vector<String>();
-					combined_row.addAll(row1);
+					combined_row.addAll(row1_copy);
 					combined_row.addAll(row2_copy);
 					cp_table.addRow(combined_row);
 				}
