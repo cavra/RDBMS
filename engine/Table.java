@@ -98,41 +98,42 @@ public class Table implements Serializable{
 	}
 
 	public void selection(String attribute, String operator, String qualificator, String table_name, String new_table_name){
-		//i = attributes.indexOf(attribute);
+		int i = (Arrays.asList(attributes).indexOf(attribute));
 		// if i == -1, exit
 
-		//for (Vector<String> row : attribute_table) {
+		for (Vector<String> row : attribute_table) {
 
 			// Compare the first element of the row (its id) with the given id
-			//if (getOp(operator, row.get(i), qualificator){
-				// add it to a new table
-			//}
-		//}
+			if (getOp(operator, row.get(i), qualificator)){
+				addRow(row);
+			}
+		}
 	}
 
 	public Boolean getOp(String operator, String a, String b){
-		//if ((a.matches("[0-9]+") && (b.matches("[0-9]+")))){
-/*
-			switch(operator)
+		if ((a.matches("[0-9]+") && (b.matches("[0-9]+")))){
+
+			switch(operator){
 				case ">": 
-					return (a > b);
-					break;
+					return (Integer.parseInt(a) > Integer.parseInt(b));
+					//break;
 				case "<": 
-					return (a < b);
-					break;
+					return (Integer.parseInt(a) < Integer.parseInt(b));
+					//break;
 				case ">=": 
-					return a >= b;
-					break;
+					return (Integer.parseInt(a) >= Integer.parseInt(b));
+					//break;
 				case "<=": 
-					return a >= b;
-					break;
+					return (Integer.parseInt(a) >= Integer.parseInt(b));
+					//break;
 				case "==": 
 					return a == b;
-					break;
+					//break;
 				case "!=": 
 					return a != b;
-					break;
-		//}	*/
+					//break;
+			}
+		}	
 		return true;
 	}
 
