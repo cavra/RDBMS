@@ -137,7 +137,7 @@ public class Engine {
 			temp_table.attribute_table.get(0).set(0, new_table_name);
 			rdbms_tables_container.remove(old_table_name);
 			rdbms_tables_container.put(new_table_name, temp_table);
-			System.out.println("Renamed " + table_name + " to " + new_table_name);
+			System.out.println("Renamed " + old_table_name + " to " + new_table_name);
 		}
 	}
 
@@ -157,6 +157,118 @@ public class Engine {
 		}
 	}
 	
+// ==========================================================================================================================
+// This function is used to return the data that meets a given condition,
+// from a given table. 
+// ==========================================================================================================================
+
+	public static void selection(String attribute, String operator, String qualificator, String table_name, String new_table_name){
+		// Check if the table exists
+		Table table = rdbms_tables_container.get(table_name);
+		if (table == null) {
+			System.out.println("Error: Cannot select from table; table doesn't exist.");
+		}
+		else{
+			Table selection_table = new Table(new_table_name, table.attributes, table.primary_keys);	
+
+			int index = (Arrays.asList(table.attributes).indexOf(attribute)) + 1;
+			// if index == -1, exit
+
+			for(int i = 1; i < table.attribute_table.size(); i++) {
+				Vector<String> row = table.attribute_table.get(i);
+
+				// Compare the first element of the row (its id) with the given id
+				if (getOp(operator, row.get(index), qualificator)){
+					selection_table.addRow(row);
+				}
+			}
+			rdbms_tables_container.put(new_table_name, selection_table);			
+		}
+	}
+	
+// ==========================================================================================================================
+// This function below is used to take in an operator as a string and
+// return the given operation in executable form.
+// ==========================================================================================================================
+
+	public static Boolean getOp(String operator, String a, String b){
+		if ((a.matches("[0-9]+") && (b.matches("[0-9]+")))){
+
+			switch(operator){
+				case ">": 
+					return (Integer.parseInt(a) > Integer.parseInt(b));
+					//break;
+				case "<": 
+					return (Integer.parseInt(a) < Integer.parseInt(b));
+					//break;
+				case ">=": 
+					return (Integer.parseInt(a) >= Integer.parseInt(b));
+					//break;
+				case "<=": 
+					return (Integer.parseInt(a) >= Integer.parseInt(b));
+					//break;
+				case "==": 
+					return a == b;
+					//break;
+				case "!=": 
+					return a != b;
+					//break;
+			}
+		}	
+		return true;
+	}
+
+// ==========================================================================================================================
+// This function creates a new table composed of a subset of attributes of a given table
+// ==========================================================================================================================
+
+	public static void projection(String table_name, String new_table_name, String[] new_attr){
+		// Check if the table exists
+		Table table = rdbms_tables_container.get(table_name);
+		if (table == null) {
+			System.out.println("Error: Cannot project from table; table doesn't exist.");
+		}
+		else{
+			Table projection_table = new Table(new_table_name, new_attr, table.primary_keys);
+			Vector<Integer> indicies = getIndicies(table, new_attr);
+
+			for(int i = 1; i < table.attribute_table.size(); i++){
+				Vector<String> row = table.attribute_table.get(i);
+				Vector<String> row_projected = new Vector<String>();
+
+				// Add the key
+				row_projected.add(row.get(0));
+
+				// Add all values using stored indices
+				for(int j : indicies){
+					row_projected.add(row.get(j + 1));
+				}
+
+				projection_table.addRow(row_projected);
+			}
+
+			rdbms_tables_container.put(new_table_name, projection_table);
+		}
+	}
+	
+// ==========================================================================================================================
+// This is a helper function that returns a vector of indicies (for a given subset
+// of attributes) to allow for easy location of data. 
+// ==========================================================================================================================
+
+	public static Vector<Integer> getIndicies(Table table, String[] new_attr){
+		Vector<Integer> indicies_list = new Vector<Integer>();
+
+		for (int i = 0; i < table.attributes.length; i++){
+			for (int j = 0; j < new_attr.length; j++){
+				if (table.attributes[i] == new_attr[j]) {
+					indicies_list.add(i);
+				}
+			}
+		}
+		return indicies_list;
+	}
+
 // ==========================================================================================================================
 // This function below takes in two tables and combines the data while removing duplicates (redundancies).
 // ==========================================================================================================================
@@ -325,18 +437,45 @@ public class Engine {
 // The function below writes a table's data to a .ser file to save it
 // ===========================================================================================================================
 
-	public static void writeTable(String table_name){
-		Table temp_table = rdbms_tables_container.get(table_name);
-		temp_table.writeTable();
-	}
-	
-// ===========================================================================================================================
-// The function below reads a table's data from a .ser file to load it
-// ===========================================================================================================================
+/*public void writeTable(String table_name){
+		try {
+			Table table = rdbms_tables_container.get(table_name);
 
-	public static void readTable(String table_name){
-		Table temp_table = rdbms_tables_container.get(table_name);
-		temp_table.readTable();
-	}
+			FileOutputStream file_out = new FileOutputStream("table_data/" + table_name + ".ser");
+			ObjectOutputStream out = new ObjectOutputStream(file_out);
 
+			out.writeObject(table);
+			out.close();
+			file_out.close();
+			System.out.println("Serialized data is saved in table_data/" + table_name + ".ser");
+     	}
+     	catch(IOException i) {
+      		i.printStackTrace();
+     	}
+  	}*/
+  	
+// ==========================================================================================================================
+// This function below reads through a file and inputs the data. This is important so that the
+// data is not last between sessions.
+// ==========================================================================================================================
+
+  	/*public void readTable(String table_name){
+		try {
+			FileInputStream file_in = new FileInputStream("table_data/" + table_name + ".ser");
+			ObjectInputStream in = new ObjectInputStream(file_in);
+
+			Table read_table = in.readObject(); // warning: [unchecked] unchecked cast
+			in.close();
+			file_in.close();
+		}
+		catch(IOException i) {
+			i.printStackTrace();
+			return;
+		}
+		catch(ClassNotFoundException c) {
+			System.out.println("Table data not found");
+			c.printStackTrace();
+			return;
+		}
+  	}*/
 }

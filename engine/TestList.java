@@ -6,9 +6,9 @@ public class TestList {
 
 		// All functions should be called here
 		createTable1();
-		createTable2();
+		//createTable2();
 		insertRow1();
-		insertRow2();
+		//insertRow2();
 		show("Test Table");
 
 		//deleteRow();
@@ -20,15 +20,17 @@ public class TestList {
 		//show("New Test Table");
 
 		// None of these work
-		//selection();
-		//projection();
+		//selection("Test Table");
+		//show("Selection Table");
+		//projection("Test Table");
+		//show("Projection Table");
 		//naturalJoin();
 		//setUnion();
 		//show("Set Union Table");
 		//setDifference();
 		//show("Set Difference Table");
-		crossProduct();
-		show("CP Table");
+		//crossProduct();
+		//show("CP Table");
 
 		//writeTable();
 		//readTable();
@@ -97,11 +99,12 @@ public class TestList {
 	}
 
 	public void selection(String table_name) {
-		//Engine.selection(table_name);
+		Engine.selection("age", ">", "30", table_name, "Selection Table");
 	}
 
 	public void projection(String table_name) {
-		//Engine.projection(table_name);
+		String[] keys = {"name", "age"};
+		Engine.projection(table_name, "Projection Table", keys);
 	}
 
 	public void naturalJoin(){
@@ -121,11 +124,11 @@ public class TestList {
 	}
 
 	public void writeTable(){
-		Engine.writeTable("Test Table");
+		//Engine.writeTable("Test Table");
 	}
 
 	public void readTable(){
-		Engine.readTable("Test Table");
+		//Engine.readTable("Test Table");
 	}
 
  }
