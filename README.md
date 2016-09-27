@@ -76,3 +76,8 @@ Cory Avra - Write and read functions
 Reed Spivey - Projection/cleaned code
 Jason Alonzo - Set Union & Set difference/wrote print statements for successes
 Cory Avra - Cross product, Testing, Re-wrote functions
+
+9/26/16
+Reed Spivey - Worked on revising Design Documents
+Jason Alonzo - Worked on testing framework
+Cory Avra - Worked on cleaning code
