@@ -1,11 +1,20 @@
 # CSCE-315 Group Project 1 - RDBMS
 
-**RDBMS** is the second programming assignment for CSCE 315 at Texas A&M, compromising of 3 parts: an engine, a parser, and an interactive system. This is a team project by Cory Avra, Reed Spivey, and Jason Alonzo. See the DesignDocuments.pdf for detailed designs. Compare the development log below with the commit history for a detailed list of our meetings and productivity.
+## Project Summary
+
+**RDBMS** is the second programming assignment for CSCE 315 at Texas A&M, compromising of 3 parts: an engine, a parser, and an interactive system. See the DesignDocuments.pdf for detailed designs. Compare the development log below with the commit history for a detailed list of our meetings and productivity.
+
+## Members
+Jason Alonzo<br>
+Cory Avra<br>
+Reed Spivey<br>
 
 ## Instructions
-Our program has been developed in compute.cs.tamu.edu, although it should run on all servers. We reccomend using compute. Compile it with the makefile (which is in /engine), then execute the test code with 
+Our program has been developed in compute.cs.tamu.edu, although it should run on all servers. We reccomend using compute. From the engine directory, compile it with the makefile, and then execute it with 
 
 $ java Engine
+
+Feel free to comment/uncomment any of the tests in TestList.java, or even add your own. 
 
 ## Stories
 
