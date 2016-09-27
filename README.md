@@ -37,23 +37,32 @@ This group project is only partially complete. As of right now, all we have is t
 
 ## Development Log
 
-9/12/16
+#### Week 1: Design Documents
+
+**9/12/16**
+
 Met at annex to develop understanding of project and discuss ideas
 
-9/14/16
+**9/14/16**
+
 Collaborated together on how to approach project
 
-9/18/16
+**9/18/16**
+
 Collaborated together on ALL ideas + intro of Design Document
 Reed Spivey - Engine/Parser section of Design Document
 Jason Alonzo - Engine/Parser section of Design Document 
 Cory Avra - Interactive System section of Design Document
 
-9/9/16
+#### Week 2: Engine
+
+**9/19/16**
+
 Creating Sport, Team, Player classes
 Create a Array of Strings for each class
 
-9/21/16
+**9/21/16**
+
 Created table class
 Completed create table function
 Removed Player, Team, and Sport Class
@@ -64,20 +73,26 @@ DBMS now represented as HashMap hashmap storing String Vectors, keyed with Strin
       Jason Alonzo - Set Union, Set Difference
       Cory Avra - Write, Open, Close
 
-9/22/16
+**9/22/16**
+
 Reed Spivey - Finished Natural Join function
 
-9/24/16
+**9/24/16**
+
 Reed Spivey - Worked on Projection
 Jason Alonzo - Worked on Set Union
 Cory Avra - Write and read functions
 
-9/25/16
+**9/25/16**
+
 Reed Spivey - Projection/cleaned code
 Jason Alonzo - Set Union & Set difference/wrote print statements for successes
 Cory Avra - Cross product, Testing, Re-wrote functions
 
-9/26/16
+#### Week 3: Parser
+
+**9/26/16**
+
 Reed Spivey - Worked on revising Design Documents
 Jason Alonzo - Worked on testing framework
 Cory Avra - Worked on cleaning code
