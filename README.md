@@ -52,13 +52,12 @@ Cory Avra - Interactive System section of Design Document
 9/9/16
 Creating Sport, Team, Player classes
 Create a Array of Strings for each class
-HM<String uniqueID, HM<String,String>>
 
 9/21/16
 Created table class
 Completed create table function
 Removed Player, Team, and Sport Class
-DBMS now represented as HashMap<String, ArrayList<Vector<String>>>
+DBMS now represented as HashMap hashmap storing String Vectors, keyed with Strings
 @TODO ID-Table class constructor
 @TODO Work on insert function
 @TODO Reed Spivey - Natural Join, Projection
