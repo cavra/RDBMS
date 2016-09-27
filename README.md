@@ -49,28 +49,28 @@ Collaborated together on how to approach project
 
 **9/18/16**
 
-Collaborated together on ALL ideas + intro of Design Document
-Reed Spivey - Engine/Parser section of Design Document
-Jason Alonzo - Engine/Parser section of Design Document 
+Collaborated together on ALL ideas + intro of Design Document<br/>
+Reed Spivey - Engine/Parser section of Design Document<br/>
+Jason Alonzo - Engine/Parser section of Design Document<br/>
 Cory Avra - Interactive System section of Design Document
 
 #### Week 2: Engine
 
 **9/19/16**
 
-Creating Sport, Team, Player classes
+Creating Sport, Team, Player classes<br/>
 Create a Array of Strings for each class
 
 **9/21/16**
 
-Created table class
-Completed create table function
-Removed Player, Team, and Sport Class
-DBMS now represented as HashMap hashmap storing String Vectors, keyed with Strings
-@TODO ID-Table class constructor
-@TODO Work on insert function
-@TODO Reed Spivey - Natural Join, Projection
-      Jason Alonzo - Set Union, Set Difference
+Created table class<br/>
+Completed create table function<br/>
+Removed Player, Team, and Sport Class<br/>
+DBMS now represented as HashMap hashmap storing String Vectors, keyed with Strings<br/>
+@TODO ID-Table class constructor<br/>
+@TODO Work on insert function<br/>
+@TODO Reed Spivey - Natural Join, Projection<br/>
+      Jason Alonzo - Set Union, Set Difference<br/>
       Cory Avra - Write, Open, Close
 
 **9/22/16**
@@ -79,20 +79,20 @@ Reed Spivey - Finished Natural Join function
 
 **9/24/16**
 
-Reed Spivey - Worked on Projection
-Jason Alonzo - Worked on Set Union
+Reed Spivey - Worked on Projection<br/>
+Jason Alonzo - Worked on Set Union<br/>
 Cory Avra - Write and read functions
 
 **9/25/16**
 
-Reed Spivey - Projection/cleaned code
-Jason Alonzo - Set Union & Set difference/wrote print statements for successes
+Reed Spivey - Projection/cleaned code<br/>
+Jason Alonzo - Set Union & Set difference/wrote print statements for successes<br/>
 Cory Avra - Cross product, Testing, Re-wrote functions
 
 #### Week 3: Parser
 
 **9/26/16**
 
-Reed Spivey - Worked on revising Design Documents
-Jason Alonzo - Worked on testing framework
+Reed Spivey - Worked on revising Design Documents<br/>
+Jason Alonzo - Worked on testing framework<br/>
 Cory Avra - Worked on cleaning code
