@@ -1,5 +1,4 @@
-#!/usr/bin/ruby
-require 'leaderboard' 
+#!/usr/bin/python
 
 input = ARGF.read
 leaderboard = Leaderboard.new
