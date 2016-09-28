@@ -105,3 +105,9 @@ Cory Avra - Cross product, Testing, Re-wrote functions
 Reed Spivey - Worked on revising Design Documents<br/>
 Jason Alonzo - Worked on testing framework<br/>
 Cory Avra - Worked on cleaning code
+
+**9/27/16**
+
+Reed Spivey - Revised engine section of Design Documents, worked on Change Log<br/>
+Jason Alonzo - Worked Change Log framework<br/>
+Cory Avra - Revised Interactive System and Parser sections of Design Documents, worked on Change Log
