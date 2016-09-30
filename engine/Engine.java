@@ -172,7 +172,7 @@ public class Engine {
 				Vector<String> row = table.attribute_table.get(i);
 
 				// Compare the first element of the row (its id) with the given id
-				if (getOp(operator, row.get(index), qualificator)){
+				if (checkCondition(operator, row.get(index), qualificator)){
 					selection_table.addRow(row);
 				}
 			}
@@ -185,7 +185,7 @@ public class Engine {
 // return the given operation in executable form.
 // ==========================================================================================================================
 
-	public static Boolean getOp(String operator, String a, String b){
+	public static Boolean checkCondition(String operator, String a, String b){
 		if ((a.matches("[0-9]+") && (b.matches("[0-9]+")))){
 			switch(operator){
 				case ">": 
