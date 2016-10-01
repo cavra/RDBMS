@@ -1,100 +1,86 @@
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.*;
 import java.io.*;
 
 public class Grammar {
 
-	Grammar(){}
+	String input;
+   	
+   	// Regex patterns
+   	String alpha_p = "^[a-zA-Z]+";
+	String digit_p = "^[0-9]+";
+  	String identifier_p = "^[a-zA-Z][a-zA-Z0-9]+";
+  	String relation_name_p = identifier_p;
+	String attribute_name_p = identifier_p;
 
-// -----------------------------------------------------------------------------
-// Queries
-// -----------------------------------------------------------------------------
+	String integer_p = digit_p + "[0-9]"; // More than 1
+	String literal_p = integer_p | "\'[^\']*\'"; // This probably doesn't work, needs testing
+   	String[] operators_p = {"==", "!=", "<", ">", "<=", ">="};
 
-	void query(String name){}
+	String operand_p = attribute_name_p + "|" + literal_p;
+	String comparison_p = operand_p + "==|!=|<|>|<=|>=" + operand_p;
+	String conjunction_p = comparison_p + "{" + "&&" + comparison_p + "}" + "|" + "(" + condition_p + ")";
+	String condition_p = conjunction_p + "{" + "||" + conjunction_p + "}";
 
-	void relationName(String name){}
+	String attribute_list_p = attribute_name_p + "{" + attribute_name_p + "}";
 
-	void identifier(String name){}
+  	String selection_p = "SELECT" + "[(]" + condition_p + ")" + atomic_expression_p;
+  	String projection_p = "PROJECT" + "[(]" + attribute_list_p + ")" + atomic_expression_p;
+  	String renaming_p = "RENAME" + "[(]" + attribute_list_p + ")" + atomic_expression_p;
+  	String union_p = atomic_expression_p + "+" + atomic_expression_p;
+  	String difference_p = atomic_expression_p + "-" + atomic_expression_p;
+  	String product_p = atomic_expression_p + "*" + atomic_expression_p;
+  	String natural_join_p = atomic_expression_p + "JOIN" + atomic_expression_p;
 
-	void alpha(String name){}
+   	String expression_p =	atomic_expression_p + "|" + 
+   							selection_p + "|" +
+   							projection_p + "|" +
+   							renaming_p + "|" + 
+   							union_p + "|" + 
+   							difference_p + "|" + 
+   							product_p + "|" + 
+   							natural_join_p;
 
-	void digit(String name){}
+   	String atomic_expression_p = relation_name_p + expression_p;
 
-	void expr(String name){}
+   	String query_p = relation_name_p + "<-" + expression_p + ";";
+	
+	String type_p = "VARCHAR" + "(" + integer_p + ")" + "|" + "INTEGER";
+	String typed_attribute_list_p = attribute_name_p + type_p + "{" + attribute_name_p + type_p + "}";
+	
+	// Commands
+	String open_cmd_p = "OPEN" + relation_name_p;
+	String close_cmd_p = "CLOSE" + relation_name_p;
+	String write_cmd_p = "WRITE" + relation_name_p;
+	String exit_cmd_p = "EXIT";
+	String show_cmd_p = "SHOW" + atomic_expression_p;
 
-	void atomicExpr(String name){
-		| selection
-		| projection
-		| renaming
-		| union
-		| difference
-		| product
-		| natural-join
+	String create_cmd_p = "CREATE TABLE" + relation_name_p + "(" + typed_attribute_list_p + ")" + "PRIMARY KEY" + "(" + attribute_list_p + ")";
+	String drop_cmd_p = "DROP TABLE" + relation_name_p;
+
+	String insert_cmd_p1 = "INSERT INTO" + relation_name_p + "VALUES FROM" + "(" + literal_p + "{" + literal_p + "}" + ")";
+	String insert_cmd_p2 = "INSERT INTO" + relation_name_p + "VALUES FROM RELATION" + expression_p;
+
+	String update_cmd_p = "UPDATE" + relation_name_p + "SET" + attribute_name_p + "=" + literal_p + "{" + attribute_name_p + "=" + literal_p + "}" + "WHERE" + condition_p;
+	String delete_cmd_p = "DELETE FROM" + relation_name_p + "WHERE" + condition_p;
+
+	String program_p = "{" + query_p + "|" + "command" + "}"; // "command" here can be any of the commands above
+
+	/*// Now create matcher object.
+	Matcher m = r.matcher(line);
+		if (m.find( )) {
+			System.out.println("Found value: " + m.group(0) );
+			System.out.println("Found value: " + m.group(1) );
+			System.out.println("Found value: " + m.group(2) );
+		}else {
+			System.out.println("NO MATCH");
+		}
+	}*/
+
+	Grammar(String line){
+		input = line;
 	}
-
-	void selection(String name){}
-
-	void condition(String name){}
-
-	void conjunction(String name){}
-
-	void comparison(String name){}
-
-	void op(String name){}
-
-	void operand(String name){}
-
-	void attributeName(String name){}
-
-	void literal(String name){}
-
-	void integer(String name){}
-
-	void projection(String name){}
-
-	void attributeList(String name){}
-
-	void renaming(String name){}
-
-	void union(String name){}
-
-	void difference(String name){}
-
-	void product(String name){}
-
-	void naturalJoin(String name){}
-
-// -----------------------------------------------------------------------------
-// Commands
-// -----------------------------------------------------------------------------
-
-command ::= open-cmd | close-cmd | write-cmd | exit-cmd | show-cmd | create-cmd | update-cmd | insert-cmd | delete-cmd ;
-open-cmd ::== OPEN relation-name
-close-cmd ::== CLOSE relation-name
-write-cmd ::== WRITE relation-name
-exit-cmd ::== EXIT 
-show-cmd ::== SHOW atomic-expr
-
-//This command is DDL (Data Definition Language):
-
-create-cmd ::= CREATE TABLE relation-name ( typed-attribute-list ) PRIMARY KEY ( attribute-list )
-drop-cmd ::= DROP TABLE relation-name
-typed-attribute-list ::= attribute-name type { , attribute-name type }
-type ::= VARCHAR ( integer ) | INTEGER
-
-//These commands are DML (Data Manipulation Language):
-
-insert-cmd ::= INSERT INTO relation-name VALUES FROM ( literal { , literal } )
-                       | INSERT INTO relation-name VALUES FROM RELATION expr
-update-cmd ::= UPDATE relation-name SET attribute-name = literal { , attribute-name = literal } WHERE condition
-delete-cmd ::= DELETE FROM relation-name WHERE condition
-
-//Note that we made a distinction between queries and commands in the grammar. 
-//The result of a query is a view. The result of a command is typically a boolean 
-//value indicating if the operation was successful, with the exception that SHOW 
-//prints the content of a relation into the console.
-//A program is then defined as:
-
-program ::= { query | command }
 
 }
 
