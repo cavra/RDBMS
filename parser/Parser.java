@@ -9,7 +9,14 @@ public class Parser {
 		Vector<String> input_vector = new Vector<String>();
 		Scanner file_input = new Scanner(System.in);
 		while(file_input.hasNextLine()){
-			input_vector.add(file_input.nextLine());
+			String line = file_input.nextLine();
+			if (line != null && !line.isEmpty()) {
+				input_vector.add(line);
+			}
+		}
+
+		for (String line : input_vector) {
+			Grammar ugh = new Grammar(line);
 		}
 	}
 
