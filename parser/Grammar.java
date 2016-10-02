@@ -5,7 +5,9 @@ import java.io.*;
 
 public class Grammar {
    	
-   	// Basics
+   	// this might be deprecated
+
+   	// Basics 
    	String alpha_p = "[a-zA-Z]+";
 	String digit_p = "[0-9]+";
   	String identifier_p = "[a-zA-Z][a-zA-Z0-9]+";
@@ -57,7 +59,7 @@ public class Grammar {
 	String create_cmd_p = "CREATETABLE" + relation_name_p + "(" + typed_attribute_list_p + ")" + "PRIMARYKEY" + "(" + attribute_list_p + ")" + ";";
 	String drop_cmd_p = "DROPTABLE" + relation_name_p + ";";
 
-	String insert_cmd_p1 = "INSERTINTO" + relation_name_p + "VALUESFROM" + "[(]" + literal_p + "[{]" + literal_p + "[}]" + ")" + ";";
+	String insert_cmd_p1 = "INSERTINTO" + relation_name_p + "VALUESFROM" + "[(]" + literal_p + "[{]" + literal_p + "[}]" + "[)]" + ";";
 	String insert_cmd_p2 = "INSERTINTO" + relation_name_p + "VALUESFROMRELATION" + expression_p + ";";
 
 	String update_cmd_p = "UPDATE" + relation_name_p + "SET" + attribute_name_p 
@@ -99,9 +101,89 @@ public class Grammar {
 
 	Grammar(String line){
 
-		line = line.replaceAll(" ", "");
+		// Remove all whitespace to handle various inputs
+		String command = line.replaceAll(" ", "");
 
-		System.out.println("\nLine input is: " + line);
+		//command = command.toUpperCase(); // Do we need to do this? 
+
+		// Get the most nested command
+		String nested_command = getMostNested(command);
+
+		// Check all the possible commands
+		// in each if statement here, get the first part of the string and second part and 
+		// call the proper engine function, get the proper table or whatever, 
+		// and then return it here if necessary so the parser can handle nested stuff
+		if (command.contains("CREATETABLE")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("DROPTABLE")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("OPEN")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("CLOSE")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("WRITE")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("EXIT")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("SHOW")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("UPDATE")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("DELETEFROM")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("INSERTINTO")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("SELECT")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("PROJECT")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("RENAME")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("+")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("-")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("*")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("JOIN")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("<-")) {
+			System.out.println("\nFound command: " + command);
+		}
+		else if (command.contains("==") || 
+			command.contains("!=") || 
+			command.contains("<") || 
+			command.contains(">") || 
+			command.contains("<=") ||
+			command.contains(">=")) {
+			System.out.println("\nFound command: " + command);
+			}
+		else {
+			System.out.println("\nNOT found command: " + command);
+		}
+
+		// After we've done this, we need to see if there are any more commands left besides
+		// the most nested one we've just done
+
+		// This is the old Regex way of doing things, leave it here JIC
+		/*System.out.println("\nLine input is: " + command);
 	
 		for (int i = 0; i < regex_patterns.length; i++) {
 
@@ -109,15 +191,30 @@ public class Grammar {
 	      	Pattern r = Pattern.compile(regex_patterns[i]);
 
 			// Now create matcher object.
-			if (line.matches(regex_patterns[i])) {
-			//Matcher m = r.matcher(line);
+			if (command.matches(regex_patterns[i])) {
+			//Matcher m = r.matcher(command);
 			//if (m.find( )) {
 				System.out.println("Current index: " + i);
 				System.out.println("Found pattern: " + r + "\n");
 			}else {
 				//System.out.println("NO MATCH" + "\n");
 			}
+		}*/
+	}
+
+	public String getMostNested(String command) {
+		if (command.contains("(")) {
+			String new_command = command.substring(command.indexOf("("), command.indexOf(")"));
+			getMostNested(new_command);
 		}
+		else if (command.charAt(0) == "(") {
+			String newcommand = command.substring(1, command.size() - 2); // Not sure what this is for, Reed explain?
+		}
+		else {
+			// Found it!
+			return command;
+		}
+
 	}
 
 }

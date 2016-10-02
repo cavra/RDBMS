@@ -16,7 +16,7 @@ public class Parser {
 		}
 
 		for (String line : input_vector) {
-			Grammar ugh = new Grammar(line);
+			Grammar grammy = new Grammar(line);
 		}
 	}
 
