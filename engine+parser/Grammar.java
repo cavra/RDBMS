@@ -61,7 +61,8 @@ public class Grammar {
 			isFound = true;
 		}
 		else if (command.contains("INSERT INTO")) {
-			//System.out.println("\nFound command: " + command);
+			System.out.println("\nINSERT INTO invoked");
+			insert_command(cut_string);
 			isFound = true;
 		}
 		else if (command.contains("SELECT")) {
@@ -176,5 +177,51 @@ public class Grammar {
 		return new_table;
 	}
 
+	public static void insert_command(String cut_string){
+		String table_name = "";
+		String data_string = "";
+
+		// Get the table name
+		String pattern_table_name = ".+?(?=VALUES FROM)";
+		Pattern r1 = Pattern.compile(pattern_table_name);
+		Matcher m1 = r1.matcher(cut_string);
+		if (m1.find()) {
+			table_name = m1.group(0).trim();
+			cut_string = cut_string.replace(m1.group(0), "");
+		}
+
+		// Get the data to insert
+		String data_list = "(?<=VALUES FROM).+?(?=;)";
+		Pattern r2 = Pattern.compile(data_list);
+		Matcher m2 = r2.matcher(cut_string);
+		if (m2.find()) {
+			data_string = m2.group(0).trim();
+			cut_string = cut_string.replace(m2.group(0), "");
+		}
+
+		// Parse the data into an array
+		String[] data_array = data_string.split(",");
+		data_array[0] = data_array[0].replaceFirst("[\\(]", "");
+		data_array[data_array.length - 1] = data_array[data_array.length - 1].substring(0,data_array[data_array.length - 1].length()-1);
+
+		System.out.println("Table name: " + table_name);
+		System.out.println("Data String: " + Arrays.toString(data_array));
+		System.out.println("");
+
+		// Place data in pre-existing table
+		Engine.insertRow(table_name.trim(), data_array);
+	}
+
 }
+
+
+
+
+
+
+
+
+
+
+
 
