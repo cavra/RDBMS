@@ -25,7 +25,7 @@ public class Table implements Serializable{
 		// Record the indexes of the primary keys in the attribute list
 		for (int i = 0; i < attribute_list.length; i++){
 			for (int j = 0; j < p_keys.length; j++){
-				if (attribute_list[i] == p_keys[j]) {
+				if (attribute_list[i].equals(p_keys[j])) {
 					p_key_indices.add(i);
 				}
 			}

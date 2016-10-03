@@ -23,18 +23,18 @@ public class TestList {
 		//renameTable();
 		//show("New Test Table");
 
-		selection("Test Table");
-		show("Selection Table");
-		projection("Test Table");
-		show("Projection Table");
-		naturalJoin();
-		show("Natural Join Table");
-		setUnion();
-		show("Set Union Table");
-		setDifference();
-		show("Set Difference Table");
-		crossProduct();
-		show("CP Table");
+		// selection("Test Table");
+		// show("Selection Table");
+		// projection("Test Table");
+		// show("Projection Table");
+		// naturalJoin();
+		// show("Natural Join Table");
+		// setUnion();
+		// show("Set Union Table");
+		// setDifference();
+		// show("Set Difference Table");
+		// crossProduct();
+		// show("CP Table");
 
 		writeTable();
 		readTable();
