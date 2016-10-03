@@ -41,7 +41,8 @@ public class Grammar {
 			isFound = true;
 		}
 		else if (command.contains("WRITE")) {
-			//System.out.println("\nFound command: " + command);
+			System.out.println("\nWrite invoked");
+			write_command(cut_string);
 			isFound = true;
 		}
 		else if (command.contains("EXIT")) {
@@ -49,7 +50,8 @@ public class Grammar {
 			isFound = true;
 		}
 		else if (command.contains("SHOW")) {
-			//System.out.println("\nFound command: " + command);
+			System.out.println("\nShow invoked");
+			show_command(cut_string);
 			isFound = true;
 		}
 		else if (command.contains("UPDATE")) {
@@ -210,6 +212,38 @@ public class Grammar {
 
 		// Place data in pre-existing table
 		Engine.insertRow(table_name.trim(), data_array);
+	}
+
+	public static void write_command(String cut_string)
+	{
+		String table_name = "";
+		// Get the table name
+		String pattern_table_name = ".+?(?=;)";
+		Pattern r1 = Pattern.compile(pattern_table_name);
+		Matcher m1 = r1.matcher(cut_string);
+		if (m1.find()) {
+			table_name = m1.group(0).trim();
+			cut_string = cut_string.replace(m1.group(0), "");
+		}
+		System.out.println("Table Name: " + table_name);
+		Engine.writeTable(table_name.trim());
+
+	}
+
+	public static void show_command(String cut_string)
+	{
+		String table_name = "";
+		// Get the table name
+		String pattern_table_name = ".+?(?=;)";
+		Pattern r1 = Pattern.compile(pattern_table_name);
+		Matcher m1 = r1.matcher(cut_string);
+		if (m1.find()) {
+			table_name = m1.group(0).trim();
+			cut_string = cut_string.replace(m1.group(0), "");
+		}
+		System.out.println("Table Name: " + table_name);
+		Engine.show(table_name.trim());
+
 	}
 
 }
