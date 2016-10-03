@@ -5,7 +5,6 @@ import java.io.*;
 
 public class Grammar {
    
-	private Boolean isFound = false;
 	private Vector<String> token_vector = new Vector<String>();
 
 	Grammar(String line){
@@ -21,129 +20,98 @@ public class Grammar {
 			 }
 		}
 
-		System.out.println(token_vector);
+		System.out.println("\n" + token_vector);
 
 		for (String token : token_vector){
 			switch(token) {
 				case "CREATE":
-					System.out.println("\nCREATE TABLE invoked");
-					createTableCommand(token_vector);
+					System.out.println("CREATE TABLE invoked");
+					createCommand(token_vector);
+					break;
 				case "DROP":
+					System.out.println("DROP TABLE invoked");
+					dropCommand(token_vector);
+					break;
 				case "OPEN":
+					System.out.println("OPEN invoked");
+					openCommand(token_vector);
+					break;
 				case "ClOSE":
+					System.out.println("CLOSE invoked");
+					closeCommand(token_vector);
+					break;
 				case "WRITE":
-				case "EXIT":
+					System.out.println("WRITE invoked");
+					writeCommand(token_vector);
+					break;
 				case "SHOW":
+					System.out.println("SHOW invoked");
+					showCommand(token_vector);
+					break;
+				case "EXIT":
+					System.out.println("EXIT invoked");
+					exitCommand();
+					break;
 				case "UPDATE":
+					break;
 				case "DELETE":
+					break;
 				case "INSERT":
+					System.out.println("INSERT invoked");
+					insertCommand(token_vector);
+					break;
 				case "SELECT":
+					break;
 				case "PROJECT":
+					break;
 				case "RENAME":
 			}
 		}
-
-		isFound = false;
 	}
 
-	// public String buildString(String line, String command){
+	public static void evaluateExpression(Vector<String> token_vector){
+		for (String token : token_vector){
+			switch(token) {
+				case "CREATE":
+					System.out.println("CREATE TABLE invoked");
+					createCommand(token_vector);
+					break;
+				case "INSERT":
+				case "SELECT":
+				case "PROJECT":
+			}
+		}
+	}
 
-	// 	String[] ar = {"Hi"};
-	// 	String cut_string = line.replace(command, "");
+	public static String getRelationName(Vector<String> token_vector){
+		String relation_name = "";
 
-	// 	if (command.contains("CREATE TABLE")) {
-	// 		System.out.println("\nCREATE TABLE invoked");
-	// 		createTableCommand(cut_string);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("DROP TABLE")) {
-	// 		//System.out.println("\nDROPTABLE Found command: " + command);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("OPEN")) {
-	// 		//System.out.println("\nOPEN Found command: " + command);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("CLOSE")) {
-	// 		//System.out.println("\nFound command: " + command);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("WRITE")) {
-	// 		System.out.println("\nWrite invoked");
-	// 		write_command(cut_string);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("EXIT")) {
-	// 		//System.out.println("\nFound command: " + command);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("SHOW")) {
-	// 		System.out.println("\nShow invoked");
-	// 		show_command(cut_string);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("UPDATE")) {
-	// 		//System.out.println("\nFound command: " + command);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("DELETE FROM")) {
-	// 		//System.out.println("\nFound command: " + command);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("INSERT INTO")) {
-	// 		System.out.println("\nINSERT INTO invoked");
-	// 		insert_command(cut_string);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("SELECT")) {
-	// 		//System.out.println("\nFound command: " + command);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("PROJECT")) {
-	// 		//System.out.println("\nFound command: " + command);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("RENAME")) {
-	// 		//System.out.println("\nFound command: " + command);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("+")) {
-	// 		//System.out.println("\nFound command: " + command);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("-")) {
-	// 		//System.out.println("\nFound command: " + command);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("*")) {
-	// 		//System.out.println("\nFound command: " + command);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("JOIN")) {
-	// 		//System.out.println("\nFound command: " + command);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("<-")) {
-	// 		//System.out.println("\nFound command: " + command);
-	// 		isFound = true;
-	// 	}
-	// 	else if (command.contains("==") || 
-	// 		command.contains("!=") || 
-	// 		command.contains("<") || 
-	// 		command.contains(">") || 
-	// 		command.contains("<=") ||
-	// 		command.contains(">=")) {
-	// 		//System.out.println("\nFound command: " + command);
-	// 		isFound = true;
-	// 	}
-	// 	else {
-	// 		//System.out.println("\nNOT found command: " + command);
-	// 	}
-	// 	//Table new_table = Engine.createTable("hi", ar, ar);
-	// 	return command;
-	// }
+		if (token_vector.contains("CREATE") ||
+			token_vector.contains("SELECT") ||
+			token_vector.contains("PROJECT") ||
+			token_vector.contains("+") ||
+			token_vector.contains("-") ||
+			token_vector.contains("*") ||
+			token_vector.contains("JOIN")){
+				System.out.println("Nested table detected in getRelationName");
+		}
+		else {
+			for (String token : token_vector){
+				if (!token.equals("OPEN") &&
+					!token.equals("CLOSE") &&
+					!token.equals("WRITE") &&
+					!token.equals("SHOW") &&
+					!token.equals("DROP") &&
+					!token.equals("TABLE") &&
+					!token.equals(";")){
+					relation_name += token;
+				}
+			}
+		}
+		return relation_name;
+	}
 
-	public static Table createTableCommand(Vector<String> token_vector){	
+	public static Table createCommand(Vector<String> token_vector){	
 
 		String relation_name = "";
 		Vector<String> attribtues_vector = new Vector<String>();
@@ -205,6 +173,7 @@ public class Grammar {
 		System.out.println("Attribute List:" + attribtues_vector);
 		System.out.println("Primary keys List:" + keys_vector);
 
+		// Convert the arrays to vectors
 		String[] attributes_array = attribtues_vector.toArray(new String[attribtues_vector.size()]);
 		String[] keys_array = keys_vector.toArray(new String[keys_vector.size()]);
 
@@ -212,75 +181,87 @@ public class Grammar {
 		return new_table;
 	}
 
-	public static void insert_command(String cut_string){
+	public static void insertCommand(Vector<String> token_vector){
 		String relation_name = "";
-		String data_string = "";
+		Vector<String> data_vector = new Vector<String>();
 
-		// Get the table name
-		String pattern_relation_name = ".+?(?=VALUES FROM)";
-		Pattern r1 = Pattern.compile(pattern_relation_name);
-		Matcher m1 = r1.matcher(cut_string);
-		if (m1.find()) {
-			relation_name = m1.group(0).trim();
-			cut_string = cut_string.replace(m1.group(0), "");
+		Integer token_index = 2;
+
+		// Gets the relation name
+		for (int i = token_index; i < token_vector.size(); i++){
+			if (token_vector.get(i).equals("VALUES")){
+				token_index = i + 2;
+				break;
+			}
+			else {
+			relation_name += token_vector.get(i);
+			}
 		}
 
-		// Get the data to insert
-		String data_list = "(?<=VALUES FROM).+?(?=;)";
-		Pattern r2 = Pattern.compile(data_list);
-		Matcher m2 = r2.matcher(cut_string);
-		if (m2.find()) {
-			data_string = m2.group(0).trim();
-			cut_string = cut_string.replace(m2.group(0), "");
+		// Get the list of values to be inserted
+		for (int i = token_index; i < token_vector.size(); i++){
+			if (token_vector.get(i).equals(";")) {
+				token_index = i;
+				break;
+			}
+			else if (token_vector.get(i).equals("RELATION")){
+				token_index = i;
+				Vector<String> new_vec = new Vector<String>();
+				for(int j = token_index; j < token_vector.size(); j++){
+					new_vec.add(token_vector.get(j));
+				}
+				System.out.println(new_vec);
+				// evaluateExpression(new_vec);
+			}
+			else if (!token_vector.get(i).equals("(") && !token_vector.get(i).equals(")")) {
+				data_vector.add(token_vector.get(i));
+			}
+			else {
+				//System.out.println("Skipping token... " + token_vector.get(i));
+			}
 		}
 
-		// Parse the data into an array
-		String[] data_array = data_string.split(",");
-		data_array[0] = data_array[0].replaceFirst("[\\(]", "");
-		data_array[data_array.length - 1] = data_array[data_array.length - 1].substring(0,data_array[data_array.length - 1].length()-1);
+		String[] data_array = data_vector.toArray(new String[data_vector.size()]);
 
-		System.out.println("Table name: " + relation_name);
-		System.out.println("Data String: " + Arrays.toString(data_array));
-		System.out.println("");
-
-		// Place data in pre-existing table
 		Engine.insertRow(relation_name.trim(), data_array);
 	}
 
-	public static void write_command(String cut_string)
-	{
-		String relation_name = "";
-		// Get the table name
-		String pattern_relation_name = ".+?(?=;)";
-		Pattern r1 = Pattern.compile(pattern_relation_name);
-		Matcher m1 = r1.matcher(cut_string);
-		if (m1.find()) {
-			relation_name = m1.group(0).trim();
-			cut_string = cut_string.replace(m1.group(0), "");
-		}
+	public static void dropCommand(Vector<String> token_vector){	
+		String relation_name = getRelationName(token_vector);
 		System.out.println("Table Name: " + relation_name);
-		Engine.writeTable(relation_name.trim());
-
+		Engine.dropTable(relation_name.trim());
 	}
 
-	public static void show_command(String cut_string)
-	{
-		String relation_name = "";
-		// Get the table name
-		String pattern_relation_name = ".+?(?=;)";
-		Pattern r1 = Pattern.compile(pattern_relation_name);
-		Matcher m1 = r1.matcher(cut_string);
-		if (m1.find()) {
-			relation_name = m1.group(0).trim();
-			cut_string = cut_string.replace(m1.group(0), "");
-		}
+	public static void openCommand(Vector<String> token_vector){	
+		String relation_name = getRelationName(token_vector);
+		System.out.println("Table Name: " + relation_name);
+		Engine.writeTable(relation_name.trim()); // Close table???
+	}
+
+	public static void closeCommand(Vector<String> token_vector){	
+		String relation_name = getRelationName(token_vector);
+		System.out.println("Table Name: " + relation_name);
+		Engine.writeTable(relation_name.trim());
+	}
+
+	public static void writeCommand(Vector<String> token_vector) {
+		String relation_name = getRelationName(token_vector);
+		System.out.println("Table Name: " + relation_name);
+		Engine.writeTable(relation_name.trim());
+	}
+
+	public static void showCommand(Vector<String> token_vector) {
+		String relation_name = getRelationName(token_vector);
 		System.out.println("Table Name: " + relation_name);
 		Engine.show(relation_name.trim());
+	}
 
+	public static void exitCommand() {
+		System.out.println("Program ending");
+		// end program
 	}
 
 }
-
 
 
 
