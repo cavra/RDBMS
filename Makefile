@@ -5,11 +5,18 @@ JC = javac
 	$(JC) $(JFLAGS) $*.java
 
 CLASSES = \
-	*.java \
+	engine/*.java \
+	parser/*.java \
+
+all:
+	cd engine; make
+	cd parser; make
 
 default: classes
 
 classes: $(CLASSES:.java=.class)
 
 clean:
-	$(RM) *.class
+	cd engine; $(RM) *.class
+	cd parser; $(RM) *.class
+

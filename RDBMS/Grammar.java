@@ -268,7 +268,6 @@ public class Grammar {
 
 	}
 
-
 	public static void dropCommand(Vector<String> token_vector){	
 		String relation_name = getRelationName(token_vector);
 		System.out.println("Table Name: " + relation_name);
