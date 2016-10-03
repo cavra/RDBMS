@@ -53,6 +53,8 @@ public class Grammar {
 					exitCommand();
 					break;
 				case "UPDATE":
+					System.out.println("UPDATE invoked");
+					updateCommand(token_vector);
 					break;
 				case "DELETE":
 					break;
@@ -222,9 +224,50 @@ public class Grammar {
 		}
 
 		String[] data_array = data_vector.toArray(new String[data_vector.size()]);
-
 		Engine.insertRow(relation_name.trim(), data_array);
 	}
+
+	public static void updateCommand(Vector<String> token_vector){
+		String relation_name = "";
+		String row_id = "";
+		Vector<String> values_vec = new Vector<String>();
+
+		Integer token_index = 1;
+
+		// Gets the relation name
+		for (int i = token_index; i < token_vector.size(); i++){
+			if (token_vector.get(i).equals("SET")){
+				token_index = i + 1;
+				break;
+			}
+			else {
+				relation_name += token_vector.get(i);
+			}
+		}
+
+		// gets the set of data
+		for (int i = token_index; i < token_vector.size(); i++){
+			if (token_vector.get(i).equals("WHERE")) {
+				token_index = i;
+				break;
+			}
+			else {
+			}
+		}
+
+		/* We have to careful with this function because it depending on how the
+		input comes in (whitespace or not) depends on how we go about implementing it.
+		ex. UPDATE animals SET kind="dog",age="10" WHERE name="Leroy"
+			-> [UPDATE, animals, SET, kind="dog". age="10", WHERE, name="Leroy"]
+		vs
+		UPDATE animals SET kind = "dog", age = "10" WHERE name = "Leroy"
+			-> [UPDATE, animals, SET, kind, =, "dog", . . .]
+		*/
+
+
+
+	}
+
 
 	public static void dropCommand(Vector<String> token_vector){	
 		String relation_name = getRelationName(token_vector);

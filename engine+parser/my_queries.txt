@@ -6,6 +6,8 @@ INSERT INTO animals VALUES FROM ("Snoopy", "dog", 3);
 INSERT INTO animals VALUES FROM ("Tweety", "bird", 1);
 INSERT INTO animals VALUES FROM ("Joe", "bird", 2);
 
+UPDATE animals SET years = "10", kind = "dog" WHERE name = "Joe"
+
 SHOW animals;
 
 dogs <- select (kind == "dog") animals;
