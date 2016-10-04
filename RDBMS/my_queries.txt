@@ -8,6 +8,9 @@ INSERT INTO animals VALUES FROM ("Joe", "bird", 2);
 
 SHOW animals;
 
+UPDATE animals SET kind == "dog" && years == 10 WHERE name == "Snoopy";
+SHOW animals;
+
 dogs <- select (kind == "dog") animals;
 old_dogs <- select (age > 10) dogs;
 cats_or_dogs <- dogs + (select (kind == "cat") animals);

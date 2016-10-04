@@ -7,7 +7,7 @@ public class Table implements Serializable{
 	Vector<Integer> p_key_indices = new Vector<Integer>();
 	String[] attributes;
 	String[] primary_keys;
-	String table_name;
+	String relation_name;
 
 // ==========================================================================================================================
 // The function below is the constructor for the Table Class. It assigns each table object a:
@@ -17,8 +17,8 @@ public class Table implements Serializable{
 // table name.
 // ==========================================================================================================================
 
-	Table(String t_name, String[] attribute_list, String[] p_keys){		// Take an array of attribute names and insert as first row in arraylist
-		table_name = t_name;
+	Table(String r_name, String[] attribute_list, String[] p_keys){		// Take an array of attribute names and insert as first row in arraylist
+		relation_name = r_name;
 		attributes = attribute_list.clone();
 		primary_keys = p_keys.clone();
 
@@ -31,9 +31,9 @@ public class Table implements Serializable{
 			}
 		}
 
-		// Leave the first index as table name
+		// The first element of the first array will always be "Key"
 		Vector<String> keys_vector = new Vector<String>();
-		keys_vector.add(t_name);
+		keys_vector.add("Key");
 
 		// Copy all the attributes to the vector
 		for(int i = 0; i < attribute_list.length; i++) {
@@ -56,6 +56,47 @@ public class Table implements Serializable{
 	}
 
 // ==========================================================================================================================
+// This function below essentially just adds the specified row to the attribute table (member).
+// ==========================================================================================================================
+
+	public void addRow(Vector<String> new_row){
+		attribute_table.add(new_row);
+	}
+	
+// ==========================================================================================================================
+// This function below checks to see if the row exists and calls the built in remove function
+// implemented in the ArrayList class.
+// ==========================================================================================================================
+
+	public void deleteRow(String row_id){
+		Vector<String> row = getRow(row_id);
+			attribute_table.remove(row);
+	}
+
+// ==========================================================================================================================
+// This function below first checks to see if the data exists. Next, it uses the values
+// parameter to create a new row with the updated values.
+// ==========================================================================================================================
+
+	public void updateRow(String row_id, Integer attribute_index, String new_attribute){
+	// Get the row, if it exists
+	Vector<String> row = getRow(row_id);
+		row.set(attribute_index, new_attribute);
+	}
+	
+// ==========================================================================================================================
+// This function below simply iterates through the given tables and prints out
+// all of the data within the attribute table.
+// ==========================================================================================================================
+
+	public void show(){
+		// Iterate through each row
+		for (Vector<String> row : attribute_table) {
+			System.out.println(row);
+		}
+	}
+
+// ==========================================================================================================================
 // This function below searches the table for a row. If found, it is returned.
 // Otherwise, it returns an empty Vector<String>.
 // ==========================================================================================================================
@@ -75,22 +116,6 @@ public class Table implements Serializable{
 		return empty_row;
 	}
 
-// ==========================================================================================================================
-// This function below takes in a string of values and uses the primary key indices to
-// find the data needed to create a unique primary key.
-// ==========================================================================================================================
-
-	public String getPKey(String[] values){
-		// Set the initial string as empty
-		String p_key = "";
-
-		// Iterate and concatenate it with all elements of the array
-		for (Integer i : p_key_indices) {
-			p_key += values[i];
-		}
-		return p_key;
-	}
-	
 // ==========================================================================================================================
 // This function below takes in an attribute type and an attribute. From then it 
 // will return the row ID, or Row key
@@ -116,48 +141,41 @@ public class Table implements Serializable{
 	}
 
 // ==========================================================================================================================
-// This function below essentially just adds the specified row to the attribute table (member).
+// This function below takes in a string of values and uses the primary key indices to
+// find the data needed to create a unique primary key.
 // ==========================================================================================================================
 
-	public void addRow(Vector<String> new_row){
-		attribute_table.add(new_row);
-	}
-	
-// ==========================================================================================================================
-// This function below checks to see if the row exists and calls the built in remove function
-// implemented in the ArrayList class.
-// ==========================================================================================================================
+	public String getPKey(String[] values){
+		// Set the initial string as empty
+		String p_key = "";
 
-	public void deleteRow(String row_id){
-		Vector<String> row = getRow(row_id);
-			attribute_table.remove(row);
-	}
-	
-// ==========================================================================================================================
-// This function below first checks to see if the data exists. Next, it uses the values
-// parameter to create a new row with the updated values.
-// ==========================================================================================================================
-
-	public void updateRow(String row_id, String[] values){
-	// Get the row, if it exists
-	Vector<String> row = getRow(row_id);
-		row.removeAllElements();
-
-		row.add(getPKey(values));
-		for(int i = 0; i < values.length; i++) {
-			row.add(values[i]);
+		// Iterate and concatenate it with all elements of the array
+		for (Integer i : p_key_indices) {
+			p_key += values[i];
 		}
+		return p_key;
 	}
 	
 // ==========================================================================================================================
-// This function below simply iterates through the given tables and prints out
-// all of the data within the attribute table.
+// This function below searches the table for a row. If found, it is returned.
+// Otherwise, it returns an empty Vector<String>.
 // ==========================================================================================================================
 
-	public void show(){
-		// Iterate through each row
-		for (Vector<String> row : attribute_table) {
-			System.out.println(row);
+	public Integer getAttributeIndex(String attribute_type){ //row_id is just the first element of the specified row
+		// Search the first row for the desired index
+		Integer index = -1;
+
+		for (int i = 0; i < attributes.length; i++){
+			if (attributes[i].equals(attribute_type)) {
+				index = i + 1;
+ 			}
 		}
+
+		if (index == -1) {
+			System.out.println("Error: Attribute doesn't exist. Cannot get index.");
+		}
+		
+		return index;
 	}
+
 }

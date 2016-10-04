@@ -10,7 +10,7 @@ public class Grammar {
 	Grammar(String line){
 
 		// Tokenize the input and store in a vector
-		String delimiters = "(){}; \t\n\r\f";
+		String delimiters = "(){};= \t\n\r\f";
 		StringTokenizer st = new StringTokenizer(line, delimiters, true);
 		while(st.hasMoreTokens()){
 			String token = st.nextToken();
@@ -20,7 +20,18 @@ public class Grammar {
 			 }
 		}
 
-		System.out.println("\n" + token_vector);
+		// Reconnect double operators
+		String[] operators = {"!", "<", ">", "="};
+		for (int i = 1; i < token_vector.size(); i++){
+			for (String operator: operators){
+				if (token_vector.get(i-1).equals(operator) && token_vector.get(i).equals("=")){
+					token_vector.set(i-1, operator + "=");
+					token_vector.remove(i);
+				}
+			}
+		}
+
+		System.out.println("\nTokenized vector: " + token_vector);
 
 		for (String token : token_vector){
 			switch(token) {
@@ -53,20 +64,26 @@ public class Grammar {
 					exitCommand();
 					break;
 				case "UPDATE":
-					System.out.println("UPDATE invoked");
+					System.out.println("UPDATE ROW invoked");
 					updateCommand(token_vector);
 					break;
 				case "DELETE":
+					System.out.println("DELETE ROW invoked");
+					//deleteCommand(token_vector);
 					break;
 				case "INSERT":
 					System.out.println("INSERT invoked");
 					insertCommand(token_vector);
 					break;
 				case "SELECT":
+					System.out.println("SELECT invoked");
 					break;
 				case "PROJECT":
+					System.out.println("PROJECT invoked");
 					break;
 				case "RENAME":
+					System.out.println("RENAME invoked");
+					break;
 			}
 		}
 	}
@@ -84,7 +101,7 @@ public class Grammar {
 			}
 		}
 	}
-
+ 
 	public static String getRelationName(Vector<String> token_vector){
 		String relation_name = "";
 
@@ -229,15 +246,15 @@ public class Grammar {
 
 	public static void updateCommand(Vector<String> token_vector){
 		String relation_name = "";
-		String row_id = "";
-		Vector<String> values_vec = new Vector<String>();
+		Vector<String> attribute_type_vector = new Vector<String>();
+		Vector<String> new_attribute_vector = new Vector<String>();
+		Vector<String> condition_vector = new Vector<String>();
 
 		Integer token_index = 1;
-
-		// Gets the relation name
+		// Get the relation name
 		for (int i = token_index; i < token_vector.size(); i++){
 			if (token_vector.get(i).equals("SET")){
-				token_index = i + 1;
+				token_index = i;
 				break;
 			}
 			else {
@@ -245,27 +262,41 @@ public class Grammar {
 			}
 		}
 
-		// gets the set of data
-		for (int i = token_index; i < token_vector.size(); i++){
-			if (token_vector.get(i).equals("WHERE")) {
-				token_index = i;
-				break;
-			}
-			else {
+		// Get the set of data
+		Integer old_token_index = token_index;
+		String[] operators = {"!=", "<", ">", "<=", ">=", "=="};
+		for (String operator : operators){
+			for (int i = old_token_index; i < token_vector.size() - 1; i++){
+				if (token_vector.get(i).equals("WHERE")) {
+					token_index = i + 1;
+					break;
+				}
+				else if (token_vector.get(i+1).equals(operator)){
+					attribute_type_vector.add(token_vector.get(i));
+					new_attribute_vector.add(token_vector.get(i+2));
+				}
+				else {
+					continue;
+				}
 			}
 		}
 
-		/* We have to careful with this function because it depending on how the
-		input comes in (whitespace or not) depends on how we go about implementing it.
-		ex. UPDATE animals SET kind="dog",age="10" WHERE name="Leroy"
-			-> [UPDATE, animals, SET, kind="dog". age="10", WHERE, name="Leroy"]
-		vs
-		UPDATE animals SET kind = "dog", age = "10" WHERE name = "Leroy"
-			-> [UPDATE, animals, SET, kind, =, "dog", . . .]
-		*/
+		for (int i = token_index; i < token_vector.size(); i++){
+			condition_vector.add(token_vector.get(i));
+		}
 
+		System.out.println("Table name:" + relation_name);
+		System.out.println("Attribute Type List:" + attribute_type_vector);
+		System.out.println("New Attribute List:" + new_attribute_vector);
+		System.out.println("Conditions List:" + condition_vector);
 
+		Engine.updateRow(relation_name, attribute_type_vector, new_attribute_vector, condition_vector);
+	}
 
+	public static void renameCommand(Vector<String> token_vector){	
+		String relation_name = getRelationName(token_vector);
+		System.out.println("Table Name: " + relation_name);
+		Engine.dropTable(relation_name.trim());
 	}
 
 	public static void dropCommand(Vector<String> token_vector){	
