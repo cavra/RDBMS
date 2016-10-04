@@ -3,8 +3,7 @@ import java.io.*;
 
 public class Engine {
 
-	private static HashMap<String, Table> relations_database = new HashMap<String, Table>(); 
-	private static Vector<Vector<String>> stacked_conditions_vector = new Vector<Vector<String>>(); 
+	static HashMap<String, Table> relations_database = new HashMap<String, Table>(); 
 
 	public static void main(String[] args){}
 
@@ -88,38 +87,19 @@ public class Engine {
 			System.out.println("Error: Table and/or row don't exist. Failed to update row.");
 		}
 		else{
-			// Prepare for conditions
-			stacked_conditions_vector.clear();
-			handleConditions(tokenized_conditions);
-
-			for (Vector<String> condition : stacked_conditions_vector) {
-
-				// Get the index of the attribute type to check in each row vector
-				Integer attribute_index = table.getAttributeIndex(condition.get(0));
-				String operator = condition.get(1); // "=="
-				String qualificator = condition.get(2); // "dog"
-
-				// Loop through all the rows of a table
-				if (attribute_index >= 0) {
-					outerloop:
-					for (Vector<String> row : table.attribute_table) {
-						if (checkCondition(row.get(attribute_index), operator, qualificator)){
-
-							// Row has met the condition, update it with each value in the new_attributes vector
-							// new_attributes and attributes_type have the same size
-							for (int i = 0; i < new_attributes.size(); i++) {
-								Integer update_attribute_index = table.getAttributeIndex(attribute_types.get(i));
-								// Check that the attribute to update exists
-								if (update_attribute_index >= 0) {
-									table.updateRow(row.get(0), update_attribute_index, new_attributes.get(i));
-									break outerloop;
-								}
-							}
-						}
-						else {
-							//System.out.println("Did not update " + row.get(0) + " in table " + relation_name + "; condition not met.");
+			// Loop through all the rows of a table
+			for (Vector<String> row : table.attribute_table) {
+				if (parseConditions(table, row, tokenized_conditions)) {
+					// Row has met the condition, update it with each value in the new_attributes vector
+					// new_attributes and attributes_type have the same size
+					for (int i = 0; i < new_attributes.size(); i++) {
+						Integer update_attribute_index = table.getAttributeIndex(attribute_types.get(i));
+						// Check that the attribute to update exists
+						if (update_attribute_index >= 0) {
+							table.updateRow(row.get(0), update_attribute_index, new_attributes.get(i));
 						}
 					}
+					break; // We only want to update the first row we find, no more
 				}
 			}
 		}
@@ -138,29 +118,13 @@ public class Engine {
 			System.out.println("Error: Table and/or row don't exist. Failed to delete row.");
 		}
 		else{
-			// Prepare for conditions
-			stacked_conditions_vector.clear();
-			handleConditions(tokenized_conditions);
-
-			for (Vector<String> condition : stacked_conditions_vector) {
-
-				Integer attribute_index = table.getAttributeIndex(condition.get(0));
-				String operator = condition.get(1); // "=="
-				String qualificator = condition.get(2); // "dog"
-
-				// Loop through all the rows of a table
-				if (attribute_index >= 0) {
-					for (Vector<String> row : table.attribute_table) {
-						if (checkCondition(row.get(attribute_index), operator, qualificator)){
-
-							// Row has met the condition, delete it
-							table.deleteRow(row.get(0));
-							break;
-						}
-						else {
-							//System.out.println("Did not delete " + row.get(0) + " in table " + relation_name + "; condition not met.");
-						}
-					}
+			// Loop through all the rows of a table
+			outerloop:
+			for (Vector<String> row : table.attribute_table) {
+				if (parseConditions(table, row, tokenized_conditions)) {
+					// Row has met the condition, delete it
+					table.deleteRow(row.get(0));
+					break outerloop;
 				}
 			}
 		}
@@ -207,28 +171,25 @@ public class Engine {
 // from a given table. 
 // =============================================================================
 
-	public static void selection(String attribute, String operator, String qualificator, String relation_name, String new_relation_name){
+	public static Table selection(String relation_name, Vector<String> tokenized_conditions){
 		// Check if the table exists
 		Table table = relations_database.get(relation_name);
 		if (table == null) {
 			System.out.println("Error: Cannot select from table; table doesn't exist.");
 		}
 		else{
-			Table selection_table = new Table(new_relation_name, table.attributes, table.primary_keys);	
+			Table selection_table = new Table("Selection from " + relation_name, table.attributes, table.primary_keys);	
 
-			int index = (Arrays.asList(table.attributes).indexOf(attribute)) + 1;
-			// if index == -1, exit
-
-			for(int i = 1; i < table.attribute_table.size(); i++) {
-				Vector<String> row = table.attribute_table.get(i);
-
-				// Compare the first element of the row (its id) with the given id
-				if (checkCondition(operator, row.get(index), qualificator)){
+			// Loop through all the rows of a table
+			for (Vector<String> row : table.attribute_table) {
+				if (parseConditions(table, row, tokenized_conditions)) {
+					// Row has met the condition, add it to the selection table
 					selection_table.addRow(row);
 				}
 			}
-			relations_database.put(new_relation_name, selection_table);			
+			return selection_table;		
 		}
+		return null;
 	}
 
 // =============================================================================
@@ -513,6 +474,7 @@ public class Engine {
 			System.out.println("Dropped table: " + relation_name);
 		}
 	}
+	
 // =============================================================================
 // This is a helper function that returns a vector of indicies (for a given subset
 // of attributes) to allow for easy location of data. 
@@ -533,71 +495,103 @@ public class Engine {
 	}
 
 // =============================================================================
-// This helper function takes in a vector of tokens, containing conditions, and
-// adds each condition to a vector
+// This helper function takes in a given row and a tokenized vector of 
+// conditions. From then, it will apply each condition to the row and return
+// true if a row meets all the conditions
 // =============================================================================
 
-	public static void handleConditions(Vector<String> token_vector){
+	public static Boolean parseConditions(Table table, Vector<String> row, Vector<String> token_vector){
 		// Stores 1 complete comparison
 		// e.g. "kind", "==", "dog"
 		Vector<String> comparison_vector = new Vector<String>();
+		Boolean value = false; // default to false
 
 		for (int i = 0; i < token_vector.size(); i++){
-			// When the end of a comparison is reached, stop
-			if (token_vector.get(i).equals("||") ||
-				token_vector.get(i).equals(";") ||
-				token_vector.get(i).equals("&&") ||
-				token_vector.get(i).equals(")")){
-					stacked_conditions_vector.add(comparison_vector);
-					break;
+			// The end of the comparison has been reached
+			if (token_vector.get(i).equals(";") || 
+				token_vector.get(i).equals(")")) {
+				value = evaluateCondition(table, row, comparison_vector);
+				break;
 			}
-			// If the beginning of a nested comparison is reached, handle it with this function
+			// Handle the && operator
+			else if (token_vector.get(i).equals("&&")) {
+				Vector<String> and_comparison_vector = new Vector<String>();
+				for (int j = i+1; j < token_vector.size(); j++){
+					and_comparison_vector.add(token_vector.get(j));
+				}
+				value = (evaluateCondition(table, row, comparison_vector) && parseConditions(table, row, and_comparison_vector));
+				break;
+			}
+			// Handle the || operator
+			else if (token_vector.get(i).equals("||")) {
+				Vector<String> or_comparison_vector = new Vector<String>();
+				for (int j = i+1; j < token_vector.size(); j++){
+					or_comparison_vector.add(token_vector.get(j));
+				}
+				value = (evaluateCondition(table, row, comparison_vector) || parseConditions(table, row, or_comparison_vector));
+				break;
+			}
+			// Handle nested comparisons
 			else if(token_vector.get(i).equals("(")){
 				Vector<String> nested_comparison = new Vector<String>();
 				for (int j = i+1; j < token_vector.size(); j++){
 					nested_comparison.add(token_vector.get(j));
 				}
-				handleConditions(nested_comparison);
+				value = parseConditions(table, row, nested_comparison);
 			}
 			else {
 				comparison_vector.add(token_vector.get(i));
 			}
 		}
-
+		return value;
 	}
 
 // =============================================================================
-// This function below is used to take in an operator as a string and
-// return the given operation in executable form.
 // =============================================================================
 
-	public static Boolean checkCondition(String a, String operator, String b){
+	public static Boolean evaluateCondition(Table table, Vector<String> row, Vector<String> condition_vector){
+		Integer attribute_index = table.getAttributeIndex(condition_vector.get(0)); // kind -> 2
+		String operator = condition_vector.get(1); // "=="
+		String qualificator = condition_vector.get(2); // "dog"
+		Boolean value = false; // default to false
+
+		// If the attribute exists, and the row meets the condition...
+		if (attribute_index >= 0 && checkCondition(row.get(attribute_index), operator, qualificator)){
+			value = true;
+		}
+		return value;
+	}
+
+// =============================================================================
+// =============================================================================
+
+	public static Boolean checkCondition(String attribute, String operator, String qualificator){
 		String integer_regex = "[0-9]+";
 		
 		// INTEGER case
-		if ((a.matches(integer_regex)) && (b.matches(integer_regex))){
+		if ((attribute.matches(integer_regex)) && (qualificator.matches(integer_regex))){
 			switch(operator){
 				case ">": 
-					return (Integer.parseInt(a) > Integer.parseInt(b));
+					return (Integer.parseInt(attribute) > Integer.parseInt(qualificator));
 				case "<": 
-					return (Integer.parseInt(a) < Integer.parseInt(b));
+					return (Integer.parseInt(attribute) < Integer.parseInt(qualificator));
 				case ">=": 
-					return (Integer.parseInt(a) >= Integer.parseInt(b));
+					return (Integer.parseInt(attribute) >= Integer.parseInt(qualificator));
 				case "<=": 
-					return (Integer.parseInt(a) >= Integer.parseInt(b));
+					return (Integer.parseInt(attribute) >= Integer.parseInt(qualificator));
 				case "==": 
-					return a.equals(b);
+					return attribute.equals(qualificator);
 				case "!=": 
-					return a != b;
+					return attribute != qualificator;
 			}
 		}
 		// VARCHAR case
 		else {
 			switch(operator){
 				case "==": 
-					return a.equals(b);
+					return attribute.equals(qualificator);
 				case "!=": 
-					return !a.equals(b);
+					return !attribute.equals(qualificator);
 			}
 		}
 		return false;

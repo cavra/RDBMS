@@ -60,8 +60,13 @@ public class Table implements Serializable{
 // ==========================================================================================================================
 
 	public void addRow(Vector<String> new_row){
-		attribute_table.add(new_row);
-		System.out.println("Inserted row with key " + new_row.get(0) + " in table " + relation_name);
+		if (new_row.size() != 0) {
+			attribute_table.add(new_row);
+			System.out.println("Inserted row with key " + new_row.get(0) + " in table " + relation_name);
+		}
+		else {
+			System.out.println("Error: Row with id " + new_row.get(0) + " in table " + relation_name + "doesn't exist; failed to insert");			
+		}
 	}
 	
 // ==========================================================================================================================
@@ -71,8 +76,13 @@ public class Table implements Serializable{
 
 	public void deleteRow(String row_id){
 		Vector<String> row = getRow(row_id);
+		if (!row.get(0).equals("key")) {
 			attribute_table.remove(row);
-		System.out.println("Deleted row with key " + row_id + " in table " + relation_name);
+			System.out.println("Deleted row with key " + row_id + " in table " + relation_name);
+		}
+		else {
+			System.out.println("Error: Row with id " + row_id + " in table " + relation_name + "doesn't exist; failed to delete");			
+		}
 	}
 
 // ==========================================================================================================================
@@ -83,8 +93,13 @@ public class Table implements Serializable{
 	public void updateRow(String row_id, Integer attribute_index, String new_attribute){
 		// Get the row, if it exists
 		Vector<String> row = getRow(row_id);
-		row.set(attribute_index, new_attribute);
-		System.out.println("Updated row with key " + row_id + " in table " + relation_name);
+		if (!row.get(0).equals("key")) {
+			row.set(attribute_index, new_attribute);
+			System.out.println("Updated row with key " + row_id + " in table " + relation_name);
+		}
+		else {
+			System.out.println("Error: Row with id " + row_id + " in table " + relation_name + "doesn't exist; failed to update");			
+		}
 	}
 	
 // ==========================================================================================================================
@@ -93,7 +108,7 @@ public class Table implements Serializable{
 // ==========================================================================================================================
 
 	public void show(){
-		// Iterate through each row
+		// This function could use some formatting
 		for (Vector<String> row : attribute_table) {
 			System.out.println(row);
 		}
@@ -104,7 +119,7 @@ public class Table implements Serializable{
 // Otherwise, it returns an empty Vector<String>.
 // ==========================================================================================================================
 
-	public Vector<String> getRow(String row_id){ //row_id is just the first element of the specified row
+	public Vector<String> getRow(String row_id){ 
 		// Search each row in the table
 		for (Vector<String> row : attribute_table) {
 			// Compare the first element of the row (its id) with the given id
@@ -113,10 +128,10 @@ public class Table implements Serializable{
 			}
 		}
 
-		// If the row was not found, return an empty array
-		Vector<String> empty_row = new Vector<String>(0);
 		//System.out.println("Error: Row doesn't exist. Cannot get.");
-		return empty_row;
+
+		// If the row was not found, return an empty array
+		return new Vector<String>(0);
 	}
 
 // ==========================================================================================================================
@@ -125,22 +140,23 @@ public class Table implements Serializable{
 // ==========================================================================================================================
 
 	public String getRowID(String attribute_type, String attribute){
-		// Set the initial string as empty
 		Integer p_index = 0;
+		String row_id = "0";
 
+		// Get the index for the desired attribute
 		for (int i = 0; i < attributes.length; i++){
 			if (attributes[i].equals(attribute_type)) {
 				p_index = i;
 			}
 		}
 
-		// Iterate and concatenate it with all elements of the array
+		// Using the index, search each row for a match
 		for (Vector<String> row : attribute_table) {
 			if (row.get(p_index).equals(attribute)){
-				return row.get(0);
+				row_id = row.get(0);
 			}
 		}
-		return "0";
+		return row_id;
 	}
 
 // ==========================================================================================================================
@@ -148,11 +164,10 @@ public class Table implements Serializable{
 // find the data needed to create a unique primary key.
 // ==========================================================================================================================
 
-	public String getPKey(String[] values){
-		// Set the initial string as empty
+	public String getPKey(String[] values) {
 		String p_key = "";
 
-		// Iterate and concatenate it with all elements of the array
+		// Concatenate p_key with all elements of the primary keys
 		for (Integer i : p_key_indices) {
 			p_key += values[i];
 		}
@@ -164,20 +179,20 @@ public class Table implements Serializable{
 // Otherwise, it returns an empty Vector<String>.
 // ==========================================================================================================================
 
-	public Integer getAttributeIndex(String attribute_type){ //row_id is just the first element of the specified row
-		// Search the first row for the desired index
+	public Integer getAttributeIndex(String attribute_type) {
+		// 	int index = (Arrays.asList(table.attributes).indexOf(attribute)) + 1;
 		Integer index = -1;
 
-		for (int i = 0; i < attributes.length; i++){
+		// Search the first row for the desired index
+		for (int i = 0; i < attributes.length; i++) {
 			if (attributes[i].equals(attribute_type)) {
-				index = i + 1;
+				index = i + 1; // add one to accomodate for primary key
  			}
 		}
-
+		// Print error if attribute not found
 		if (index == -1) {
 			System.out.println("Error: Attribute doesn't exist. Cannot get index.");
 		}
-
 		return index;
 	}
 
