@@ -119,12 +119,11 @@ public class Engine {
 		}
 		else{
 			// Loop through all the rows of a table
-			outerloop:
-			for (Vector<String> row : table.attribute_table) {
+			for (int i = 0; i < table.attribute_table.size(); i++) {
+				Vector<String> row = table.attribute_table.get(i);
 				if (parseConditions(table, row, tokenized_conditions)) {
 					// Row has met the condition, delete it
 					table.deleteRow(row.get(0));
-					break outerloop;
 				}
 			}
 		}
@@ -196,15 +195,19 @@ public class Engine {
 // This function creates a new table composed of a subset of attributes of a given table
 // =============================================================================
 
-	public static void projection(String relation_name, String new_relation_name, String[] new_attr){
+	public static Table projection(String relation_name, Vector<String> new_attributes_vector){
 		// Check if the table exists
 		Table table = relations_database.get(relation_name);
 		if (table == null) {
 			System.out.println("Error: Cannot project from table; table doesn't exist.");
+			return null;
 		}
 		else{
-			Table projection_table = new Table(new_relation_name, new_attr, table.primary_keys);
-			Vector<Integer> indicies = getIndices(table, new_attr);
+			String[] new_attributes_array = new_attributes_vector.toArray(new String[new_attributes_vector.size()]);
+			Table projection_table = new Table("Projection from " + relation_name, new_attributes_array, table.primary_keys);
+			Vector<Integer> indicies = getIndices(table, new_attributes_array);
+
+			System.out.println(indicies);
 
 			// Loop through all rows of the table 
 			for(int i = 1; i < table.attribute_table.size(); i++){
@@ -221,7 +224,7 @@ public class Engine {
 
 				projection_table.addRow(row_projected);
 			}
-			relations_database.put(new_relation_name, projection_table);
+			return projection_table;
 		}
 	}
 	
@@ -474,7 +477,7 @@ public class Engine {
 			System.out.println("Dropped table: " + relation_name);
 		}
 	}
-	
+
 // =============================================================================
 // This is a helper function that returns a vector of indicies (for a given subset
 // of attributes) to allow for easy location of data. 
@@ -486,7 +489,7 @@ public class Engine {
 		// Loop through both attribute lists and look for the duplicates
 		for (int i = 0; i < table.attributes.length; i++){
 			for (int j = 0; j < new_attr.length; j++){
-				if (table.attributes[i] == new_attr[j]) {
+				if (table.attributes[i].equals(new_attr[j])) {
 					indicies_list.add(i);
 				}
 			}
@@ -595,6 +598,17 @@ public class Engine {
 			}
 		}
 		return false;
+	}
+
+	public static Boolean tableExists(String relation_name) {
+		Table table = relations_database.get(relation_name);
+		if (table == null){
+			System.out.println("Error: Table and/or row don't exist.");
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 
 }

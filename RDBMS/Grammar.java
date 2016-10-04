@@ -45,6 +45,7 @@ public class Grammar {
 					break tokenloop;
 				case "project":
 					System.out.println("PROJECT invoked");
+					projectQuery(token_vector);
 					break tokenloop;
 				case "rename":
 					System.out.println("RENAME invoked");
@@ -114,16 +115,25 @@ public class Grammar {
 					return selectQuery(token_vector);
 				case "project":
 					System.out.println("PROJECT invoked");
+					return projectQuery(token_vector);
 				case "rename":
 					System.out.println("RENAME invoked");
+					return renameQuery(token_vector);
 				case "+":
 					System.out.println("SET UNION invoked");
+					return setUnionQuery(token_vector);
 				case "-":
 					System.out.println("SET DIFFERENCE invoked");
+					return setDifferenceQuery(token_vector);
 				case "*":
 					System.out.println("CROSS PRODUCT invoked");
+					return crossProductQuery(token_vector);
 				case "JOIN":
 					System.out.println("NATURAL JOIN invoked");
+					return naturalJoinQuery(token_vector);
+				// case "(":
+				// 	System.out.println("NESTED EXPRESSION detected");
+				// 	return evaluateExpression( naturalJoinQuery(token_vector);
 			}
 		}
 		return null;
@@ -157,10 +167,11 @@ public class Grammar {
 					break;
 				}
 				else {
-					relation_name += token;					
+					relation_name += token + " ";					
 				}
 			}
 		}
+		relation_name = relation_name.trim();
 		return relation_name;
 	}
 
@@ -180,9 +191,10 @@ public class Grammar {
 				break;
 			}
 			else {
-				relation_name += token_vector.get(i);
+				relation_name += token_vector.get(i) + " ";
 			}
 		}
+		relation_name = relation_name.trim();
 
 		// Get the attribute list
 		for (int i = token_index; i < token_vector.size(); i++) {
@@ -253,9 +265,10 @@ public class Grammar {
 				break;
 			}
 			else {
-			relation_name += token_vector.get(i);
+			relation_name += token_vector.get(i) + " ";
 			}
 		}
+		relation_name = relation_name.trim();
 
 		// Get the list of values to be inserted
 		for (int i = token_index; i < token_vector.size(); i++) {
@@ -297,9 +310,10 @@ public class Grammar {
 				break;
 			}
 			else {
-				relation_name += token_vector.get(i);
+				relation_name += token_vector.get(i) + " ";
 			}
 		}
+		relation_name = relation_name.trim();
 
 		// Get the set of data
 		Integer old_token_index = token_index;
@@ -341,9 +355,10 @@ public class Grammar {
 				break;
 			}
 			else {
-				relation_name += token_vector.get(i);
+				relation_name += token_vector.get(i) + " ";
 			}
 		}
+		relation_name = relation_name.trim();
 
 		for (int i = token_index; i < token_vector.size(); i++) {
 			condition_vector.add(token_vector.get(i));
@@ -396,9 +411,10 @@ public class Grammar {
 				break;
 			}
 			else {
-				relation_name += token_vector.get(i);
+				relation_name += token_vector.get(i) + " ";
 			}
 		}
+		relation_name = relation_name.trim();
 
 		// Get the expression vector
 		for (int i = token_index; i < token_vector.size(); i++) {
@@ -425,7 +441,8 @@ public class Grammar {
 
 		// Get the condition vector
 		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(")")) {
+			if (token_vector.get(i).equals(")")) { 
+				condition_vector.add(token_vector.get(i)); // Keep parentheses for evaluating conditions
 				token_index = i + 1;
 				break;
 			}
@@ -437,6 +454,7 @@ public class Grammar {
 		// Get the expression vector
 		for (int i = token_index; i < token_vector.size(); i++) {
 			if (token_vector.get(i).equals(";")) {
+				expression_vector.add(token_vector.get(i)); // Keep semicolon for evaluating expressions
 				token_index = i;
 				break;
 			}
@@ -445,14 +463,97 @@ public class Grammar {
 			}
 		}
 
-		System.out.println("Expressions List (or table name): " + expression_vector);
 		System.out.println("Conditions List:" + condition_vector);
+		System.out.println("Expressions List (or table name): " + expression_vector);
 
-		String relation_name = expression_vector.get(0);
+		// Check if expression vector contains just a table name
+		if (Engine.tableExists(expression_vector.get(0))) {
+			Table selection_table = Engine.selection(expression_vector.get(0), condition_vector);
+			return selection_table;
+		}
+		// Evaluate the expression
+		else {
+			Table expression_table = evaluateExpression(expression_vector);
+			Table selection_table = Engine.selection(expression_table.relation_name, condition_vector);
+			return selection_table;
+		}
+	}
 
-		Table selection_table = Engine.selection(relation_name, condition_vector);
-		System.out.println("test");
-		return selection_table;
+	public static Table projectQuery(Vector<String> token_vector){
+		Vector<String> attribute_list_vector = new Vector<String>();
+		Vector<String> expression_vector = new Vector<String>();
+		Integer token_index = 1;
+
+		// Move the token_index to the beginning of the attribute list
+		for (int i = token_index; i < token_vector.size(); i++) {
+			if (token_vector.get(i).equals("(")) { 
+				token_index = i + 1;
+				break;
+			}
+		}
+
+		// Get the attribute list vector
+		for (int i = token_index; i < token_vector.size(); i++) {
+			if (token_vector.get(i).equals(")")) { 
+				token_index = i + 1;
+				break;
+			}
+			else {
+				attribute_list_vector.add(token_vector.get(i));
+			}
+		}
+
+		// Get the expression vector
+		for (int i = token_index; i < token_vector.size(); i++) {
+			if (token_vector.get(i).equals(";")) {
+				expression_vector.add(token_vector.get(i)); // Keep semicolon for evaluating expressions
+				token_index = i;
+				break;
+			}
+			else {
+				expression_vector.add(token_vector.get(i));
+			}
+		}
+
+		System.out.println("Attributes List:" + attribute_list_vector);
+		System.out.println("Expressions List (or table name): " + expression_vector);
+
+		// Check if expression vector contains just a table name
+		if (Engine.tableExists(expression_vector.get(0))) {
+			Table selection_table = Engine.projection(expression_vector.get(0), attribute_list_vector);
+			return selection_table;
+		}
+		// Evaluate the expression
+		else {
+			Table expression_table = evaluateExpression(expression_vector);
+			Table selection_table = Engine.projection(expression_table.relation_name, attribute_list_vector);
+			return selection_table;
+		}
+	}
+
+	public static Table renameQuery(Vector<String> token_vector){
+		
+		return null;
+	}
+
+	public static Table setUnionQuery(Vector<String> token_vector){
+		
+		return null;
+	}
+
+	public static Table setDifferenceQuery(Vector<String> token_vector){
+		
+		return null;
+	}
+
+	public static Table crossProductQuery(Vector<String> token_vector){
+		
+		return null;
+	}
+
+	public static Table naturalJoinQuery(Vector<String> token_vector){
+		
+		return null;
 	}
 
 }

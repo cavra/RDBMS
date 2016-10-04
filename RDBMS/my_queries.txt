@@ -16,5 +16,8 @@ DELETE FROM animals WHERE name == "Joe";
 
 SHOW animals;
 
-dogs <- select (kind == "dog") animals;
-SHOW dogs;
+birds <- select (kind == "bird") animals;
+SHOW birds;
+
+a <- (project (name, kind) animals);
+SHOW a;
