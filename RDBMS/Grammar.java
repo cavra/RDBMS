@@ -18,7 +18,7 @@ public class Grammar {
 			 }
 		}
 
-		// Reconnect double operators
+		// Reconnect all double operators
 		String[] operators = {"!", "<", ">", "="};
 		for (int i = 1; i < token_vector.size(); i++){
 			for (String operator: operators){
@@ -31,9 +31,34 @@ public class Grammar {
 
 		System.out.println("\nTokenized vector: " + token_vector);
 
-		// Commands
 		for (String token : token_vector){
 			switch(token) {
+				// QUERIES
+				case "<-":
+					System.out.println("QUERY invoked");
+					break;
+				case "select":
+					System.out.println("SELECT invoked");
+					break;
+				case "project":
+					System.out.println("PROJECT invoked");
+					break;
+				case "rename":
+					System.out.println("RENAME invoked");
+					break;
+				case "+":
+					System.out.println("SET UNION invoked");
+					break;
+				case "-":
+					System.out.println("SET DIFFERENCE invoked");
+					break;
+				case "*":
+					System.out.println("CROSS PRODUCT invoked");
+					break;
+				case "JOIN":
+					System.out.println("NATURAL JOIN invoked");
+					break;
+				// COMMANDS
 				case "CREATE":
 					System.out.println("CREATE TABLE invoked");
 					createCommand(token_vector);
