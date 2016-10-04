@@ -56,7 +56,7 @@ public class Table implements Serializable{
 	}
 
 // ==========================================================================================================================
-// This function below takes in a string of values and uses the primary key indices ti
+// This function below takes in a string of values and uses the primary key indices to
 // find the data needed to create a unique primary key.
 // ==========================================================================================================================
 
@@ -69,6 +69,30 @@ public class Table implements Serializable{
 			p_key += values[i];
 		}
 		return p_key;
+	}
+	
+// ==========================================================================================================================
+// This function below takes in an attribute type and an attribute. From then it 
+// will return the row ID, or Row key
+// ==========================================================================================================================
+
+	public String getRowID(String attribute_type, String attribute){
+		// Set the initial string as empty
+		Integer p_index = 0;
+
+		for (int i = 0; i < attributes.length; i++){
+			if (attributes[i].equals(attribute_type)) {
+				p_index = i;
+			}
+		}
+
+		// Iterate and concatenate it with all elements of the array
+		for (String[] row : attribute_table) {
+			if (row.get(p_index).equals(attribute)){
+				return row.get(0);
+			}
+		}
+		return 0;
 	}
 	
 // ==========================================================================================================================
@@ -113,7 +137,6 @@ public class Table implements Serializable{
 	public Vector<String> getRow(String row_id){ //row_id is just the first element of the specified row
 		// Search each row in the table
 		for (Vector<String> row : attribute_table) {
-
 			// Compare the first element of the row (its id) with the given id
 			if (row.firstElement().equals(row_id)){
 				return row;

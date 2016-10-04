@@ -85,11 +85,11 @@ public class Engine {
 // Then, calls the non static updateRow function which is used to change the data.
 // ==========================================================================================================================
 
-	public static void updateRow(String table_name, String row_id, String[] values){
+	public static void updateRow(String table_name, String attribute_type, String attribute, String[] values){
 		// Check if the table and row exist
 		Table table = rdbms_tables_container.get(table_name);
-		Vector<String> temp_row = table.getRow(row_id);
-		if (table == null || temp_row.size() == 0){
+		String row_id = table.getRowID(attribute_type, attribute);
+		if (table == null || row_id == 0){
 			System.out.println("Error: Table and/or row don't exist. Failed to update row.");
 		}
 		else{
@@ -104,11 +104,11 @@ public class Engine {
 // of data.
 // ==========================================================================================================================
 
-	public static void deleteRow(String table_name, String row_id){
+	public static void deleteRow(String table_name, String attribute_type, String attribute){
 		// Check if the table and row exist
 		Table table = rdbms_tables_container.get(table_name);
-		Vector<String> temp_row = table.getRow(row_id);
-		if (table == null || temp_row.size() == 0){
+		String row_id = table.getRowID(attribute_type, attribute);
+		if (table == null || row_id == 0){
 			System.out.println("Error: Table and/or row don't exist. Failed to delete row.");
 		}
 		else{
