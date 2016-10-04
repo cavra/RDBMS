@@ -6,11 +6,7 @@ public class Engine {
 	// This hashmap stores Tables, which are arrayLists containing vectors
 	static HashMap<String, Table> rdbms_tables_container = new HashMap<String, Table>(); 
 
-	public static void main(String[] args){
-		// Call the test class
-		TestList new_test_list = new TestList();
-		new_test_list.callAll();
-	}
+	public static void main(String[] args){}
 
 // ==========================================================================================================================
 // This function below takes input from the parser and creates essentially an empty table 
@@ -89,7 +85,7 @@ public class Engine {
 		// Check if the table and row exist
 		Table table = rdbms_tables_container.get(table_name);
 		String row_id = table.getRowID(attribute_type, attribute);
-		if (table == null || row_id == 0){
+		if (table == null || row_id.equals("0")){
 			System.out.println("Error: Table and/or row don't exist. Failed to update row.");
 		}
 		else{
@@ -108,7 +104,7 @@ public class Engine {
 		// Check if the table and row exist
 		Table table = rdbms_tables_container.get(table_name);
 		String row_id = table.getRowID(attribute_type, attribute);
-		if (table == null || row_id == 0){
+		if (table == null || row_id.equals("0")){
 			System.out.println("Error: Table and/or row don't exist. Failed to delete row.");
 		}
 		else{

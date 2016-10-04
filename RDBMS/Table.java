@@ -56,6 +56,26 @@ public class Table implements Serializable{
 	}
 
 // ==========================================================================================================================
+// This function below searches the table for a row. If found, it is returned.
+// Otherwise, it returns an empty Vector<String>.
+// ==========================================================================================================================
+
+	public Vector<String> getRow(String row_id){ //row_id is just the first element of the specified row
+		// Search each row in the table
+		for (Vector<String> row : attribute_table) {
+			// Compare the first element of the row (its id) with the given id
+			if (row.firstElement().equals(row_id)){
+				return row;
+			}
+		}
+
+		// If the row was not found, return an empty array
+		Vector<String> empty_row = new Vector<String>(0);
+		//System.out.println("Error: Row doesn't exist. Cannot get.");
+		return empty_row;
+	}
+
+// ==========================================================================================================================
 // This function below takes in a string of values and uses the primary key indices to
 // find the data needed to create a unique primary key.
 // ==========================================================================================================================
@@ -87,14 +107,14 @@ public class Table implements Serializable{
 		}
 
 		// Iterate and concatenate it with all elements of the array
-		for (String[] row : attribute_table) {
+		for (Vector<String> row : attribute_table) {
 			if (row.get(p_index).equals(attribute)){
 				return row.get(0);
 			}
 		}
-		return 0;
+		return "0";
 	}
-	
+
 // ==========================================================================================================================
 // This function below essentially just adds the specified row to the attribute table (member).
 // ==========================================================================================================================
@@ -129,26 +149,6 @@ public class Table implements Serializable{
 		}
 	}
 	
-// ==========================================================================================================================
-// This function below searches the table for a row. If found, it is returned.
-// Otherwise, it returns an empty Vector<String>.
-// ==========================================================================================================================
-
-	public Vector<String> getRow(String row_id){ //row_id is just the first element of the specified row
-		// Search each row in the table
-		for (Vector<String> row : attribute_table) {
-			// Compare the first element of the row (its id) with the given id
-			if (row.firstElement().equals(row_id)){
-				return row;
-			}
-		}
-
-		// If the row was not found, return an empty array
-		Vector<String> empty_row = new Vector<String>(0);
-		//System.out.println("Error: Row doesn't exist. Cannot get.");
-		return empty_row;
-	}
-
 // ==========================================================================================================================
 // This function below simply iterates through the given tables and prints out
 // all of the data within the attribute table.

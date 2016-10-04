@@ -19,5 +19,4 @@ public class Parser {
 			Grammar grammy = new Grammar(line);
 		}
 	}
-
 }
