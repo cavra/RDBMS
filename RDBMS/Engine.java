@@ -207,8 +207,6 @@ public class Engine {
 			Table projection_table = new Table("Projection from " + relation_name, new_attributes_array, table.primary_keys);
 			Vector<Integer> indicies = getIndices(table, new_attributes_array);
 
-			System.out.println(indicies);
-
 			// Loop through all rows of the table 
 			for(int i = 1; i < table.attribute_table.size(); i++){
 				Vector<String> row = table.attribute_table.get(i);

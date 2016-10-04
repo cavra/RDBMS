@@ -265,7 +265,7 @@ public class Grammar {
 				break;
 			}
 			else {
-			relation_name += token_vector.get(i) + " ";
+				relation_name += token_vector.get(i) + " ";
 			}
 		}
 		relation_name = relation_name.trim();
