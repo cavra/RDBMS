@@ -180,9 +180,10 @@ public class Grammar {
 				break;
 			}
 			else {
-				relation_name += token_vector.get(i);
+				relation_name += token_vector.get(i) + " ";
 			}
 		}
+		relation_name = relation_name.trim();
 
 		// Get the attribute list
 		for (int i = token_index; i < token_vector.size(); i++) {
@@ -253,9 +254,10 @@ public class Grammar {
 				break;
 			}
 			else {
-			relation_name += token_vector.get(i);
+				relation_name += token_vector.get(i) + " ";
 			}
 		}
+		relation_name = relation_name.trim();
 
 		// Get the list of values to be inserted
 		for (int i = token_index; i < token_vector.size(); i++) {
