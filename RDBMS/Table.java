@@ -61,6 +61,7 @@ public class Table implements Serializable{
 
 	public void addRow(Vector<String> new_row){
 		attribute_table.add(new_row);
+		System.out.println("Inserted row with key " + new_row.get(0) + " in table " + relation_name);
 	}
 	
 // ==========================================================================================================================
@@ -71,6 +72,7 @@ public class Table implements Serializable{
 	public void deleteRow(String row_id){
 		Vector<String> row = getRow(row_id);
 			attribute_table.remove(row);
+		System.out.println("Deleted row with key " + row_id + " in table " + relation_name);
 	}
 
 // ==========================================================================================================================
@@ -79,9 +81,10 @@ public class Table implements Serializable{
 // ==========================================================================================================================
 
 	public void updateRow(String row_id, Integer attribute_index, String new_attribute){
-	// Get the row, if it exists
-	Vector<String> row = getRow(row_id);
+		// Get the row, if it exists
+		Vector<String> row = getRow(row_id);
 		row.set(attribute_index, new_attribute);
+		System.out.println("Updated row with key " + row_id + " in table " + relation_name);
 	}
 	
 // ==========================================================================================================================
@@ -174,7 +177,7 @@ public class Table implements Serializable{
 		if (index == -1) {
 			System.out.println("Error: Attribute doesn't exist. Cannot get index.");
 		}
-		
+
 		return index;
 	}
 

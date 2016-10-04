@@ -1,5 +1,3 @@
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.*;
 import java.io.*;
 
@@ -33,6 +31,7 @@ public class Grammar {
 
 		System.out.println("\nTokenized vector: " + token_vector);
 
+		// Commands
 		for (String token : token_vector){
 			switch(token) {
 				case "CREATE":
@@ -43,25 +42,9 @@ public class Grammar {
 					System.out.println("DROP TABLE invoked");
 					dropCommand(token_vector);
 					break;
-				case "OPEN":
-					System.out.println("OPEN invoked");
-					openCommand(token_vector);
-					break;
-				case "ClOSE":
-					System.out.println("CLOSE invoked");
-					closeCommand(token_vector);
-					break;
-				case "WRITE":
-					System.out.println("WRITE invoked");
-					writeCommand(token_vector);
-					break;
-				case "SHOW":
-					System.out.println("SHOW invoked");
-					showCommand(token_vector);
-					break;
-				case "EXIT":
-					System.out.println("EXIT invoked");
-					exitCommand();
+				case "INSERT":
+					System.out.println("INSERT invoked");
+					insertCommand(token_vector);
 					break;
 				case "UPDATE":
 					System.out.println("UPDATE ROW invoked");
@@ -69,20 +52,27 @@ public class Grammar {
 					break;
 				case "DELETE":
 					System.out.println("DELETE ROW invoked");
-					//deleteCommand(token_vector);
+					deleteCommand(token_vector);
 					break;
-				case "INSERT":
-					System.out.println("INSERT invoked");
-					insertCommand(token_vector);
+				case "SHOW":
+					System.out.println("SHOW invoked");
+					showCommand(token_vector);
 					break;
-				case "SELECT":
-					System.out.println("SELECT invoked");
+				case "OPEN":
+					System.out.println("OPEN invoked");
+					openCommand(token_vector);
 					break;
-				case "PROJECT":
-					System.out.println("PROJECT invoked");
+				case "WRITE":
+					System.out.println("OPEN invoked");
+					writeCommand(token_vector);
 					break;
-				case "RENAME":
-					System.out.println("RENAME invoked");
+				case "CLOSE":
+					System.out.println("CLOSE invoked");
+					closeCommand(token_vector);
+					break;
+				case "EXIT":
+					System.out.println("EXIT invoked");
+					exitCommand();
 					break;
 			}
 		}
@@ -113,6 +103,7 @@ public class Grammar {
 			token_vector.contains("*") ||
 			token_vector.contains("JOIN")){
 				System.out.println("Nested table detected in getRelationName");
+				System.out.println("(Need to handle this!!!)");
 		}
 		else {
 			for (String token : token_vector){
@@ -200,6 +191,12 @@ public class Grammar {
 		return new_table;
 	}
 
+	public static void dropCommand(Vector<String> token_vector){	
+		String relation_name = getRelationName(token_vector);
+		System.out.println("Table Name: " + relation_name);
+		Engine.dropTable(relation_name.trim());
+	}
+
 	public static void insertCommand(Vector<String> token_vector){
 		String relation_name = "";
 		Vector<String> data_vector = new Vector<String>();
@@ -264,20 +261,17 @@ public class Grammar {
 
 		// Get the set of data
 		Integer old_token_index = token_index;
-		String[] operators = {"!=", "<", ">", "<=", ">=", "=="};
-		for (String operator : operators){
-			for (int i = old_token_index; i < token_vector.size() - 1; i++){
-				if (token_vector.get(i).equals("WHERE")) {
-					token_index = i + 1;
-					break;
-				}
-				else if (token_vector.get(i+1).equals(operator)){
-					attribute_type_vector.add(token_vector.get(i));
-					new_attribute_vector.add(token_vector.get(i+2));
-				}
-				else {
-					continue;
-				}
+		for (int i = old_token_index; i < token_vector.size() - 1; i++){
+			if (token_vector.get(i).equals("WHERE")) {
+				token_index = i + 1;
+				break;
+			}
+			else if (token_vector.get(i+1).equals("=")){
+				attribute_type_vector.add(token_vector.get(i));
+				new_attribute_vector.add(token_vector.get(i+2));
+			}
+			else {
+				continue;
 			}
 		}
 
@@ -293,28 +287,42 @@ public class Grammar {
 		Engine.updateRow(relation_name, attribute_type_vector, new_attribute_vector, condition_vector);
 	}
 
-	public static void renameCommand(Vector<String> token_vector){	
-		String relation_name = getRelationName(token_vector);
-		System.out.println("Table Name: " + relation_name);
-		Engine.dropTable(relation_name.trim());
+	public static void deleteCommand(Vector<String> token_vector){
+		String relation_name = "";
+		Vector<String> condition_vector = new Vector<String>();
+
+		Integer token_index = 2;
+		// Get the relation name
+		for (int i = token_index; i < token_vector.size(); i++){
+			if (token_vector.get(i).equals("WHERE")){
+				token_index = i + 1;
+				break;
+			}
+			else {
+				relation_name += token_vector.get(i);
+			}
+		}
+
+		for (int i = token_index; i < token_vector.size(); i++){
+			condition_vector.add(token_vector.get(i));
+		}
+
+		System.out.println("Table name:" + relation_name);
+		System.out.println("Conditions List:" + condition_vector);
+
+		Engine.deleteRow(relation_name, condition_vector);
 	}
 
-	public static void dropCommand(Vector<String> token_vector){	
+	public static void showCommand(Vector<String> token_vector) {
 		String relation_name = getRelationName(token_vector);
 		System.out.println("Table Name: " + relation_name);
-		Engine.dropTable(relation_name.trim());
+		Engine.show(relation_name.trim());
 	}
 
 	public static void openCommand(Vector<String> token_vector){	
 		String relation_name = getRelationName(token_vector);
 		System.out.println("Table Name: " + relation_name);
-		Engine.writeTable(relation_name.trim()); // Close table???
-	}
-
-	public static void closeCommand(Vector<String> token_vector){	
-		String relation_name = getRelationName(token_vector);
-		System.out.println("Table Name: " + relation_name);
-		Engine.writeTable(relation_name.trim());
+		Engine.openTable(relation_name.trim()); // Close table???
 	}
 
 	public static void writeCommand(Vector<String> token_vector) {
@@ -323,10 +331,10 @@ public class Grammar {
 		Engine.writeTable(relation_name.trim());
 	}
 
-	public static void showCommand(Vector<String> token_vector) {
+	public static void closeCommand(Vector<String> token_vector){	
 		String relation_name = getRelationName(token_vector);
 		System.out.println("Table Name: " + relation_name);
-		Engine.show(relation_name.trim());
+		Engine.closeTable(relation_name.trim());
 	}
 
 	public static void exitCommand() {

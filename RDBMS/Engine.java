@@ -9,7 +9,8 @@ public class Engine {
 	public static void main(String[] args){}
 
 // =============================================================================
-// This function below takes input from the parser and creates essentially an empty table 
+// This function below takes input from the parser and creates essentially an 
+// empty table 
 // =============================================================================
 
 	public static Table createTable(String relation_name, String[] attributes, String[] p_keys){
@@ -32,8 +33,8 @@ public class Engine {
 	}
 	
 // =============================================================================
-// This function below takes in the name of an existing table in the database and removes it.
-// Does this by calling a deleteTable function which is self explanatory.
+// This function below takes in the name of an existing table in the database 
+// and removes it. Does this by calling a deleteTable function
 // =============================================================================
 
 	public static void dropTable(String relation_name){
@@ -50,8 +51,8 @@ public class Engine {
 	}
 	
 // =============================================================================
-// This function below takes in a table and an array of values. It uses this data to create a 
-// Vector<String> row and adds it to the given table.
+// This function below takes in a table and an array of values. It uses this 
+// data to create a Vector<String> row and adds it to the given table.
 // =============================================================================
 
 	public static void insertRow(String relation_name, String[] values){
@@ -72,7 +73,6 @@ public class Engine {
 				new_values.add(values[i-1]);
 			}
 			table.addRow(new_values);
-			System.out.println("Inserted row into table: " + relation_name);
 		}
 	}
 	
@@ -97,25 +97,28 @@ public class Engine {
 				// Get the index of the attribute type to check in each row vector
 				Integer attribute_index = table.getAttributeIndex(condition.get(0));
 				String operator = condition.get(1); // "=="
-				String qualificator = condition.get(2 ); // "dog"
+				String qualificator = condition.get(2); // "dog"
 
-				// Loop through all the rows of a table, starting at the first entry
-				for (Vector<String> row : table.attribute_table) {
-					if (checkCondition(row.get(attribute_index), operator, qualificator)){
+				// Loop through all the rows of a table
+				if (attribute_index >= 0) {
+					outerloop:
+					for (Vector<String> row : table.attribute_table) {
+						if (checkCondition(row.get(attribute_index), operator, qualificator)){
 
-						// Row has met the condition, update it with each value in the new_attributes vector
-						// new_attributes and attributes_type have the same size
-						for (int i = 0; i < new_attributes.size(); i++) {
-							Integer update_attribute_index = table.getAttributeIndex(attribute_types.get(i));
-							// Check that the attribute to update exists
-							if (update_attribute_index >= 0) {
-								table.updateRow(row.get(0), update_attribute_index, new_attributes.get(i));
-								System.out.println("Updated row with key " + row.get(0) + " in table " + relation_name);
+							// Row has met the condition, update it with each value in the new_attributes vector
+							// new_attributes and attributes_type have the same size
+							for (int i = 0; i < new_attributes.size(); i++) {
+								Integer update_attribute_index = table.getAttributeIndex(attribute_types.get(i));
+								// Check that the attribute to update exists
+								if (update_attribute_index >= 0) {
+									table.updateRow(row.get(0), update_attribute_index, new_attributes.get(i));
+									break outerloop;
+								}
 							}
 						}
-					}
-					else {
-						//System.out.println("Did not update " + row.get(0) + " in table " + relation_name + "; condition not met.");
+						else {
+							//System.out.println("Did not update " + row.get(0) + " in table " + relation_name + "; condition not met.");
+						}
 					}
 				}
 			}
@@ -128,16 +131,38 @@ public class Engine {
 // of data.
 // =============================================================================
 
-	public static void deleteRow(String relation_name, String attribute_type, String attribute){
+	public static void deleteRow(String relation_name, Vector<String> tokenized_conditions){
 		// Check if the table and row exist
 		Table table = relations_database.get(relation_name);
-		String row_id = table.getRowID(attribute_type, attribute);
-		if (table == null || row_id.equals("0")){
+		if (table == null){
 			System.out.println("Error: Table and/or row don't exist. Failed to delete row.");
 		}
 		else{
-			table.deleteRow(row_id);
-			System.out.println("Deleted row with key " + row_id + " in table " + relation_name);
+			// Prepare for conditions
+			stacked_conditions_vector.clear();
+			handleConditions(tokenized_conditions);
+
+			for (Vector<String> condition : stacked_conditions_vector) {
+
+				Integer attribute_index = table.getAttributeIndex(condition.get(0));
+				String operator = condition.get(1); // "=="
+				String qualificator = condition.get(2); // "dog"
+
+				// Loop through all the rows of a table
+				if (attribute_index >= 0) {
+					for (Vector<String> row : table.attribute_table) {
+						if (checkCondition(row.get(attribute_index), operator, qualificator)){
+
+							// Row has met the condition, delete it
+							table.deleteRow(row.get(0));
+							break;
+						}
+						else {
+							//System.out.println("Did not delete " + row.get(0) + " in table " + relation_name + "; condition not met.");
+						}
+					}
+				}
+			}
 		}
 	}
 	
@@ -409,40 +434,12 @@ public class Engine {
 		relations_database.put(new_relation_name, nj_table);
 	}
 
-// ===========================================================================================================================
-// The function below writes a table's data to a .ser file to save it
-// ===========================================================================================================================
-
-public static void writeTable(String relation_name){
-		try {
-			// Check that the table exists
-			Table table = relations_database.get(relation_name);
-			if (table == null){
-				System.out.println("Error: Cannot cross write table; table doesn't exist.");
-			}
-			else {
-				// Create the .ser file
-				FileOutputStream file_out = new FileOutputStream("table_data/" + relation_name + ".ser");
-				ObjectOutputStream out = new ObjectOutputStream(file_out);
-
-				// Write to the .ser file
-				out.writeObject(table);
-				out.close();
-				file_out.close();
-				System.out.println("Serialized data is saved in table_data/" + relation_name + ".ser");
-			}
-     	}
-     	catch(IOException i) {
-      		i.printStackTrace();
-     	}
-  	}
-
 // =============================================================================
 // This function below reads through a file and inputs the data. This is important so that the
 // data is not last between sessions.
 // =============================================================================
 
-  	public static void readTable(String relation_name){
+  	public static void openTable(String relation_name){
 		try {
 
 			Table read_table = null;
@@ -469,6 +466,53 @@ public static void writeTable(String relation_name){
 		}
   	}
 
+// ===========================================================================================================================
+// The function below writes a table's data to a .ser file to save it
+// ===========================================================================================================================
+
+	public static void writeTable(String relation_name){
+		try {
+			// Check that the table exists
+			Table table = relations_database.get(relation_name);
+			if (table == null){
+				System.out.println("Error: Cannot cross write table; table doesn't exist.");
+			}
+			else {
+				// Create the .ser file
+				FileOutputStream file_out = new FileOutputStream("table_data/" + relation_name + ".ser");
+				ObjectOutputStream out = new ObjectOutputStream(file_out);
+
+				// Write to the .ser file
+				out.writeObject(table);
+				out.close();
+				file_out.close();
+				System.out.println("Serialized data is saved in table_data/" + relation_name + ".ser");
+			}
+     	}
+     	catch(IOException i) {
+      		i.printStackTrace();
+     	}
+  	}
+
+	
+// =============================================================================
+// This function below takes in the name of an existing table in the database 
+// and removes it. Does this by calling a deleteTable function
+// =============================================================================
+
+  	// Currently, this is the same as dropTable! Fix this, check piazza for difference
+	public static void closeTable(String relation_name){
+		// Check if the table exists
+		Table table = relations_database.get(relation_name);
+		if(table == null){
+			System.out.println("Error: Table doesn't exist. Failed to drop.");
+		}
+		else{
+			table.deleteTable();
+			relations_database.remove(relation_name);
+			System.out.println("Dropped table: " + relation_name);
+		}
+	}
 // =============================================================================
 // This is a helper function that returns a vector of indicies (for a given subset
 // of attributes) to allow for easy location of data. 
