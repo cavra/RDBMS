@@ -25,16 +25,18 @@ Parser Functionality:
 - [x] Insert Row
 - [x] Update Row
 - [x] Delete Row
-- [x] Rename Table
 - [x] Show
 - [x] Selection
 - [x] Projection
+- [x] Rename
 - [x] Set Union
 - [x] Set Difference
 - [x] Cross Product
 - [x] Natural Join
 - [x] Write Table
 - [x] Read Table
+- [x] Handles nested conditions
+- [x] Handles nested queries
 
 Engine Functionality: 
 
@@ -43,10 +45,10 @@ Engine Functionality:
 - [x] Insert Row
 - [x] Update Row
 - [x] Delete Row
-- [x] Rename Table
 - [x] Show
 - [x] Selection
 - [x] Projection
+- [x] Rename
 - [x] Set Union
 - [x] Set Difference
 - [x] Cross Product
@@ -153,3 +155,15 @@ Cory Avra - Revised regex designs, worked on a better implementation
 Reed Spivey - Worked on various functions for parser<br/>
 Jason Alonzo - Worked on various functions for parser<br/>
 Cory Avra - Scrapped regex, now using tokenizer, Worked on various functions for parser
+
+**10/04/16**
+
+@Completed
+Reed Spivey - Worked on Attribtue.java<br/>
+Jason Alonzo - Worked on test functions and changelog for engine resubmission<br/>
+Cory Avra - Finished basic parser functionality, improved engine
+@TODO
+Reed Spivey - Finish Attribute class<br/>
+Jason Alonzo - Begin work on the Interactive System<br/>
+Cory Avra - Begin work on the Interactive System, finish parser and engine
+
