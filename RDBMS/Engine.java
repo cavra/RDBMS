@@ -18,7 +18,7 @@ public class Engine {
 		if (table != null){
 			System.out.println("Error: Table already exists. Failed to create.");
 		}
-		else{
+		else {
 			// Returns a table initialized with ID and wanted attributes
 			Table new_table = new Table(relation_name, attributes, p_keys); 
 
@@ -42,7 +42,7 @@ public class Engine {
 		if(table == null){
 			System.out.println("Error: Table doesn't exist. Failed to drop.");
 		}
-		else{
+		else {
 			table.deleteTable();
 			relations_database.remove(relation_name);
 			System.out.println("Dropped table: " + relation_name);
@@ -202,7 +202,7 @@ public class Engine {
 			System.out.println("Error: Cannot project from table; table doesn't exist.");
 			return null;
 		}
-		else{
+		else {
 			String[] new_attributes_array = new_attributes_vector.toArray(new String[new_attributes_vector.size()]);
 			Table projection_table = new Table("Projection from " + relation_name, new_attributes_array, table.primary_keys);
 			Vector<Integer> indicies = getIndices(table, new_attributes_array);
@@ -219,18 +219,17 @@ public class Engine {
 				for(int j : indicies){
 					row_projected.add(row.get(j + 1));
 				}
-
 				projection_table.addRow(row_projected);
 			}
 			return projection_table;
 		}
 	}
-	
+
 // =============================================================================
 // This function below takes in two tables and combines the data while removing duplicates (redundancies).
 // =============================================================================
 
-	public static void setUnion(String new_relation_name, String relation_name1, String relation_name2){
+	public static Table setUnion(String new_relation_name, String relation_name1, String relation_name2){
 		Table table1 = relations_database.get(relation_name1); //Get table1
 		Table table2 = relations_database.get(relation_name2); //Get table2
 		Table union_table = new Table(new_relation_name, table1.attributes, table1.primary_keys);	
@@ -264,6 +263,7 @@ public class Engine {
 			}
 		}
 		relations_database.put(new_relation_name, union_table);
+		return union_table;
 	}
 	
 // =============================================================================
@@ -271,7 +271,7 @@ public class Engine {
 // The results are then added to a newly created table.
 // =============================================================================
 
-	public static void setDifference(String new_relation_name, String relation_name1, String relation_name2){
+	public static Table setDifference(String new_relation_name, String relation_name1, String relation_name2){
 		Table table1 = relations_database.get(relation_name1); //Get table1
 		Table table2 = relations_database.get(relation_name2); //Get table2
 		Table difference_table = new Table(new_relation_name, table1.attributes, table1.primary_keys);	
@@ -290,13 +290,14 @@ public class Engine {
 			}
 		}
 		relations_database.put(new_relation_name, difference_table);
+		return difference_table;
 	}
 	
 // =============================================================================
 // This function below takes in two sets of data and returns every combination of sets, in a newly created table.
 // =============================================================================
 
-	public static void crossProduct(String new_relation_name, String relation_name1, String relation_name2){
+	public static Table crossProduct(String new_relation_name, String relation_name1, String relation_name2){
 		Table table1 = relations_database.get(relation_name1);
 		Table table2 = relations_database.get(relation_name2);
 
@@ -337,7 +338,9 @@ public class Engine {
 				}
 			}
 			relations_database.put(new_relation_name, cp_table);
+			return cp_table;
 		}
+		return null;
 	}
 	
 // ===========================================================================================================================
@@ -346,7 +349,7 @@ public class Engine {
 // entities, making sure to combine the attributes of each table.
 // ===========================================================================================================================
 
-	public static void naturalJoin(String new_relation_name, String relation_name1, String relation_name2){ 
+	public static Table naturalJoin(String new_relation_name, String relation_name1, String relation_name2){ 
 		Table table1 = relations_database.get(relation_name1);
 		Table table2 = relations_database.get(relation_name2);
 		int table1_width = table1.attribute_table.get(0).size();
@@ -394,6 +397,7 @@ public class Engine {
 			}
 		}
 		relations_database.put(new_relation_name, nj_table);
+		return nj_table;
 	}
 
 // =============================================================================

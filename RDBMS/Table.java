@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
 
-public class Table implements Serializable{
+public class Table implements Serializable {
 	
 	ArrayList<Vector<String>> attribute_table = new ArrayList<Vector<String>>();
 	Vector<Integer> p_key_indices = new Vector<Integer>();
@@ -17,7 +17,7 @@ public class Table implements Serializable{
 // table name.
 // ==========================================================================================================================
 
-	Table(String r_name, String[] attribute_list, String[] p_keys){		// Take an array of attribute names and insert as first row in arraylist
+	Table(String r_name, String[] attribute_list, String[] p_keys) { // Take an array of attribute names and insert as first row in arraylist
 		relation_name = r_name;
 		attributes = attribute_list.clone();
 		primary_keys = p_keys.clone();

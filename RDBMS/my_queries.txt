@@ -8,6 +8,14 @@ INSERT INTO animals VALUES FROM ("Joe", "bird", 2);
 
 SHOW animals;
 
+CREATE TABLE plants (name VARCHAR(20), kind VARCHAR(8), years INTEGER) PRIMARY KEY (name, kind);
+
+INSERT INTO plants VALUES FROM ("Pine", "Tree", 40);
+INSERT INTO plants VALUES FROM ("Rose", "Flower", 10);
+INSERT INTO plants VALUES FROM ("Deadbush", "Bush", 31);
+
+SHOW plants;
+
 UPDATE animals SET kind = "dog", years = 10 WHERE name == "Snoopy";
 UPDATE animals SET kind = "bird", years = 12 WHERE name == "Tweety" && (kind=="human" || kind=="raptor");
 
@@ -19,5 +27,17 @@ SHOW animals;
 birds <- select (kind == "bird") animals;
 SHOW birds;
 
-a <- (project (name, kind) animals);
-SHOW a;
+p <- (project (name, kind) animals);
+SHOW p;
+
+u <- animals + plants;
+SHOW u;
+
+d <- animals - plants;
+SHOW d;
+
+cp <- animals * plants;
+SHOW cp;
+
+j <- animals JOIN plants;
+SHOW j;
