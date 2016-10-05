@@ -183,17 +183,16 @@ public class Queries {
 
 		// Check if expression vector contains just a table name
 		if (Grammar.isRelationName(expression_vector)) {
-			//Table selection_table = Engine.projection(expression_vector.get(0), attribute_list_vector);
-			//return selection_table;
+			Table rename_table = Engine.rename(expression_vector.get(0), attribute_list_vector);
+			return rename_table;
 		}
 		// Evaluate the expression
 		else {
 			Table expression_table = Grammar.evaluateExpression(expression_vector);
 			Engine.relations_database.put("Temp Expression Table", expression_table);
-			//Table selection_table = Engine.projection("Temp Expression Table", attribute_list_vector);
-			//return selection_table;
+			Table rename_table = Engine.rename("Temp Expression Table", attribute_list_vector);
+			return rename_table;
 		}
-		return null;
 	}
 
 	public static Table setUnionQuery(Vector<String> token_vector) {

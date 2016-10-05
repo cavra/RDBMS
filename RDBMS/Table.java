@@ -108,7 +108,8 @@ public class Table implements Serializable {
 // ==========================================================================================================================
 
 	public void show(){
-		// This function could use some formatting
+		//Integer row_length = attributes.length() + 1;
+
 		for (Vector<String> row : attribute_table) {
 			System.out.println(row);
 		}

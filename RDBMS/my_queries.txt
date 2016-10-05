@@ -8,12 +8,12 @@ INSERT INTO animals VALUES FROM ("Joe", "bird", 2);
 
 SHOW animals;
 
-CREATE TABLE plants (name VARCHAR(20), kind VARCHAR(8), years INTEGER) PRIMARY KEY (name, kind);
+CREATE TABLE plants (name VARCHAR(20), kind VARCHAR(8), age INTEGER) PRIMARY KEY (name, kind);
 
 INSERT INTO plants VALUES FROM ("Pine", "Tree", 40);
 INSERT INTO plants VALUES FROM ("Rose", "Flower", 10);
 INSERT INTO plants VALUES FROM ("Deadbush", "Bush", 31);
-INSERT INTO plants VALUES FROM ("Tweety", "bird", 1);
+INSERT INTO plants VALUES FROM ("Tweety", "bird", 10);
 
 SHOW plants;
 
@@ -30,6 +30,9 @@ SHOW s;
 
 p <- (project (name, kind) animals);
 SHOW p;
+
+r <- rename (rname, rkind) p;
+SHOW r;
 
 u <- animals + plants;
 SHOW u;

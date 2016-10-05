@@ -29,7 +29,7 @@ public class Attribute {
 
 	public boolean isValid(String attr){
 		String integer_regex = "[0-9]+";
-		String varchar_regex = "[a-zA-Z][a-zA-Z0-9]+";
+		String varchar_regex = "[a-zA-Z][a-zA-Z0-9_]+";
 
 		if (attr.matches(integer_regex) && attribute_type == "INTEGER")
 			return true;

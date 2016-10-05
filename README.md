@@ -158,11 +158,11 @@ Cory Avra - Scrapped regex, now using tokenizer, Worked on various functions for
 
 **10/04/16**
 
-@Completed
+@Completed<br/>
 Reed Spivey - Worked on Attribtue.java<br/>
 Jason Alonzo - Worked on test functions and changelog for engine resubmission<br/>
-Cory Avra - Finished basic parser functionality, improved engine
-@TODO
+Cory Avra - Finished basic parser functionality, improved engine<br/>
+@TODO<br/>
 Reed Spivey - Finish Attribute class<br/>
 Jason Alonzo - Begin work on the Interactive System<br/>
 Cory Avra - Begin work on the Interactive System, finish parser and engine

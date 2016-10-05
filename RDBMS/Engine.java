@@ -226,6 +226,34 @@ public class Engine {
 	}
 
 // =============================================================================
+// =============================================================================
+
+	public static Table rename(String relation_name, Vector<String> new_attributes_vector){
+		// Check if the table exists
+		Table table = relations_database.get(relation_name);
+		if (table == null) {
+			System.out.println("Error: Cannot project from table; table doesn't exist.");
+			return null;
+		}
+		else {
+			String[] new_attributes_array = new_attributes_vector.toArray(new String[new_attributes_vector.size()]);
+
+			String[] new_p_keys = new String[table.p_key_indices.size()];
+			for (int i = 0; i < table.p_key_indices.size(); i++) {
+				new_p_keys[i] = new_attributes_array[table.p_key_indices.get(i)];
+			}
+
+			Table rename_table = new Table("Renamed from " + relation_name, new_attributes_array, new_p_keys);
+
+			// Loop through all rows of the table 
+			for(int i = 1; i < table.attribute_table.size(); i++){
+				Vector<String> row = table.attribute_table.get(i);
+				rename_table.addRow(row);
+			}
+			return rename_table;
+		}
+	}
+// =============================================================================
 // This function below takes in two tables and combines the data while removing duplicates (redundancies).
 // =============================================================================
 
@@ -354,19 +382,32 @@ public class Engine {
 		Table table2 = relations_database.get(relation_name2);
 		int table1_width = table1.attribute_table.get(0).size();
 		int table2_width = table2.attribute_table.get(0).size();
-		String[] new_values = new String[table1.attributes.length + table2.attributes.length]; 
+		Vector<String> new_values = new Vector<String>(table1.attributes.length + table2.attributes.length); 
 		
 		// Puts table1 values in new_values array
 		for(int i = 0; i < table1_width - 1; i++){ 
-			new_values[i] = table1.attribute_table.get(0).get(i+1);
+			new_values.add(table1.attribute_table.get(0).get(i+1));
 		}
 		// Puts table2 values in new_values array AFTER table1 values are inserted
 		for(int i = 0; i < table2_width - 1; i++){	
-			new_values[i + table1_width - 1] = table2.attribute_table.get(0).get(i+1);
+			new_values.add(table2.attribute_table.get(0).get(i+1));
 		}
 
+		for(int i = 0; i < new_values.size(); i++){
+			for(int p = 0; p < new_values.size(); p++){
+				if(i!=p){
+                  if(new_values.elementAt(i).equals(new_values.elementAt(p))){
+                     new_values.removeElementAt(p);
+                  }
+                }
+			}
+		}
+
+		String[] new_values_array = new_values.toArray(new String[new_values.size()]);
+
+
 		// Create the new table with combined attributes using the p
-		Table nj_table = new Table((new_relation_name), new_values, table1.primary_keys); 
+		Table nj_table = new Table((new_relation_name), new_values_array, table1.primary_keys); 
 
 		// Iterate through all values of both tables and store them in the new table
 		for(int j = 1; j < table1.attribute_table.size(); j++){
@@ -392,6 +433,21 @@ public class Engine {
 					Vector<String> combined_row = new Vector<String>();
 					combined_row.addAll(row1_copy);
 					combined_row.addAll(row2_copy);
+
+					for(int i = 0; i < combined_row.size(); i++)
+					{
+						for(int p = 0; p < combined_row.size(); p++)
+						{
+							if(i!=p)
+                    		{
+                        		if(combined_row.elementAt(i).equals(combined_row.elementAt(p)))
+                        		{
+                        			combined_row.removeElementAt(p);
+                        		}
+                   		 	}
+						}
+					}
+					System.out.println(combined_row);
 					nj_table.addRow(combined_row);
 				}
 			}
@@ -399,6 +455,7 @@ public class Engine {
 		relations_database.put(new_relation_name, nj_table);
 		return nj_table;
 	}
+
 
 // =============================================================================
 // This function below reads through a file and inputs the data. This is important so that the
