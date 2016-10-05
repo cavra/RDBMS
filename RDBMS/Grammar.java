@@ -21,7 +21,7 @@ public class Grammar {
 		// Reconnect all double operators
 		String[] operators = {"!", "<", ">", "="};
 		for (int i = 1; i < token_vector.size(); i++) {
-			for (String operator: operators) {
+			for (String operator : operators) {
 				if (token_vector.get(i-1).equals(operator) && token_vector.get(i).equals("=")) {
 					token_vector.set(i-1, operator + "=");
 					token_vector.remove(i);
@@ -37,103 +37,129 @@ public class Grammar {
 				// QUERIES
 				case "<-":
 					System.out.println("QUERY invoked");
-					queryQuery(token_vector);
+					Queries.queryQuery(token_vector);
 					break tokenloop;
 				case "select":
 					System.out.println("SELECT invoked");
-					selectQuery(token_vector);
+					Queries.selectQuery(token_vector);
 					break tokenloop;
 				case "project":
 					System.out.println("PROJECT invoked");
-					projectQuery(token_vector);
+					Queries.projectQuery(token_vector);
 					break tokenloop;
 				case "rename":
 					System.out.println("RENAME invoked");
+					Queries.renameQuery(token_vector);
 					break tokenloop;
 				case "+":
 					System.out.println("SET UNION invoked");
+					Queries.setUnionQuery(token_vector);
 					break tokenloop;
 				case "-":
 					System.out.println("SET DIFFERENCE invoked");
+					Queries.setDifferenceQuery(token_vector);
 					break tokenloop;
 				case "*":
 					System.out.println("CROSS PRODUCT invoked");
+					Queries.crossProductQuery(token_vector);
 					break tokenloop;
 				case "JOIN":
 					System.out.println("NATURAL JOIN invoked");
+					Queries.naturalJoinQuery(token_vector);
 					break tokenloop;
 				// COMMANDS
 				case "CREATE":
 					System.out.println("CREATE TABLE invoked");
-					createCommand(token_vector);
+					Commands.createCommand(token_vector);
 					break tokenloop;
 				case "DROP":
 					System.out.println("DROP TABLE invoked");
-					dropCommand(token_vector);
+					Commands.dropCommand(token_vector);
 					break tokenloop;
 				case "INSERT":
 					System.out.println("INSERT invoked");
-					insertCommand(token_vector);
+					Commands.insertCommand(token_vector);
 					break tokenloop;
 				case "UPDATE":
 					System.out.println("UPDATE ROW invoked");
-					updateCommand(token_vector);
+					Commands.updateCommand(token_vector);
 					break tokenloop;
 				case "DELETE":
 					System.out.println("DELETE ROW invoked");
-					deleteCommand(token_vector);
+					Commands.deleteCommand(token_vector);
 					break tokenloop;
 				case "SHOW":
 					System.out.println("SHOW invoked");
-					showCommand(token_vector);
+					Commands.showCommand(token_vector);
 					break tokenloop;
 				case "OPEN":
 					System.out.println("OPEN invoked");
-					openCommand(token_vector);
+					Commands.openCommand(token_vector);
 					break tokenloop;
 				case "WRITE":
 					System.out.println("OPEN invoked");
-					writeCommand(token_vector);
+					Commands.writeCommand(token_vector);
 					break tokenloop;
 				case "CLOSE":
 					System.out.println("CLOSE invoked");
-					closeCommand(token_vector);
+					Commands.closeCommand(token_vector);
 					break tokenloop;
 				case "EXIT":
 					System.out.println("EXIT invoked");
-					exitCommand();
+					Commands.exitCommand();
 					break tokenloop;
 			}
 		}
 	}
 
+	public static Boolean isRelationName(Vector<String> token_vector) {
+		Boolean value = true;
+	
+		String[] algebraic_expressions = {"select", "project", "rename", "+", "-", "*", "JOIN"};
+		for (int i = 0; i < token_vector.size(); i++) {
+			for (String expression : algebraic_expressions) {
+				if (token_vector.get(i).equals(expression)) {
+					value = false; // Algebraic expression found
+				}
+			}
+		}
+		return value;
+	}
+
 	public static Table evaluateExpression(Vector<String> token_vector) { //eventually return table
-		for (String token : token_vector) {
+		for (int i = 0; i < token_vector.size(); i++) {
+			String token = token_vector.get(i);
 			switch(token) {
 				case "select":
 					System.out.println("SELECT invoked");
-					return selectQuery(token_vector);
+					return Queries.selectQuery(token_vector);
 				case "project":
 					System.out.println("PROJECT invoked");
-					return projectQuery(token_vector);
+					return Queries.projectQuery(token_vector);
 				case "rename":
 					System.out.println("RENAME invoked");
-					return renameQuery(token_vector);
+					return Queries.renameQuery(token_vector);
 				case "+":
 					System.out.println("SET UNION invoked");
-					return setUnionQuery(token_vector);
+					return Queries.setUnionQuery(token_vector);
 				case "-":
 					System.out.println("SET DIFFERENCE invoked");
-					return setDifferenceQuery(token_vector);
+					return Queries.setDifferenceQuery(token_vector);
 				case "*":
 					System.out.println("CROSS PRODUCT invoked");
-					return crossProductQuery(token_vector);
+					return Queries.crossProductQuery(token_vector);
 				case "JOIN":
 					System.out.println("NATURAL JOIN invoked");
-					return naturalJoinQuery(token_vector);
-				// case "(":
-				// 	System.out.println("NESTED EXPRESSION detected");
-				// 	return evaluateExpression( naturalJoinQuery(token_vector);
+					return Queries.naturalJoinQuery(token_vector);
+				 // case "(":
+				 // 	System.out.println("NESTED EXPRESSION detected");
+				 // 	Vector<String> nested_expression_vector = new Vector<String>();
+
+					// // Store the nested expression
+					// for (int j = i + 1; j < token_vector.size(); j++) {
+					// 	nested_expression_vector.add(token_vector.get(j));
+					// }
+					// return evaluateExpression(nested_expression_vector);
 			}
 		}
 		return null;
@@ -174,584 +200,4 @@ public class Grammar {
 		relation_name = relation_name.trim();
 		return relation_name;
 	}
-
-	public static Table createCommand(Vector<String> token_vector) {	
-
-		String relation_name = "";
-		Vector<String> attribtues_vector = new Vector<String>();
-		Vector<String> keys_vector = new Vector<String>();
-
-		// Start the token index at the begining of the relation name
-		Integer token_index = 2;
-
-		// Get the relation name
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals("(")) {
-				token_index = i;
-				break;
-			}
-			else {
-				relation_name += token_vector.get(i) + " ";
-			}
-		}
-		relation_name = relation_name.trim();
-
-		// Get the attribute list
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals("PRIMARY")) {
-				token_index = i;
-				break;
-			}
-			else if (token_vector.get(i).equals("VARCHAR")) {
-				i = i + 2;
-				continue;
-			}
-			else if (token_vector.get(i).equals("INTEGER")) {
-				continue;
-			}
-			else if (!token_vector.get(i).equals("(") && !token_vector.get(i).equals(")")) {
-				attribtues_vector.add(token_vector.get(i));
-			}
-			else {
-				//System.out.println("Skipping token... " + token_vector.get(i));
-			}
-		}
-
-		// Get the primary keys list
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(";")) {
-				token_index = i;
-				break;
-			}
-			else if (token_vector.get(i).equals("PRIMARY") || token_vector.get(i).equals("KEY")) {
-				continue;
-			}
-			else if (!token_vector.get(i).equals("(") && !token_vector.get(i).equals(")")) {
-				keys_vector.add(token_vector.get(i));
-			}			
-			else {
-				//System.out.println("Skipping token... " + token_vector.get(i));				
-			}
-		}
-
-		System.out.println("Table name:" + relation_name);
-		System.out.println("Attribute List:" + attribtues_vector);
-		System.out.println("Primary keys List:" + keys_vector);
-
-		// Convert the arrays to vectors
-		String[] attributes_array = attribtues_vector.toArray(new String[attribtues_vector.size()]);
-		String[] keys_array = keys_vector.toArray(new String[keys_vector.size()]);
-
-		Table new_table = Engine.createTable(relation_name.trim(), attributes_array, keys_array);
-		return new_table;
-	}
-
-	public static void dropCommand(Vector<String> token_vector) {	
-		String relation_name = getRelationName(token_vector);
-		System.out.println("Table Name: " + relation_name);
-		Engine.dropTable(relation_name.trim());
-	}
-
-	public static void insertCommand(Vector<String> token_vector) {
-		String relation_name = "";
-		Vector<String> data_vector = new Vector<String>();
-
-		Integer token_index = 2;
-
-		// Gets the relation name
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals("VALUES")) {
-				token_index = i + 2;
-				break;
-			}
-			else {
-				relation_name += token_vector.get(i) + " ";
-			}
-		}
-		relation_name = relation_name.trim();
-
-		// Get the list of values to be inserted
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(";")) {
-				token_index = i;
-				break;
-			}
-			else if (token_vector.get(i).equals("RELATION")) {
-				token_index = i;
-				Vector<String> new_vec = new Vector<String>();
-				for(int j = token_index; j < token_vector.size(); j++) {
-					new_vec.add(token_vector.get(j));
-				}
-				System.out.println(new_vec);
-			}
-			else if (!token_vector.get(i).equals("(") && !token_vector.get(i).equals(")")) {
-				data_vector.add(token_vector.get(i));
-			}
-			else {
-				//System.out.println("Skipping token... " + token_vector.get(i));
-			}
-		}
-
-		String[] data_array = data_vector.toArray(new String[data_vector.size()]);
-		Engine.insertRow(relation_name.trim(), data_array);
-	}
-
-	public static void updateCommand(Vector<String> token_vector) {
-		String relation_name = "";
-		Vector<String> attribute_type_vector = new Vector<String>();
-		Vector<String> new_attribute_vector = new Vector<String>();
-		Vector<String> condition_vector = new Vector<String>();
-
-		Integer token_index = 1;
-		// Get the relation name
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals("SET")) {
-				token_index = i;
-				break;
-			}
-			else {
-				relation_name += token_vector.get(i) + " ";
-			}
-		}
-		relation_name = relation_name.trim();
-
-		// Get the set of data
-		Integer old_token_index = token_index;
-		for (int i = old_token_index; i < token_vector.size() - 1; i++) {
-			if (token_vector.get(i).equals("WHERE")) {
-				token_index = i + 1;
-				break;
-			}
-			else if (token_vector.get(i+1).equals("=")) {
-				attribute_type_vector.add(token_vector.get(i));
-				new_attribute_vector.add(token_vector.get(i+2));
-			}
-			else {
-				continue;
-			}
-		}
-
-		for (int i = token_index; i < token_vector.size(); i++) {
-			condition_vector.add(token_vector.get(i));
-		}
-
-		System.out.println("Table name:" + relation_name);
-		System.out.println("Attribute Type List:" + attribute_type_vector);
-		System.out.println("New Attribute List:" + new_attribute_vector);
-		System.out.println("Conditions List:" + condition_vector);
-
-		Engine.updateRow(relation_name, attribute_type_vector, new_attribute_vector, condition_vector);
-	}
-
-	public static void deleteCommand(Vector<String> token_vector) {
-		String relation_name = "";
-		Vector<String> condition_vector = new Vector<String>();
-
-		Integer token_index = 2;
-		// Get the relation name
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals("WHERE")) {
-				token_index = i + 1;
-				break;
-			}
-			else {
-				relation_name += token_vector.get(i) + " ";
-			}
-		}
-		relation_name = relation_name.trim();
-
-		for (int i = token_index; i < token_vector.size(); i++) {
-			condition_vector.add(token_vector.get(i));
-		}
-
-		System.out.println("Table name:" + relation_name);
-		System.out.println("Conditions List:" + condition_vector);
-
-		Engine.deleteRow(relation_name, condition_vector);
-	}
-
-	public static void showCommand(Vector<String> token_vector) {
-		String relation_name = getRelationName(token_vector);
-		System.out.println("Table Name: " + relation_name);
-		Engine.show(relation_name.trim());
-	}
-
-	public static void openCommand(Vector<String> token_vector) {	
-		String relation_name = getRelationName(token_vector);
-		System.out.println("Table Name: " + relation_name);
-		Engine.openTable(relation_name.trim()); // Close table???
-	}
-
-	public static void writeCommand(Vector<String> token_vector) {
-		String relation_name = getRelationName(token_vector);
-		System.out.println("Table Name: " + relation_name);
-		Engine.writeTable(relation_name.trim());
-	}
-
-	public static void closeCommand(Vector<String> token_vector) {	
-		String relation_name = getRelationName(token_vector);
-		System.out.println("Table Name: " + relation_name);
-		Engine.closeTable(relation_name.trim());
-	}
-
-	public static void exitCommand() {
-		System.out.println("Program ending");
-		// end program
-	}
-
-	public static void queryQuery(Vector<String> token_vector) {
-		Vector<String> expression_vector = new Vector<String>();
-		String relation_name = "";
-		Integer token_index = 0;
-
-		// Get the new relation name
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals("<-")) {
-				token_index = i + 1;
-				break;
-			}
-			else {
-				relation_name += token_vector.get(i) + " ";
-			}
-		}
-		relation_name = relation_name.trim();
-
-		// Get the expression vector
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(";")) {
-				token_index = i;
-				break;
-			}
-			else {
-				expression_vector.add(token_vector.get(i));
-			}
-		}
-
-		System.out.println("Table Name: " + relation_name);
-		System.out.println("Expressions List (or table name): " + expression_vector);
-
-		Table expression_table = evaluateExpression(expression_vector);
-		Engine.relations_database.put(relation_name, expression_table);
-	}
-
-	public static Table selectQuery(Vector<String> token_vector) {
-		Vector<String> condition_vector = new Vector<String>();
-		Vector<String> expression_vector = new Vector<String>();
-		Integer token_index = 2;
-
-		// Get the condition vector
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(")")) { 
-				condition_vector.add(token_vector.get(i)); // Keep parentheses for evaluating conditions
-				token_index = i + 1;
-				break;
-			}
-			else {
-				condition_vector.add(token_vector.get(i));
-			}
-		}
-
-		// Get the expression vector
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(";")) {
-				expression_vector.add(token_vector.get(i)); // Keep semicolon for evaluating expressions
-				token_index = i;
-				break;
-			}
-			else {
-				expression_vector.add(token_vector.get(i));
-			}
-		}
-
-		System.out.println("Conditions List:" + condition_vector);
-		System.out.println("Expressions List (or table name): " + expression_vector);
-
-		// Check if expression vector contains just a table name
-		if (Engine.tableExists(expression_vector.get(0))) {
-			Table selection_table = Engine.selection(expression_vector.get(0), condition_vector);
-			return selection_table;
-		}
-		// Evaluate the expression
-		else {
-			Table expression_table = evaluateExpression(expression_vector);
-			Table selection_table = Engine.selection(expression_table.relation_name, condition_vector);
-			return selection_table;
-		}
-	}
-
-	public static Table projectQuery(Vector<String> token_vector){
-		Vector<String> attribute_list_vector = new Vector<String>();
-		Vector<String> expression_vector = new Vector<String>();
-		Integer token_index = 1;
-
-		// Move the token_index to the beginning of the attribute list
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals("(")) { 
-				token_index = i + 1;
-				break;
-			}
-		}
-
-		// Get the attribute list vector
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(")")) { 
-				token_index = i + 1;
-				break;
-			}
-			else {
-				attribute_list_vector.add(token_vector.get(i));
-			}
-		}
-
-		// Get the expression vector
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(";")) {
-				expression_vector.add(token_vector.get(i)); // Keep semicolon for evaluating expressions
-				token_index = i;
-				break;
-			}
-			else {
-				expression_vector.add(token_vector.get(i));
-			}
-		}
-
-		System.out.println("Attributes List:" + attribute_list_vector);
-		System.out.println("Expressions List (or table name): " + expression_vector);
-
-		// Check if expression vector contains just a table name
-		if (Engine.tableExists(expression_vector.get(0))) {
-			Table selection_table = Engine.projection(expression_vector.get(0), attribute_list_vector);
-			return selection_table;
-		}
-		// Evaluate the expression
-		else {
-			Table expression_table = evaluateExpression(expression_vector);
-			Table selection_table = Engine.projection(expression_table.relation_name, attribute_list_vector);
-			return selection_table;
-		}
-	}
-
-	// This function is the same as project, except it calls rename at the end
-	// Which isn't defined in the engine yet
-	public static Table renameQuery(Vector<String> token_vector){
-		Vector<String> attribute_list_vector = new Vector<String>();
-		Vector<String> expression_vector = new Vector<String>();
-		Integer token_index = 1;
-
-		// Move the token_index to the beginning of the attribute list
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals("(")) { 
-				token_index = i + 1;
-				break;
-			}
-		}
-
-		// Get the attribute list vector
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(")")) { 
-				token_index = i + 1;
-				break;
-			}
-			else {
-				attribute_list_vector.add(token_vector.get(i));
-			}
-		}
-
-		// Get the expression vector
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(";")) {
-				expression_vector.add(token_vector.get(i)); // Keep semicolon for evaluating expressions
-				token_index = i;
-				break;
-			}
-			else {
-				expression_vector.add(token_vector.get(i));
-			}
-		}
-
-		System.out.println("Attributes List:" + attribute_list_vector);
-		System.out.println("Expressions List (or table name): " + expression_vector);
-
-		// Check if expression vector contains just a table name
-		if (Engine.tableExists(expression_vector.get(0))) {
-			//Table selection_table = Engine.projection(expression_vector.get(0), attribute_list_vector);
-			//return selection_table;
-		}
-		// Evaluate the expression
-		else {
-			Table expression_table = evaluateExpression(expression_vector);
-			//Table selection_table = Engine.projection(expression_table.relation_name, attribute_list_vector);
-			//return selection_table;
-		}
-		return null;
-	}
-
-	public static Table setUnionQuery(Vector<String> token_vector) {
-		Vector<String> expression_vector1 = new Vector<String>();
-		Vector<String> expression_vector2 = new Vector<String>();
-		Integer token_index = 0;
-
-		// Store the first expression
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals("+")) { 
-				token_index = i + 1;
-				break;
-			}
-			else {
-				expression_vector1.add(token_vector.get(i));
-			}
-		}
-
-		// Store the second expression
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(";")) { 
-				token_index = i + 1;
-				break;
-			}
-			else {
-				expression_vector2.add(token_vector.get(i));
-			}
-		}
-
-		// // Check if expression vector contains just a table name
-		// if (Engine.tableExists(expression_vector1.get(0))) {
-		// }
-		// // Evaluate the expression
-		// else {
-		// 	Table expression_table = evaluateExpression(expression_vector);
-		// 	//Table selection_table = Engine.projection(expression_table.relation_name, attribute_list_vector);
-		// 	return selection_table;
-		// }
-
-		Table set_union_table = Engine.setUnion("Temp Set Union Table", expression_vector1.get(0), expression_vector2.get(0));
-
-		return set_union_table;
-	}
-
-	public static Table setDifferenceQuery(Vector<String> token_vector){
-		Vector<String> expression_vector1 = new Vector<String>();
-		Vector<String> expression_vector2 = new Vector<String>();
-		Integer token_index = 0;
-
-		// Store the first expression
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals("-")) { 
-				token_index = i + 1;
-				break;
-			}
-			else {
-				expression_vector1.add(token_vector.get(i));
-			}
-		}
-
-		// Store the second expression
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(";")) { 
-				token_index = i + 1;
-				break;
-			}
-			else {
-				expression_vector2.add(token_vector.get(i));
-			}
-		}
-
-		// // Check if expression vector contains just a table name
-		// if (Engine.tableExists(expression_vector1.get(0))) {
-		// }
-		// // Evaluate the expression
-		// else {
-		// 	Table expression_table = evaluateExpression(expression_vector);
-		// 	//Table selection_table = Engine.projection(expression_table.relation_name, attribute_list_vector);
-		// 	return selection_table;
-		// }
-
-		Table set_difference_table = Engine.setDifference("Temp Set Difference Table", expression_vector1.get(0), expression_vector2.get(0));
-
-		return set_difference_table;	
-	}
-
-	public static Table crossProductQuery(Vector<String> token_vector){
-		Vector<String> expression_vector1 = new Vector<String>();
-		Vector<String> expression_vector2 = new Vector<String>();
-		Integer token_index = 0;
-
-		// Store the first expression
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals("*")) { 
-				token_index = i + 1;
-				break;
-			}
-			else {
-				expression_vector1.add(token_vector.get(i));
-			}
-		}
-
-		// Store the second expression
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(";")) { 
-				token_index = i + 1;
-				break;
-			}
-			else {
-				expression_vector2.add(token_vector.get(i));
-			}
-		}
-
-		// // Check if expression vector contains just a table name
-		// if (Engine.tableExists(expression_vector1.get(0))) {
-		// }
-		// // Evaluate the expression
-		// else {
-		// 	Table expression_table = evaluateExpression(expression_vector);
-		// 	//Table selection_table = Engine.projection(expression_table.relation_name, attribute_list_vector);
-		// 	return selection_table;
-		// }
-
-		Table cross_product_table = Engine.crossProduct("Temp Cross Product Table", expression_vector1.get(0), expression_vector2.get(0));
-
-		return cross_product_table;
-	}
-
-	public static Table naturalJoinQuery(Vector<String> token_vector){
-		Vector<String> expression_vector1 = new Vector<String>();
-		Vector<String> expression_vector2 = new Vector<String>();
-		Integer token_index = 0;
-
-		// Store the first expression
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals("join")) { 
-				token_index = i + 1;
-				break;
-			}
-			else {
-				expression_vector1.add(token_vector.get(i));
-			}
-		}
-
-		// Store the second expression
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(";")) { 
-				token_index = i + 1;
-				break;
-			}
-			else {
-				expression_vector2.add(token_vector.get(i));
-			}
-		}
-
-		// // Check if expression vector contains just a table name
-		// if (Engine.tableExists(expression_vector1.get(0))) {
-		// }
-		// // Evaluate the expression
-		// else {
-		// 	Table expression_table = evaluateExpression(expression_vector);
-		// 	//Table selection_table = Engine.projection(expression_table.relation_name, attribute_list_vector);
-		// 	return selection_table;
-		// }
-
-		Table natural_join_table = Engine.naturalJoin("Temp Natural Join Table", expression_vector1.get(0), expression_vector2.get(0));
-
-		return natural_join_table;
-	}
-
 }

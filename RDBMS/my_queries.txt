@@ -13,6 +13,7 @@ CREATE TABLE plants (name VARCHAR(20), kind VARCHAR(8), years INTEGER) PRIMARY K
 INSERT INTO plants VALUES FROM ("Pine", "Tree", 40);
 INSERT INTO plants VALUES FROM ("Rose", "Flower", 10);
 INSERT INTO plants VALUES FROM ("Deadbush", "Bush", 31);
+INSERT INTO plants VALUES FROM ("Tweety", "bird", 1);
 
 SHOW plants;
 
@@ -24,8 +25,8 @@ DELETE FROM animals WHERE name == "Joe";
 
 SHOW animals;
 
-birds <- select (kind == "bird") animals;
-SHOW birds;
+s <- select (kind == "bird") animals;
+SHOW s;
 
 p <- (project (name, kind) animals);
 SHOW p;
@@ -38,6 +39,9 @@ SHOW d;
 
 cp <- animals * plants;
 SHOW cp;
+
+SHOW animals;
+SHOW plants;
 
 j <- animals JOIN plants;
 SHOW j;
