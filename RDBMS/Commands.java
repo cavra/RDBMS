@@ -41,7 +41,7 @@ public class Commands {
 				attribtues_vector.add(token_vector.get(i));
 			}
 			else {
-				System.out.println("Skipping token... " + token_vector.get(i));
+				//System.out.println("Skipping token... " + token_vector.get(i));
 			}
 		}
 
@@ -58,7 +58,7 @@ public class Commands {
 				keys_vector.add(token_vector.get(i));
 			}			
 			else {
-				System.out.println("Skipping token... " + token_vector.get(i));				
+				//System.out.println("Skipping token... " + token_vector.get(i));				
 			}
 		}
 
@@ -82,7 +82,7 @@ public class Commands {
 
 	public static void insertCommand(Vector<String> token_vector) {
 		String relation_name = "";
-		Vector<String> data_vector = new Vector<String>();
+		Vector<String> expression_vector = new Vector<String>();
 
 		Integer token_index = 2;
 
@@ -98,29 +98,40 @@ public class Commands {
 		}
 		relation_name = relation_name.trim();
 
-		// Get the list of values to be inserted
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(";")) {
-				token_index = i;
-				break;
-			}
-			else if (token_vector.get(i).equals("RELATION")) {
-				token_index = i;
-				Vector<String> new_vec = new Vector<String>();
-				for(int j = token_index; j < token_vector.size(); j++) {
-					new_vec.add(token_vector.get(j));
+		if (token_vector.get(token_index).equals("(")) {
+			// Get the list of values to be inserted
+			for (int i = token_index; i < token_vector.size(); i++) {
+				if (token_vector.get(i).equals(";")) {
+					token_index = i;
+					break;
+				}
+				else if (!token_vector.get(i).equals("(") && !token_vector.get(i).equals(")")) {
+					expression_vector.add(token_vector.get(i));
+				}
+				else {
+					//System.out.println("Skipping token... " + token_vector.get(i));
 				}
 			}
-			else if (!token_vector.get(i).equals("(") && !token_vector.get(i).equals(")")) {
-				data_vector.add(token_vector.get(i));
+
+			String[] data_array = expression_vector.toArray(new String[expression_vector.size()]);
+			Engine.insertRow(relation_name.trim(), data_array);
+		}
+		else if (token_vector.get(token_index).equals("RELATION")) {
+			for (int i = token_index; i < token_vector.size(); i++) {
+				if (token_vector.get(i).equals(";")) {
+					break;
+				}
+				else {
+					expression_vector.add(token_vector.get(i));
+				}
 			}
-			else {
-				System.out.println("Skipping token... " + token_vector.get(i));
+			Table expression_table = Grammar.evaluateExpression(expression_vector);
+			for (int i = 1; i < expression_table.attribute_table.size(); i++) {
+				Vector<String> row = expression_table.attribute_table.get(i);
+				String[] data_array = row.toArray(new String[row.size()]);
+				Engine.insertRow(relation_name.trim(), data_array);
 			}
 		}
-
-		String[] data_array = data_vector.toArray(new String[data_vector.size()]);
-		Engine.insertRow(relation_name.trim(), data_array);
 	}
 
 	public static void updateCommand(Vector<String> token_vector) {

@@ -186,12 +186,12 @@ Cory Avra - Begin work on the Interactive System, finish parser and engine
 
 **10/06/16**
 
-Met at annex<br/>
+Met at annex from 1 - 6<br/>
 @Completed<br/>
-Reed Spivey - <br/>
-Jason Alonzo - <br/>
-Cory Avra - Created Client.java and Server.java, basic functionality<br/>
+Reed Spivey - Worked on cases for user input<br/>
+Jason Alonzo - Worked on cases for user input<br/>
+Cory Avra - Created Client.java and Server.java, basic functionality, worked on parser and engine (specifically, recursive expressions and queries)<br/>
 @TODO<br/>
-Reed Spivey - Work on Interactive System<br/>
-Jason Alonzo - Work on Interactive System<br/>
-Cory Avra - Work on Interactive System
+Reed Spivey - Continue working on cases for user input<br/>
+Jason Alonzo - Continue working on cases for user input<br/>
+Cory Avra - Finish engine and parser, begin working on cases for user input

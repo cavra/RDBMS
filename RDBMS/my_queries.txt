@@ -1,5 +1,4 @@
 CREATE TABLE animals (name VARCHAR(20), kind VARCHAR(8), years INTEGER) PRIMARY KEY (name, kind);
-
 INSERT INTO animals VALUES FROM ("Joe", "cat", 4);
 INSERT INTO animals VALUES FROM ("Spot", "dog", 10);
 INSERT INTO animals VALUES FROM ("Snoopy", "dog", 3);
@@ -8,43 +7,25 @@ INSERT INTO animals VALUES FROM ("Joe", "bird", 2);
 
 SHOW animals;
 
-CREATE TABLE plants (name VARCHAR(20), kind VARCHAR(8), age INTEGER) PRIMARY KEY (name, kind);
+dogs <- select (kind == "dog") animals;
+SHOW dogs;
 
-INSERT INTO plants VALUES FROM ("Pine", "Tree", 40);
-INSERT INTO plants VALUES FROM ("Rose", "Flower", 10);
-INSERT INTO plants VALUES FROM ("Deadbush", "Bush", 31);
-INSERT INTO plants VALUES FROM ("Tweety", "bird", 10);
+old_dogs <- select (years > 8) dogs;
+SHOW old_dogs;
 
-SHOW plants;
+cats_or_dogs <- dogs + (select (kind == "cat") animals);
+SHOW cats_or_dogs;
 
-UPDATE animals SET kind = "dog", years = 10 WHERE name == "Snoopy";
-UPDATE animals SET kind = "bird", years = 12 WHERE name == "Tweety" && (kind=="human" || kind=="raptor");
+CREATE TABLE species (kind VARCHAR(10)) PRIMARY KEY (kind);
+INSERT INTO species VALUES FROM RELATION project (kind) animals;
+SHOW species;
 
-DELETE FROM animals WHERE name == "Spot";
-DELETE FROM animals WHERE name == "Joe";
+a <- rename (aname, akind) (project (name, kind) animals);
+common_names <- project (name) (select (aname == name && akind != kind) (a * animals));
+answer <- common_names;
+SHOW answer;
 
-SHOW animals;
+WRITE animals;
+CLOSE animals;
 
-s <- select (kind == "bird") animals;
-SHOW s;
-
-p <- (project (name, kind) animals);
-SHOW p;
-
-r <- rename (rname, rkind) p;
-SHOW r;
-
-u <- animals + plants;
-SHOW u;
-
-d <- animals - plants;
-SHOW d;
-
-cp <- animals * plants;
-SHOW cp;
-
-SHOW animals;
-SHOW plants;
-
-j <- animals JOIN plants;
-SHOW j;
+EXIT;

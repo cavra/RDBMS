@@ -112,24 +112,47 @@ public class Grammar {
 		}
 	}
 
-	public static Boolean isRelationName(Vector<String> token_vector) {
-		Boolean value = true;
-	
-		String[] algebraic_expressions = {"select", "project", "rename", "+", "-", "*", "JOIN"};
+	public static Integer skipTokens(Vector<String> token_vector, String token) {
 		for (int i = 0; i < token_vector.size(); i++) {
-			for (String expression : algebraic_expressions) {
-				if (token_vector.get(i).equals(expression)) {
-					value = false; // Algebraic expression found
-				}
+			if (!token_vector.get(i).equalsIgnoreCase(token)) {
+				return i;
 			}
 		}
-		return value;
+		return 0;
 	}
 
-	public static Table evaluateExpression(Vector<String> token_vector) { //eventually return table
+	public static Integer skipToToken(Vector<String> token_vector, Integer token_index, String token) {
+		for (int i = token_index; i < token_vector.size(); i++) {
+			if (token_vector.get(i).equalsIgnoreCase(token)) {
+				return i;
+			}
+		}
+		return 0;
+	}
+
+	public static Vector<String> retrieveTokens(Vector<String> token_vector, Integer token_index, String token, Boolean value) {
+		Vector<String> temp_vector = new Vector<String>();
+
+		for (int i = token_index; i < token_vector.size(); i++) {
+			if (token_vector.get(i).equals(token)) {
+				token_index = i + 1;
+				if (value) {
+					temp_vector.add(token_vector.get(i));			
+				}
+				break;
+			}
+			else {
+				temp_vector.add(token_vector.get(i));
+			}
+		}
+		return temp_vector;
+	}
+
+	public static Table evaluateExpression(Vector<String> token_vector) {
+		// Start off by evaluating the expression
 		for (int i = 0; i < token_vector.size(); i++) {
 			String token = token_vector.get(i);
-			switch(token) {
+			switch(token.toLowerCase()) {
 				case "select":
 					System.out.println("SELECT invoked");
 					return Queries.selectQuery(token_vector);
@@ -148,23 +171,49 @@ public class Grammar {
 				case "*":
 					System.out.println("CROSS PRODUCT invoked");
 					return Queries.crossProductQuery(token_vector);
-				case "JOIN":
+				case "join":
 					System.out.println("NATURAL JOIN invoked");
 					return Queries.naturalJoinQuery(token_vector);
-				 // case "(":
-				 // 	System.out.println("NESTED EXPRESSION detected");
-				 // 	Vector<String> nested_expression_vector = new Vector<String>();
-
-					// // Store the nested expression
-					// for (int j = i + 1; j < token_vector.size(); j++) {
-					// 	nested_expression_vector.add(token_vector.get(j));
-					// }
-					// return evaluateExpression(nested_expression_vector);
 			}
 		}
-		return null;
+
+		// If no expression is found, check if it is just a relation name
+		if (isRelationName(token_vector)) {
+			Table retrieved_table = Engine.relations_database.get(token_vector.get(0));
+			return retrieved_table;
+		}
+		// No relation name or expression found
+		else {
+			return null;
+		}
 	}
  
+	public static Boolean isRelationName(Vector<String> token_vector) {
+		Boolean value = true;
+		Integer token_index = 0;
+
+		// Remove leading parentheses
+		for (int i = token_index; i < token_vector.size(); i++) {
+			if (token_vector.get(i).equals("(")) {
+				token_index = i + 1;
+			}
+			else {
+				break;
+			}
+		}
+
+		// Check if next token is a relation name
+		String[] algebraic_expressions = {"select", "project", "rename", "+", "-", "*", "JOIN"};
+		for (int i = token_index; i < token_vector.size(); i++) {
+			for (String expression : algebraic_expressions) {
+				if (token_vector.get(i).equals(expression)) {
+					value = false; // Algebraic expression found
+				}
+			}
+		}
+		return value;
+	}
+
 	public static String getRelationName(Vector<String> token_vector) {
 		String relation_name = "";
 
@@ -176,7 +225,7 @@ public class Grammar {
 			token_vector.contains("*") ||
 			token_vector.contains("JOIN")) {
 				System.out.println("Nested table detected in getRelationName");
-				System.out.println("(Need to handle this!!!)");
+				System.out.println("(This shouldn't happen!)");
 		}
 		else {
 			for (String token : token_vector) {
@@ -188,8 +237,7 @@ public class Grammar {
 					token.equals("TABLE")) {
 					continue;
 				}
-				else if (token.equals(";") ||
-					token.equals("<-")) {
+				else if (token.equals(";")) {
 					break;
 				}
 				else {

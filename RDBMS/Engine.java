@@ -17,6 +17,7 @@ public class Engine {
 		Table table = relations_database.get(relation_name);
 		if (table != null){
 			System.out.println("Error: Table already exists. Failed to create.");
+			return table;
 		}
 		else {
 			// Returns a table initialized with ID and wanted attributes
@@ -28,7 +29,6 @@ public class Engine {
 			System.out.println("Created table: " + relation_name);
 			return new_table;
 		}
-		return table;
 	}
 	
 // =============================================================================
@@ -175,12 +175,14 @@ public class Engine {
 		Table table = relations_database.get(relation_name);
 		if (table == null) {
 			System.out.println("Error: Cannot select from table; table doesn't exist.");
+			return null;
 		}
 		else{
 			Table selection_table = new Table("Selection from " + relation_name, table.attributes, table.primary_keys);	
 
 			// Loop through all the rows of a table
-			for (Vector<String> row : table.attribute_table) {
+			for (int i = 1; i < table.attribute_table.size(); i++) {
+				Vector<String> row = table.attribute_table.get(i);
 				if (parseConditions(table, row, tokenized_conditions)) {
 					// Row has met the condition, add it to the selection table
 					selection_table.addRow(row);
@@ -188,7 +190,6 @@ public class Engine {
 			}
 			return selection_table;		
 		}
-		return null;
 	}
 
 // =============================================================================
@@ -447,7 +448,6 @@ public class Engine {
                    		 	}
 						}
 					}
-					System.out.println(combined_row);
 					nj_table.addRow(combined_row);
 				}
 			}
@@ -575,6 +575,11 @@ public class Engine {
 				value = evaluateCondition(table, row, comparison_vector);
 				break;
 			}
+			else if (i == token_vector.size() - 1) {
+				comparison_vector.add(token_vector.get(i));
+				value = evaluateCondition(table, row, comparison_vector);	
+				break;			
+			}
 			// Handle the && operator
 			else if (token_vector.get(i).equals("&&")) {
 				Vector<String> and_comparison_vector = new Vector<String>();
@@ -612,13 +617,30 @@ public class Engine {
 // =============================================================================
 
 	public static Boolean evaluateCondition(Table table, Vector<String> row, Vector<String> condition_vector){
-		Integer attribute_index = table.getAttributeIndex(condition_vector.get(0)); // kind -> 2
-		String operator = condition_vector.get(1); // "=="
-		String qualificator = condition_vector.get(2); // "dog"
+		Integer attribute1_index = table.getAttributeIndex(condition_vector.firstElement()); // kind -> 2
+		Integer attribute2_index = table.getAttributeIndex(condition_vector.lastElement()); // akind -> 2
+		String attribute1 = "";
+		String attribute2 = "";
 		Boolean value = false; // default to false
 
+		if (attribute1_index < 0) {
+			attribute1 = condition_vector.get(0);
+		}
+		else {
+			attribute1 = row.get(attribute1_index);
+		}
+
+		String operator = condition_vector.get(1);
+
+		if (attribute2_index < 0) {
+			attribute2 = condition_vector.get(2);
+		}
+		else {
+			attribute2 = row.get(attribute2_index);
+		}
+
 		// If the attribute exists, and the row meets the condition...
-		if (attribute_index >= 0 && checkCondition(row.get(attribute_index), operator, qualificator)){
+		if (checkCondition(attribute1, operator, attribute2)){
 			value = true;
 		}
 		return value;
@@ -627,36 +649,37 @@ public class Engine {
 // =============================================================================
 // =============================================================================
 
-	public static Boolean checkCondition(String attribute, String operator, String qualificator){
+	public static Boolean checkCondition(String attribute1, String operator, String attribute2){
 		String integer_regex = "[0-9]+";
-		
+		Boolean value = false; // default to false
+
 		// INTEGER case
-		if ((attribute.matches(integer_regex)) && (qualificator.matches(integer_regex))){
+		if ((attribute1.matches(integer_regex)) && (attribute2.matches(integer_regex))){
 			switch(operator){
 				case ">": 
-					return (Integer.parseInt(attribute) > Integer.parseInt(qualificator));
+					value = (Integer.parseInt(attribute1) > Integer.parseInt(attribute2));
 				case "<": 
-					return (Integer.parseInt(attribute) < Integer.parseInt(qualificator));
+					value = (Integer.parseInt(attribute1) < Integer.parseInt(attribute2));
 				case ">=": 
-					return (Integer.parseInt(attribute) >= Integer.parseInt(qualificator));
+					value = (Integer.parseInt(attribute1) >= Integer.parseInt(attribute2));
 				case "<=": 
-					return (Integer.parseInt(attribute) >= Integer.parseInt(qualificator));
+					value = (Integer.parseInt(attribute1) >= Integer.parseInt(attribute2));
 				case "==": 
-					return attribute.equals(qualificator);
+					value = attribute1.equals(attribute2);
 				case "!=": 
-					return attribute != qualificator;
+					value = attribute1 != attribute2;
 			}
 		}
 		// VARCHAR case
 		else {
 			switch(operator){
 				case "==": 
-					return attribute.equals(qualificator);
+					value = Objects.equals(attribute1, attribute2);
 				case "!=": 
-					return !attribute.equals(qualificator);
+					value = !Objects.equals(attribute1, attribute2);
 			}
 		}
-		return false;
+		return value;
 	}
 
 	public static Boolean tableExists(String relation_name) {
