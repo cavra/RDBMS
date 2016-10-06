@@ -7,9 +7,7 @@ public class Attribute {
 	int varchar_length;
 
 	Attribute(Vector<String> attr_vector){
-		String attr_name = "";
-
-		// This retrieves the name of the attribute
+		// Retrieve the attribute name
 		for (int i = 0; i < attr_vector.size(); i++) {
 			if (attr_vector.get(i).equals("VARCHAR")) {
 				attribute_type = attr_vector.get(i);
@@ -21,10 +19,10 @@ public class Attribute {
 				break;
 			}
 			else {
-				attr_name += attr_vector.get(i) + " ";
+				atttribute_name += attr_vector.get(i) + " ";
 			}
 		}
-		attr_name = attr_name.trim();
+		atttribute_name = atttribute_name.trim();
 	}
 
 	public boolean isValid(String attr){
@@ -43,5 +41,4 @@ public class Attribute {
 		else
 			return false;
 	}
-
 }

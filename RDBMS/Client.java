@@ -1,11 +1,18 @@
 import java.io.*;
 import java.net.*;
+import java.util.Scanner;
 
 public class Client{
     Socket requestSocket;
     ObjectOutputStream out;
     ObjectInputStream in;
     String message;
+    Scanner scanner = new Scanner(System.in);
+   
+    public static void main(String args[]) {
+        Client client = new Client();
+        client.run();
+    }
 
     Client(){}
 
@@ -24,26 +31,26 @@ public class Client{
             do {
                 try {
                     message = (String)in.readObject();
-                    System.out.println("server>" + message);
-                    sendMessage("Hi my server");
-                    message = "bye";
+                    System.out.println("Server> " + message);
+                    System.out.print("Client> ");
+                    message = scanner.nextLine();
                     sendMessage(message);
                 }
-                catch(ClassNotFoundException classNot){
-                    System.err.println("data received in unknown format");
+                catch(ClassNotFoundException classNot) {
+                    System.err.println("Data received in unknown format");
                 }
-            }
-            while(!message.equals("bye"));
+            } while (!message.equals("EXIT;"));
         }
-        catch(UnknownHostException unknownHost){
+        catch(UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
         }
-        catch(IOException ioException){
+        catch(IOException ioException) {
             ioException.printStackTrace();
         }
-        finally{
-            //4: Closing connection
-            try{
+        finally {
+            // Close the connection
+            try {
+                System.out.println("Client connection closed");
                 in.close();
                 out.close();
                 requestSocket.close();
@@ -53,20 +60,13 @@ public class Client{
             }
         }
     }
-    void sendMessage(String msg)
-    {
-        try{
+    void sendMessage(String msg) {
+        try {
             out.writeObject(msg);
             out.flush();
-            System.out.println("client>" + msg);
         }
-        catch(IOException ioException){
+        catch(IOException ioException) {
             ioException.printStackTrace();
         }
-    }
-    public static void main(String args[])
-    {
-        Client client = new Client();
-        client.run();
     }
 }

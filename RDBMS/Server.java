@@ -8,6 +8,13 @@ public class Server{
     ObjectInputStream in;
     String message;
 
+    public static void main(String args[]) {
+        Server server = new Server();
+        //while(true) {
+        server.run();
+        //}
+    }
+
     Server(){}
 
     void run() {
@@ -25,28 +32,29 @@ public class Server{
             out.flush();
             in = new ObjectInputStream(connection.getInputStream());
             sendMessage("Connection successful");
-            
+
             // The two parts communicate via the input and output streams
             do {
                 try {
                     message = (String)in.readObject();
-                    System.out.println("client>" + message);
-                    if (message.equals("bye")) {
-                        sendMessage("bye");
+                    System.out.println("Client> " + message);
+                    sendMessage("Command received!");
+                    if (message.equals("EXIT;")) {
+                        sendMessage("Goodbye!");
                     }
                 }
                 catch(ClassNotFoundException classnot) {
                     System.err.println("Data received in unknown format");
                 }
-            }
-            while(!message.equals("bye"));
+            } while (!message.equals("EXIT;")); 
         }
-        catch(IOException ioException){
+        catch(IOException ioException) {
             ioException.printStackTrace();
         }
-        finally{
-            //4: Closing connection
-            try{
+        finally {
+            // Close the connection
+            try {
+                System.out.println("Server connection closed");
                 in.close();
                 out.close();
                 serverSocket.close();
@@ -56,22 +64,14 @@ public class Server{
             }
         }
     }
-    void sendMessage(String msg)
-    {
-        try{
+    void sendMessage(String msg) {
+        try {
             out.writeObject(msg);
             out.flush();
-            System.out.println("server>" + msg);
+            System.out.println("Server> " + msg);
         }
-        catch(IOException ioException){
+        catch(IOException ioException) {
             ioException.printStackTrace();
-        }
-    }
-    public static void main(String args[])
-    {
-        Server server = new Server();
-        while(true){
-            server.run();
         }
     }
 }

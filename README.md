@@ -70,14 +70,17 @@ This group project is only partially complete. As of right now, all we have is t
 
 **9/12/16**
 
-Met at annex to develop understanding of project and discuss ideas
+Met at annex<br/>
+Developed understanding of project and discussed ideas
 
 **9/14/16**
 
+Met at annex<br/>
 Collaborated together on how to approach project
 
 **9/18/16**
 
+Met at annex<br/>
 Collaborated together on ALL ideas + intro of Design Document<br/>
 Reed Spivey - Engine/Parser section of Design Document<br/>
 Jason Alonzo - Engine/Parser section of Design Document<br/>
@@ -87,11 +90,13 @@ Cory Avra - Interactive System section of Design Document
 
 **9/19/16**
 
+Met at annex<br/>
 Creating Sport, Team, Player classes<br/>
 Create a Array of Strings for each class
 
 **9/21/16**
 
+Met at annex<br/>
 Created table class<br/>
 Completed create table function<br/>
 Removed Player, Team, and Sport Class<br/>
@@ -104,16 +109,19 @@ DBMS now represented as HashMap hashmap storing String Vectors, keyed with Strin
 
 **9/22/16**
 
+Met at annex<br/>
 Reed Spivey - Finished Natural Join function
 
 **9/24/16**
 
+Met at annex<br/>
 Reed Spivey - Worked on Projection<br/>
 Jason Alonzo - Worked on Set Union<br/>
 Cory Avra - Write and read functions
 
 **9/25/16**
 
+Met at annex<br/>
 Reed Spivey - Projection/cleaned code<br/>
 Jason Alonzo - Set Union & Set difference/wrote print statements for successes<br/>
 Cory Avra - Cross product, Testing, Re-wrote functions
@@ -122,42 +130,51 @@ Cory Avra - Cross product, Testing, Re-wrote functions
 
 **9/26/16**
 
+Met at annex<br/>
 Reed Spivey - Worked on revising Design Documents<br/>
 Jason Alonzo - Worked on testing framework<br/>
 Cory Avra - Worked on cleaning code
 
 **9/27/16**
 
+Met at annex<br/>
 Reed Spivey - Revised engine section of Design Documents, worked on Change Log<br/>
 Jason Alonzo - Worked Change Log framework<br/>
 Cory Avra - Revised Interactive System and Parser sections of Design Documents, worked on Change Log
 
 **9/28/16**
 
+Met at annex<br/>
 Reed Spivey - Worked on recursive data structure design<br/>
 Jason Alonzo - Worked on recursive data structure design<br/>
 Cory Avra - Worked on regex for parser
 
 **9/29/16**
 
+Met at annex<br/>
 Reed Spivey - Continued work on recursive data structure design<br/>
 Jason Alonzo - Continued work on recursive data structure design<br/>
 Cory Avra - Continued Worked on regex for parser
 
 **10/02/16**
 
+Met at annex<br/>
 Reed Spivey - Continued work on recursive data structure design<br/>
 Jason Alonzo - Continued work on recursive data structure design<br/>
 Cory Avra - Revised regex designs, worked on a better implementation
 
+#### Week 4: Interactive System
+
 **10/03/16**
 
+Met at annex<br/>
 Reed Spivey - Worked on various functions for parser<br/>
 Jason Alonzo - Worked on various functions for parser<br/>
-Cory Avra - Scrapped regex, now using tokenizer, Worked on various functions for parser
+Cory Avra - Scrapped regex, now using tokenizer, worked on various functions for parser
 
 **10/04/16**
 
+Met at annex<br/>
 @Completed<br/>
 Reed Spivey - Worked on Attribtue.java<br/>
 Jason Alonzo - Worked on test functions and changelog for engine resubmission<br/>
@@ -167,3 +184,14 @@ Reed Spivey - Finish Attribute class<br/>
 Jason Alonzo - Begin work on the Interactive System<br/>
 Cory Avra - Begin work on the Interactive System, finish parser and engine
 
+**10/06/16**
+
+Met at annex<br/>
+@Completed<br/>
+Reed Spivey - <br/>
+Jason Alonzo - <br/>
+Cory Avra - Created Client.java and Server.java, basic functionality<br/>
+@TODO<br/>
+Reed Spivey - Work on Interactive System<br/>
+Jason Alonzo - Work on Interactive System<br/>
+Cory Avra - Work on Interactive System
