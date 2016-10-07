@@ -10,12 +10,13 @@ public class Server{
     String message;
     String choice;
     Scanner scanner = new Scanner(System.in);
+    Boolean commanding = false;
 
     public static void main(String args[]) {
         Server server = new Server();
-        //while(true) {
-        server.run();
-        //}
+        while(true){
+        	server.run();
+        }
     }
 
     Server(){}
@@ -38,57 +39,68 @@ public class Server{
 
             // The two parts communicate via the input and output streams
             do {
-                try {
-			    	message = (String)in.readObject();
-			        System.out.println("Client> " + message);
+				try {
+					if (!commanding) {
+						message = (String)in.readObject();
+						System.out.println("Client> " + message);
 
-			        switch(message){
-			            case "HELP":
-			                sendMessage(listCommands());
-			                break;
-			            case "NEW":
-			                sendMessage(newCommand());
-			                break;
-			            case "ADD":
-			            case "TRADE":
-			            case "CHANGE":
-			            case "RENAME":
-			            case "REMOVE":
-			            case "PRINT":
-			            case "SAVE":
-			            case "DELETE":
-			            case "QUERY":
-			            default: 
-			                sendMessage("Invalid Command. Input 'HELP' for list of commands.");
-			                break;
-			        }
-			        if (message.equals("EXIT;")) {
-			            sendMessage("Goodbye!");
-			        }                }
-                catch(ClassNotFoundException classnot) {
-                    System.err.println("Data received in unknown format");
-                }
-            } while (!message.equals("EXIT;")); 
+						switch(message.toUpperCase()) {
+						    case "HELP":
+						        sendMessage(listCommands());
+						        break;
+						    case "NEW":
+						        commanding = true;
+						        newCommand();
+						        //commanding = false;
+						        break;
+						    case "ADD":
+						    case "TRADE":
+						    case "CHANGE":
+						    case "RENAME":
+						    case "REMOVE":
+						    case "PRINT":
+						    case "SAVE":
+						    case "DELETE":
+						    case "QUERY":
+						    case "EXIT":
+						    	exitApplication();
+						    default: 
+						        sendMessage("Invalid Command. Input 'HELP' for list of commands.");
+						        break;
+						}
+					}
+				} 
+				catch(ClassNotFoundException classnot) {
+					System.err.println("Data received in unknown format");
+				}          
+			} while (!message.equals("QUIT;"));
         }
         catch(IOException ioException) {
             ioException.printStackTrace();
         }
         finally {
-            // Close the connection
-            try {
-                System.out.println("Server connection closed");
-                in.close();
-                out.close();
-                serverSocket.close();
-            }
-            catch(IOException ioException){
-                ioException.printStackTrace();
-            }
+        	exitApplication();
         }
     }
 
-    void listenToSocket() {
-
+    String listenToSocket() {
+        try {
+			// The two parts communicate via the input and output streams
+            do {
+				try {
+					message = (String)in.readObject();
+					System.out.println("Client> " + message);
+					return message;
+				}
+				catch(ClassNotFoundException classnot) {
+					System.err.println("Data received in unknown format");
+				}            
+			} while (!message.equals("QUIT;")); 
+        }
+        catch(IOException ioException) {
+            ioException.printStackTrace();
+        }
+        return null;
     }
 
     void sendMessage(String msg) {
@@ -103,18 +115,14 @@ public class Server{
     }
 
     String listCommands(){
-    	String listedCommandsString = "HERE IS A LIST OF COMMANDS YOU MAY USE:" +
-        "\nNEW - Allows the user to create a new entry set for:" +
-        "\tPLAYER, TEAM, or GAME" +
-        "\nADD - Allows the user to insert a new entry for:" +
-        "\tPLAYER, TEAM, or GAME" +
-        "\nREMOVE - Allows the user to delete entries for:" +
-        "\tPLAYER, TEAM, or a set of the both" +
+    	String listedCommandsString = 
+    	"HERE IS A LIST OF COMMANDS YOU MAY USE:" +
+        "\nNEW - Allows the user to create a new entry set for: PLAYER, TEAM, or GAME" +
+        "\nADD - Allows the user to insert a new entry for: PLAYER, TEAM, or GAME" +
+        "\nREMOVE - Allows the user to delete entries for: PLAYER, TEAM, or a set of the both" +
         "\nTRADE - Allows the user to move players to different teams" +
-        "\nCHANGE - Allows user to make changes to:" +
-        "\tPLAYER or TEAM" +
-        "\nPRINT - Allows the user to see all information for:" +
-        "\tRELATION, PLAYER, TEAM, or SPORT" +
+        "\nCHANGE - Allows user to make changes to: PLAYER or TEAM" +
+        "\nPRINT - Allows the user to see all information for: RELATION, PLAYER, TEAM, or SPORT" +
         "\nSAVE - Allows the user to save all data." +
         "\nDELETE - Allows the user to permanently remove data." +
         "\nQUERY - Allows the user to get certain data from the database.";
@@ -122,22 +130,25 @@ public class Server{
         return listedCommandsString;
     }
 
-    String newCommand(){
-        System.out.println("Would you like to create a Sport, Team, or Player?");
-        System.out.println("Testing");
-        
-    
-       //         String team = scanner.nextLine();
-       //         sendMessage("Enter Player Age: ");
-       //         int age = scanner.nextInt();
-       //         sendMessage("Enter Player Jersey Number: ");
-       //         int jerseyNumber = scanner.nextInt();
-       //         sendMessage("Enter Player Position: ");
-       //         String position = scanner.nextLine();
-       //           
-        //}
-        return "ugh";
+    void newCommand() {
+       sendMessage("Would you like to create a Sport, Team, or Player?");
+       
+       String team = listenToSocket();
+       System.out.println("1st input: " + team);
 
+       sendMessage("Enter Player Age: ");
+       String age = listenToSocket();
+       System.out.println("2nd input: " + age);
+
+       sendMessage("Enter Player Jersey Number: ");
+       String jerseyNumber = listenToSocket();
+       System.out.println("3rd input: " + jerseyNumber);
+
+       sendMessage("Enter Player Position: ");
+       String position = listenToSocket();
+       System.out.println("4th input: " + position);
+
+       commanding = false;
     }
 
     void addCommand(){
@@ -148,5 +159,18 @@ public class Server{
     }
     void changeCommand(){
 
+    }
+
+    void exitApplication() {
+	    // Close the connection
+        try {
+            System.out.println("Server connection closed");
+            in.close();
+            out.close();
+            serverSocket.close();
+        }
+        catch(IOException ioException){
+            ioException.printStackTrace();
+        }
     }
 }
