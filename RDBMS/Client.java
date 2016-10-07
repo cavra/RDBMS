@@ -39,7 +39,7 @@ public class Client{
                 catch(ClassNotFoundException classNot) {
                     System.err.println("Data received in unknown format");
                 }
-            } while (!message.equals("EXIT;"));
+            } while (!message.toUpperCase().equals("EXIT"));
         }
         catch(UnknownHostException unknownHost) {
             System.err.println("You are trying to connect to an unknown host!");
@@ -50,10 +50,11 @@ public class Client{
         finally {
             // Close the connection
             try {
-                System.out.println("Client connection closed");
+                System.out.print("Disconnecting from server...");
                 in.close();
                 out.close();
                 requestSocket.close();
+                System.out.println("Connection closed.");
             }
             catch(IOException ioException){
                 ioException.printStackTrace();

@@ -12,7 +12,7 @@ public class Engine {
 // empty table 
 // =============================================================================
 
-	public static Table createTable(String relation_name, String[] attributes, String[] p_keys){
+	public static Table createTable(String relation_name, Attribute[] attributes, String[] p_keys){
 		// Check if the table already exists
 		Table table = relations_database.get(relation_name);
 		if (table != null){
@@ -204,7 +204,7 @@ public class Engine {
 			return null;
 		}
 		else {
-			String[] new_attributes_array = new_attributes_vector.toArray(new String[new_attributes_vector.size()]);
+			Attribute[] new_attributes_array = new_attributes_vector.toArray(new Attribute[new_attributes_vector.size()]);
 			Table projection_table = new Table("Projection from " + relation_name, new_attributes_array, table.primary_keys);
 			Vector<Integer> indicies = getIndices(table, new_attributes_array);
 

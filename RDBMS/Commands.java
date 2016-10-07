@@ -4,45 +4,52 @@ import java.io.*;
 public class Commands {
 
 	public static Table createCommand(Vector<String> token_vector) {	
-
-		String relation_name = "";
-		Vector<String> attribtues_vector = new Vector<String>();
+		Vector<Attribute> attributes = new Vector<Attribute>();
+		Vector<String> attributes_vector = new Vector<String>();
+		Vector<String> types_vector = new Vector<String>();
 		Vector<String> keys_vector = new Vector<String>();
 
 		// Start the token index at the begining of the relation name
 		Integer token_index = 2;
 
-		// Get the relation name
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals("(")) {
-				token_index = i;
-				break;
-			}
-			else {
-				relation_name += token_vector.get(i) + " ";
-			}
+		// Get the new relation name
+		String relation_name = "";
+		Vector<String> relation_name_vector = Grammar.retrieveTokens(token_vector, token_index, "(", false);
+		for (String string : relation_name_vector) {
+			relation_name += string + " ";
 		}
 		relation_name = relation_name.trim();
+		token_index += relation_name_vector.size() + 1;
 
-		// Get the attribute list
+
+		// Get the attribute list and their types
 		for (int i = token_index; i < token_vector.size(); i++) {
 			if (token_vector.get(i).equals("PRIMARY")) {
 				token_index = i;
 				break;
 			}
 			else if (token_vector.get(i).equals("VARCHAR")) {
+				types_vector.add(token_vector.get(i) + token_vector.get(i+2));
 				i = i + 2;
 				continue;
 			}
 			else if (token_vector.get(i).equals("INTEGER")) {
+				types_vector.add(token_vector.get(i));
 				continue;
 			}
 			else if (!token_vector.get(i).equals("(") && !token_vector.get(i).equals(")")) {
-				attribtues_vector.add(token_vector.get(i));
+				attributes_vector.add(token_vector.get(i));
 			}
 			else {
 				//System.out.println("Skipping token... " + token_vector.get(i));
 			}
+		}
+
+		for (int i = 0; i < attributes_vector.size(); i++) {
+			Attribute attribute = new Attribute(attributes_vector.get(i), types_vector.get(i));
+			attributes.add(attribute);
+			System.out.println("Attribute name: " + attribute.name);
+			System.out.println("Attribute type: " + attribute.type);
 		}
 
 		// Get the primary keys list
@@ -63,11 +70,12 @@ public class Commands {
 		}
 
 		System.out.println("Table name:" + relation_name);
-		System.out.println("Attribute List:" + attribtues_vector);
+		System.out.println("Attribute List:" + attributes_vector);
+		System.out.println("Types List:" + types_vector);
 		System.out.println("Primary keys List:" + keys_vector);
 
 		// Convert the arrays to vectors
-		String[] attributes_array = attribtues_vector.toArray(new String[attribtues_vector.size()]);
+		Attribute[] attributes_array = attributes.toArray(new Attribute[attributes.size()]);
 		String[] keys_array = keys_vector.toArray(new String[keys_vector.size()]);
 
 		Table new_table = Engine.createTable(relation_name.trim(), attributes_array, keys_array);

@@ -14,9 +14,9 @@ public class Server{
 
     public static void main(String args[]) {
         Server server = new Server();
-        while(true){
+        // while(true){
         	server.run();
-        }
+        // }
     }
 
     Server(){}
@@ -51,7 +51,7 @@ public class Server{
 						    case "NEW":
 						        commanding = true;
 						        newCommand();
-						        //commanding = false;
+						        commanding = false;
 						        break;
 						    case "ADD":
 						    case "TRADE":
@@ -63,17 +63,17 @@ public class Server{
 						    case "DELETE":
 						    case "QUERY":
 						    case "EXIT":
-						    	exitApplication();
-						    default: 
-						        sendMessage("Invalid Command. Input 'HELP' for list of commands.");
+						        break;
+						    default:
+						        sendMessage("Invalid Command. Type 'HELP' for list of commands.");
 						        break;
 						}
 					}
-				} 
+				}
 				catch(ClassNotFoundException classnot) {
 					System.err.println("Data received in unknown format");
 				}          
-			} while (!message.equals("QUIT;"));
+			} while (!message.toUpperCase().equals("EXIT"));
         }
         catch(IOException ioException) {
             ioException.printStackTrace();
@@ -95,10 +95,13 @@ public class Server{
 				catch(ClassNotFoundException classnot) {
 					System.err.println("Data received in unknown format");
 				}            
-			} while (!message.equals("QUIT;")); 
+			} while (!message.toUpperCase().equals("EXIT")); 
         }
         catch(IOException ioException) {
             ioException.printStackTrace();
+        }
+        finally {
+        	commanding = false;
         }
         return null;
     }
@@ -131,14 +134,14 @@ public class Server{
     }
 
     void newCommand() {
-       sendMessage("Would you like to create a Sport, Team, or Player?");
+       sendMessage("Would you like to create a relation for Sport, Team, or Players?");
        
-       String team = listenToSocket();
-       System.out.println("1st input: " + team);
+       String input1 = listenToSocket();
+       System.out.println("1st input: " + input1);
 
-       sendMessage("Enter Player Age: ");
-       String age = listenToSocket();
-       System.out.println("2nd input: " + age);
+       sendMessage("Enter the name of the " + input1);
+       String name = listenToSocket();
+       System.out.println("2nd input: " + name);
 
        sendMessage("Enter Player Jersey Number: ");
        String jerseyNumber = listenToSocket();
@@ -148,7 +151,9 @@ public class Server{
        String position = listenToSocket();
        System.out.println("4th input: " + position);
 
-       commanding = false;
+       sendMessage("Data received.");
+
+       //commanding = false;
     }
 
     void addCommand(){
@@ -164,10 +169,11 @@ public class Server{
     void exitApplication() {
 	    // Close the connection
         try {
-            System.out.println("Server connection closed");
+            System.out.print("Disconnecting Client...");
             in.close();
             out.close();
             serverSocket.close();
+            System.out.println("Connection closed.");
         }
         catch(IOException ioException){
             ioException.printStackTrace();
