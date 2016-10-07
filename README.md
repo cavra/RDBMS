@@ -188,8 +188,8 @@ Cory Avra - Begin work on the Interactive System, finish parser and engine
 
 Met at annex from 1 - 6<br/>
 @Completed<br/>
-Reed Spivey - Worked on cases for user input<br/>
-Jason Alonzo - Worked on cases for user input<br/>
+Reed Spivey - Worked on cases for user input, commits were overwritten<br/>
+Jason Alonzo - Worked on cases for user input. Worked 2 hours longer than Reed, commits were overwritten<br/>
 Cory Avra - Created Client.java and Server.java, basic functionality, worked on parser and engine (specifically, recursive expressions and queries)<br/>
 @TODO<br/>
 Reed Spivey - Continue working on cases for user input<br/>
