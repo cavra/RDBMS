@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.*;
 import java.net.*;
 import java.util.Scanner;
 
@@ -150,10 +151,36 @@ public class Server{
        sendMessage("Enter Player Position: ");
        String position = listenToSocket();
        System.out.println("4th input: " + position);
+       sendMessage("Would you like to create a Sport, Team, or Player?");
+       String choice = listenToSocket();
+       Vector<String> listOfAttr = new Vector<String>();
+
+       sendMessage("Enter Number of Attributes for Table: ");
+       String numOfAttr = listenToSocket();
+       int attrNumber = Integer.parseInt(numOfAttr);
+
+       for(int i = 0; i < attrNumber; i++)
+       {
+        sendMessage("Specify Attribute Type for Attribute " + (i+1) + " (VARCHAR(x) or INTEGER): ");
+        String attrType = listenToSocket();
+        sendMessage("Enter Name for Attribute " + (i+1) + ":");
+        String attr = listenToSocket();
+        listOfAttr.add(attr + " " + attrType);
+       }
+
+       String stringAttr = listOfAttr.toString().replace("[","").replace("]","");
+
+      sendMessage("Pick 2 Attributes to be the Primary Key.\n" + "Attribute " + 1 + ":" );
+      String pk1 = listenToSocket();
+      sendMessage("Attribute " + 2 + ":" );
+      String pk2 = listenToSocket();
+
+      String create = "CREATE TABLE " + choice + " (" + stringAttr + ")" + " PRIMARY KEY " + "(" + pk1 + ", " + pk2 + ");" ;
+      sendMessage(create);
+      sendMessage("Data Received");
 
        sendMessage("Data received.");
 
-       //commanding = false;
     }
 
     void addCommand(){

@@ -6,7 +6,7 @@ public class Commands {
 	public static Table createCommand(Vector<String> token_vector) {	
 		Vector<Attribute> attributes = new Vector<Attribute>();
 		Vector<String> attributes_vector = new Vector<String>();
-		Vector<String> types_vector = new Vector<String>();
+		Vector<String> domains_vector = new Vector<String>();
 		Vector<String> keys_vector = new Vector<String>();
 
 		// Start the token index at the begining of the relation name
@@ -21,7 +21,6 @@ public class Commands {
 		relation_name = relation_name.trim();
 		token_index += relation_name_vector.size() + 1;
 
-
 		// Get the attribute list and their types
 		for (int i = token_index; i < token_vector.size(); i++) {
 			if (token_vector.get(i).equals("PRIMARY")) {
@@ -29,12 +28,12 @@ public class Commands {
 				break;
 			}
 			else if (token_vector.get(i).equals("VARCHAR")) {
-				types_vector.add(token_vector.get(i) + token_vector.get(i+2));
+				domains_vector.add(token_vector.get(i) + " " + token_vector.get(i+2));
 				i = i + 2;
 				continue;
 			}
 			else if (token_vector.get(i).equals("INTEGER")) {
-				types_vector.add(token_vector.get(i));
+				domains_vector.add(token_vector.get(i));
 				continue;
 			}
 			else if (!token_vector.get(i).equals("(") && !token_vector.get(i).equals(")")) {
@@ -45,11 +44,10 @@ public class Commands {
 			}
 		}
 
+		// Create the Attributes
 		for (int i = 0; i < attributes_vector.size(); i++) {
-			Attribute attribute = new Attribute(attributes_vector.get(i), types_vector.get(i));
+			Attribute attribute = new Attribute(attributes_vector.get(i), domains_vector.get(i));
 			attributes.add(attribute);
-			System.out.println("Attribute name: " + attribute.name);
-			System.out.println("Attribute type: " + attribute.type);
 		}
 
 		// Get the primary keys list
@@ -71,7 +69,7 @@ public class Commands {
 
 		System.out.println("Table name:" + relation_name);
 		System.out.println("Attribute List:" + attributes_vector);
-		System.out.println("Types List:" + types_vector);
+		System.out.println("Types List:" + domains_vector);
 		System.out.println("Primary keys List:" + keys_vector);
 
 		// Convert the arrays to vectors
@@ -121,8 +119,7 @@ public class Commands {
 				}
 			}
 
-			String[] data_array = expression_vector.toArray(new String[expression_vector.size()]);
-			Engine.insertRow(relation_name.trim(), data_array);
+			Engine.insertRow(relation_name.trim(), expression_vector);
 		}
 		else if (token_vector.get(token_index).equals("RELATION")) {
 			for (int i = token_index; i < token_vector.size(); i++) {
@@ -135,17 +132,18 @@ public class Commands {
 			}
 			Table expression_table = Grammar.evaluateExpression(expression_vector);
 			for (int i = 1; i < expression_table.attribute_table.size(); i++) {
+
+				// Get the row from the table and insert it
 				Vector<String> row = expression_table.attribute_table.get(i);
-				String[] data_array = row.toArray(new String[row.size()]);
-				Engine.insertRow(relation_name.trim(), data_array);
+				Engine.insertRow(relation_name.trim(), row);
 			}
 		}
 	}
 
 	public static void updateCommand(Vector<String> token_vector) {
 		String relation_name = "";
-		Vector<String> attribute_type_vector = new Vector<String>();
-		Vector<String> new_attribute_vector = new Vector<String>();
+		Vector<String> attributes = new Vector<String>();
+		Vector<String> values = new Vector<String>();
 		Vector<String> condition_vector = new Vector<String>();
 
 		Integer token_index = 1;
@@ -169,8 +167,8 @@ public class Commands {
 				break;
 			}
 			else if (token_vector.get(i+1).equals("=")) {
-				attribute_type_vector.add(token_vector.get(i));
-				new_attribute_vector.add(token_vector.get(i+2));
+				attributes.add(token_vector.get(i));
+				values.add(token_vector.get(i+2));
 			}
 			else {
 				continue;
@@ -182,11 +180,11 @@ public class Commands {
 		}
 
 		System.out.println("Table name:" + relation_name);
-		System.out.println("Attribute Type List:" + attribute_type_vector);
-		System.out.println("New Attribute List:" + new_attribute_vector);
+		System.out.println("Attribute List:" + attributes);
+		System.out.println("Values List:" + values);
 		System.out.println("Conditions List:" + condition_vector);
 
-		Engine.updateRow(relation_name, attribute_type_vector, new_attribute_vector, condition_vector);
+		Engine.updateRow(relation_name, attributes, values, condition_vector);
 	}
 
 	public static void deleteCommand(Vector<String> token_vector) {

@@ -3,52 +3,81 @@ import java.util.*;
 public class Attribute {
 	
 	public String name;
-	public String type;
+	public String domain;
 	public Integer varchar_length = 0;
 
-	Attribute(String attribute_name, String attribute_type) {
+// =============================================================================
+// The Attribute constructor
+// Parameters:
+//   attribtue_name: The user-generated attribute name e.g. "Player Name"
+//   attribute_domain: The attribute's domain, either VARCHAR or INTEGER
+// =============================================================================
 
+	Attribute(String attribute_name, String attribute_domain) {
 		name = attribute_name;
 
-		if (attribute_type.equals("INTEGER")) {
-			type = attribute_type;
+		// Check for the domain
+		if (attribute_domain.equals("INTEGER")) {
+			domain = attribute_domain;
 		}
-		else if (attribute_type.contains("VARCHAR")) {
-			String[] attribute_type_array = attribute_type.split("\\s");
-			if (attribute_type_array.length > 1) {
-				type = attribute_type_array[0];
-				varchar_length = Integer.parseInt(attribute_type_array[1]);
+		else if (attribute_domain.contains("VARCHAR")) {
+			String[] attribute_domain_array = attribute_domain.split("\\s");
+			if (attribute_domain_array.length > 1) {
+				domain = attribute_domain_array[0];
+				varchar_length = Integer.parseInt(attribute_domain_array[1]);
 			}
 			else {
-				System.out.println("Missing VARCHAR length for attribtue!");
+				System.out.println("Missing VARCHAR length for attribute!");
 			}
 		}
 		else {
-			System.out.println("Invalid attribute_type detected: " + attribute_type);
+			System.out.println("Invalid attribute_domain detected: " + attribute_domain);
 		}
 	}
 
-	public boolean isValid(String attribute){
-		String integer_regex = "[0-9]+";
-		String varchar_regex = "[a-zA-Z][a-zA-Z0-9_]+";
+// =============================================================================
+// A function to check if a given attribute fits its defined domain
+// Parameters:
+//   value: A value to be inserted into a relation's attribute column
+//     e.g. "Joe" or "15"
+// =============================================================================
 
-		if (attribute.matches(integer_regex) && 
-			type == "INTEGER")
-			return true;
-		else if (attribute.matches(varchar_regex) && 
-			type == "VARCHAR" &&
-			attribute.toCharArray().length <= varchar_length) {
+	public boolean isValid(String value) {
+		String integer_regex = "^\\d+";
+		String varchar_regex = "^\"[a-zA-Z][a-zA-Z0-9_]*\"";
+
+		if (value.matches(integer_regex) && 
+			domain.equals("INTEGER")) {
+			//System.out.println(value + " added!");			
 			return true;
 		}
-		else if (attribute.matches(varchar_regex) && 
-			type == "VARCHAR" &&
-			attribute.toCharArray().length >= varchar_length) {
-			System.out.println("Value exceeds VARCHAR size limit.");
+		else if (value.matches(varchar_regex) && 
+			domain.equals("VARCHAR") &&
+			value.toCharArray().length <= varchar_length) {
+			//System.out.println(value + " added!");			
+			return true;
+		}
+		else if (value.matches(varchar_regex) && 
+			domain.equals("VARCHAR") &&
+			value.toCharArray().length >= varchar_length) {
+			System.out.println(value + " exceeds VARCHAR size limit.");
 			return false;
 		}
 		else {
-			System.out.println("Attribute does not match either attribute_type.");
+			System.out.println(value + " does not match its domain: " + domain);
+			System.out.println("Must be either 'VARCHAR(X)' or 'INTEGER'");
 			return false;
 		}
+	}
+
+// =============================================================================
+// A function to rename an already existing attribute
+// Parameters:
+//   new_attribute_name: The new attribute name
+//     e.g. "aname" or "akind"
+// =============================================================================
+
+	public void rename(String new_attribute_name) {
+		name = new_attribute_name;
 	}
 }
