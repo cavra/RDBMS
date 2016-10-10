@@ -323,9 +323,9 @@ public class Server {
     void updatePlayer() {
         Vector<String> attr_list = new Vector<String>();
 
-        sendMessage("Enter Name of the player to be updated: ");
+        sendMessage("Enter NAME of the player to be updated: ");
         String player_name = listenToSocket();
-        sendMessage("Enter Jersey number of the player to be updated: ");
+        sendMessage("Enter JERSEY NUMBER of the player to be updated: ");
         String player_jersey = listenToSocket();
         sendMessage("Enter TEAM NAME of the player to be updated: ");
         String player_team = listenToSocket();
@@ -387,6 +387,58 @@ public class Server {
             writer = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream("input.txt"), "utf-8"));
             writer.write(update_players + "\n" + update_team);
+        } catch (IOException ex) {} 
+        finally {
+            try {writer.close();}
+            catch (Exception ex) {}
+        }
+    }
+
+    void updateTeam(){
+        Vector<String> attr_list = new Vector<String>();
+
+        sendMessage("Enter the NAME of the team to be updated: ");
+        String team_name = listenToSocket();
+        sendMessage("Enter the CITY LOCATION of the team to be updated: ");
+        String team_location = listenToSocket();
+        sendMessage("Enter the SPORT played by the team: ");
+        String team_sport = listenToSocket();
+
+        sendMessage("Update TEAM LOCATION (Type \"NO\" to continue without updating: ");
+        String update_location = listenToSocket();
+        if(update_location.toLowerCase() != "no"){
+            String temp = "team_location=\"" + update_location +"\"";
+            attr_list.add(temp);
+        }
+
+        sendMessage("Update TEAM NAME (Type \"NO\" to continue without updating: ");
+        String update_name = listenToSocket();
+        if(update_location.toLowerCase() != "no"){
+            String temp = "team_name=\"" + update_location + "\"";
+            attr_list.add(temp);
+        }
+
+        String update_team = "UPDATE teams SET ";
+        String update_sport = "UPDATE " + team_sport + " SET ";
+        for(int i = 0; i < attr_list.size()-1; i++){
+            update_team += attr_list.get(i) + ", ";
+            update_sport += attr_list.get(i) + ", ";
+        }
+        update_team += attr_list.get(attr_list.size()-1);
+        update_team += " WHERE team_name=\"" + team_name + "\"&&team_location=\"" +
+                          team_location + "\"";
+
+        update_sport += attr_list.get(attr_list.size()-1);
+        update_sport += " WHERE name=\"" + team_name + "\"&&team_location=\"" +
+                          team_location + "\"";
+
+        sendMessage(update_team);
+        sendMessage(update_sport);
+
+        try{
+            writer = new BufferedWriter(new OutputStreamWriter(
+            new FileOutputStream("input.txt"), "utf-8"));
+            writer.write(update_team + "\n" + update_sport);
         } catch (IOException ex) {} 
         finally {
             try {writer.close();}
