@@ -71,17 +71,17 @@ public class Server {
                                 break;
                             case "5":
                                 commanding = true;
-                            //    tradePlayer();
+                                tradePlayer();
                                 commanding = false;
                                 break;
                             case "6":
                                 commanding = true;
-                            //    updatePlayer();
+                                updatePlayer();
                                 commanding = false;
                                 break;
                             case "7":
                                 commanding = true;
-                            //    updateTeam();
+                                updateTeam();
                                 commanding = false;
                                 break;
                             case "8":
@@ -373,11 +373,11 @@ public class Server {
             update_team += attr_list.get(i) + ", ";
         }
         update_players += attr_list.get(attr_list.size()-1);
-        update_players += " WHERE name=\"" + player_name + "\"&&jersey_number =\"" +
+        update_players += " WHERE name=\"" + player_name + "\"&&jersey_number=\"" +
                           player_jersey + "\"";
 
         update_team += attr_list.get(attr_list.size()-1);
-        update_team += " WHERE name=\"" + player_name + "\"&&jersey_number =\"" +
+        update_team += " WHERE name=\"" + player_name + "\"&&jersey_number=\"" +
                           player_jersey + "\"";
 
         sendMessage(update_players);
