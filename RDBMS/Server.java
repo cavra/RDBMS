@@ -136,30 +136,29 @@ public class Server{
     }
 
     void newCommand() {
-       sendMessage("Would you like to create a Sport, Team, or Player?");
-       String choice = listenToSocket();
-       Vector<String> listOfAttr = new Vector<String>();
+        sendMessage("Would you like to create a Sport, Team, or Player?");
+        String choice = listenToSocket();
+        Vector<String> listOfAttr = new Vector<String>();
+        int attrNumber = 0;
 
-       int attrNumber = 0;
-       do{
-       sendMessage("Enter Number of Attributes for Table: ");
-       String numOfAttr = listenToSocket();
-       attrNumber = Integer.parseInt(numOfAttr);
-       }while(attrNumber <= 0);
-
-       for(int i = 0; i < attrNumber; i++)
-       {
-        String typeCheck = "";
         do{
-        sendMessage("Specify Attribute Type for Attribute " + (i+1) + " (VARCHAR(x) or INTEGER): ");
-        String attrType = listenToSocket();
-        typeCheck = attrType.substring(0,7);
-        sendMessage(typeCheck);
-        sendMessage("Enter Name for Attribute " + (i+1) + ":");
-        String attr = listenToSocket();
-        listOfAttr.add(attr + " " + attrType);
-        }while(!typeCheck.equalsIgnoreCase("VARCHAR") && !typeCheck.equalsIgnoreCase("INTEGER"));
-       }
+           sendMessage("Enter Number of Attributes for Table: ");
+           String numOfAttr = listenToSocket();
+           attrNumber = Integer.parseInt(numOfAttr);
+        }while(attrNumber <= 0);
+
+        for(int i = 0; i < attrNumber; i++){
+            String typeCheck = "";
+            do{
+                sendMessage("Specify Attribute Type for Attribute " + (i+1) + " (VARCHAR(x) or INTEGER): ");
+                String attrType = listenToSocket();
+                typeCheck = attrType.substring(0,7);
+                sendMessage(typeCheck);
+                sendMessage("Enter Name for Attribute " + (i+1) + ":");
+                String attr = listenToSocket();
+                listOfAttr.add(attr + " " + attrType);
+            } while(!typeCheck.equalsIgnoreCase("VARCHAR") && !typeCheck.equalsIgnoreCase("INTEGER"));
+        }
 
         String stringAttr = listOfAttr.toString().replace("[","").replace("]","");
 
@@ -193,9 +192,59 @@ public class Server{
         commanding = false;
 
     }
-    void tradeCommand(){
 
+    void tradeCommand(){
+        sendMessage("Would you like to trade TWO players (YES/NO)?");
+        String choice = listenToSocket();
+
+        if(choice.toLowerCase() == "yes"){
+            sendMessage("Please enter the first player's TEAM: ");
+            String team1 = listenToSocket();
+            sendMessage("Please enter the name of the first player: ");
+            String player1 = listenToSocket();
+            sendMessage("Please enter the second player's TEAM: ");
+            String team2 = listenToSocket();
+            sendMessage("Please enter the name of the second player: ");
+            String player2 = listenToSocket();
+
+        //    String sql_command = " ";
+
+            // send the code to parser here
+        }
+        else if (choice.toLowerCase() == "no"){
+            sendMessage("Would you like to trade one single player to another team (YES/NO)?");
+            String choice2 = listenToSocket();
+
+            if(choice2.toLowerCase() == "yes"){
+                sendMessage("Please enter the name of the player to be traded: ");
+                String player = listenToSocket();
+                sendMessage("Please enter the player's CURRENT team: ");
+                String currentTeam = listenToSocket();
+                sendMessage("Please enter the team the player is being traded to: ");
+                String futureTeam = listenToSocket();
+
+            //    String sql_command = 
+
+                // send the code to parser here
+            }
+            else if(choice2.toLowerCase() == "no"){
+                sendMessage("Trade terminated.");
+                return;
+            }
+            else{
+                sendMessage("Command not recognized. Trade terminated.");
+                return;
+            }
+
+        }
+        else{
+            sendMessage("Command not recognized. Trade terminted.");
+            return;
+        }
+
+        commanding = false;
     }
+
     void changeCommand(){
 
     }
