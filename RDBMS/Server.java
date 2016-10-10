@@ -51,21 +51,35 @@ public class Server{
                                 break;
                             case 2:
                                 commanding = true;
-                                //newCommand();
-                                //commanding = false;
+                                addTeam();
                                 break;
                             case 3:
                                 commanding = true;
+                                removePlayer();
+                                break;
                             case 4:
+                                commanding = true;
+                                removeTeam();
+                                break;
                             case 5:
+                                commanding = true;
+                                tradePlayer();
+                                break;
                             case 6:
+                                commanding = true;
+                                updatePlayer();
+                                break;
                             case 7:
+                                commanding = true;
+                                updateTeam();
+                                break;
                             case 8:
                                 commanding = true;
+                                viewTeam();
+                                break;
                             case 9:
-                            case 10:
-                            case 11:
                                 exitApplication();
+                                break;
                             default: 
                                 sendMessage("Invalid Command. Check list of Commands for valid input.");
                                 break;
