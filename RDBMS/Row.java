@@ -3,6 +3,7 @@ import java.io.*;
 
 public class Row implements Serializable {
 	
+	// Global Variables
 	public ArrayList<String> values = new ArrayList<String>();
 	public String key;
 

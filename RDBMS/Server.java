@@ -3,7 +3,7 @@ import java.util.*;
 import java.net.*;
 import java.util.Scanner;
 
-public class Server{
+public class Server {
     ServerSocket serverSocket;
     Socket connection = null;
     ObjectOutputStream out;
@@ -21,7 +21,7 @@ public class Server{
         }
     }
 
-    Server(){}
+    Server() {}
 
     void run() {
         try {
@@ -45,40 +45,51 @@ public class Server{
                     if (!commanding) {
                         message = (String)in.readObject();
                         System.out.println("Client> " + message);
-                        switch(Integer.parseInt(message)) {
-                            case 1:
+                        switch(message) {
+                            case "0":
+                                sendMessage(listCommands());
+                                break;
+                            case "1":
                                 commanding = true;
                                 addPlayer();
+                                commanding = false;
                                 break;
-                            case 2:
+                            case "2":
                                 commanding = true;
                                 addTeam();
+                                commanding = false;
                                 break;
-                            case 3:
+                            case "3":
                                 commanding = true;
                                 removePlayer();
+                                commanding = false;
                                 break;
-                            case 4:
+                            case "4":
                                 commanding = true;
                                 removeTeam();
+                                commanding = false;
                                 break;
-                            case 5:
+                            case "5":
                                 commanding = true;
                             //    tradePlayer();
+                                commanding = false;
                                 break;
-                            case 6:
+                            case "6":
                                 commanding = true;
                             //    updatePlayer();
+                                commanding = false;
                                 break;
-                            case 7:
+                            case "7":
                                 commanding = true;
                             //    updateTeam();
+                                commanding = false;
                                 break;
-                            case 8:
+                            case "8":
                                 commanding = true;
                             //    viewTeam();
+                                commanding = false;
                                 break;
-                            case 9:
+                            case "9":
                                 exitApplication();
                                 break;
                             default: 
@@ -171,17 +182,20 @@ public class Server{
         ", " + player_age + ", " + jersey_number + ", " + "\"" + player_position +
         "\"" + ", " + player_points + ")";
 
-        try{
+        try {
             writer = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream("input.txt"), "utf-8"));
             writer.write(player_insert  + '\n' + player_insert_team);
-        } catch (IOException ex) {} 
+        } 
+        catch (IOException ex) {} 
         finally {
             try {writer.close();}
             catch (Exception ex) {}
         }
+
+        Parser.readInputFile();
+
         sendMessage(player_insert);
-        commanding = false;
     }
 
     void addTeam() {
@@ -209,8 +223,6 @@ public class Server{
         }
 
         sendMessage(team_insert);
-        commanding = false;
-
     }
 
     void removePlayer() {
