@@ -3,106 +3,106 @@ import java.io.*;
 
 public class Grammar {
    
-	private Vector<String> token_vector = new Vector<String>();
+	private ArrayList<String> token_arrayList = new ArrayList<String>();
 
 	Grammar(String line) {
 
 		// Tokenize the input and store in a vector
-		String delimiters = "() {};= \t\n\r\f";
+		String delimiters = "(){};= \t\n\r\f";
 		StringTokenizer st = new StringTokenizer(line, delimiters, true);
-		while(st.hasMoreTokens()) {
+		while (st.hasMoreTokens()) {
 			String token = st.nextToken();
 			if (!token.trim().isEmpty() && !token.equals(",")) {
 				token = token.replaceAll(",", "");
-				token_vector.add(token);
+				token_arrayList.add(token);
 			 }
 		}
 
 		// Reconnect all double operators
 		String[] operators = {"!", "<", ">", "="};
-		for (int i = 1; i < token_vector.size(); i++) {
+		for (int i = 1; i < token_arrayList.size(); i++) {
 			for (String operator : operators) {
-				if (token_vector.get(i-1).equals(operator) && token_vector.get(i).equals("=")) {
-					token_vector.set(i-1, operator + "=");
-					token_vector.remove(i);
+				if (token_arrayList.get(i-1).equals(operator) && token_arrayList.get(i).equals("=")) {
+					token_arrayList.set(i-1, operator + "=");
+					token_arrayList.remove(i);
 				}
 			}
 		}
 
-		System.out.println("\nTokenized vector: " + token_vector);
+		System.out.println("\nTokenized ArrayList: " + token_arrayList);
 
 		tokenloop:
-		for (String token : token_vector) {
+		for (String token : token_arrayList) {
 			switch(token) {
 				// QUERIES
 				case "<-":
 					System.out.println("QUERY invoked");
-					Queries.queryQuery(token_vector);
+					Queries.queryQuery(token_arrayList);
 					break tokenloop;
 				case "select":
 					System.out.println("SELECT invoked");
-					Queries.selectQuery(token_vector);
+					Queries.selectQuery(token_arrayList);
 					break tokenloop;
 				case "project":
 					System.out.println("PROJECT invoked");
-					Queries.projectQuery(token_vector);
+					Queries.projectQuery(token_arrayList);
 					break tokenloop;
 				case "rename":
 					System.out.println("RENAME invoked");
-					Queries.renameQuery(token_vector);
+					Queries.renameQuery(token_arrayList);
 					break tokenloop;
 				case "+":
 					System.out.println("SET UNION invoked");
-					Queries.setUnionQuery(token_vector);
+					Queries.setUnionQuery(token_arrayList);
 					break tokenloop;
 				case "-":
 					System.out.println("SET DIFFERENCE invoked");
-					Queries.setDifferenceQuery(token_vector);
+					Queries.setDifferenceQuery(token_arrayList);
 					break tokenloop;
 				case "*":
 					System.out.println("CROSS PRODUCT invoked");
-					Queries.crossProductQuery(token_vector);
+					Queries.crossProductQuery(token_arrayList);
 					break tokenloop;
 				case "JOIN":
 					System.out.println("NATURAL JOIN invoked");
-					Queries.naturalJoinQuery(token_vector);
+					Queries.naturalJoinQuery(token_arrayList);
 					break tokenloop;
 				// COMMANDS
 				case "CREATE":
 					System.out.println("CREATE TABLE invoked");
-					Commands.createCommand(token_vector);
+					Commands.createCommand(token_arrayList);
 					break tokenloop;
 				case "DROP":
 					System.out.println("DROP TABLE invoked");
-					Commands.dropCommand(token_vector);
+					Commands.dropCommand(token_arrayList);
 					break tokenloop;
 				case "INSERT":
 					System.out.println("INSERT invoked");
-					Commands.insertCommand(token_vector);
+					Commands.insertCommand(token_arrayList);
 					break tokenloop;
 				case "UPDATE":
 					System.out.println("UPDATE ROW invoked");
-					Commands.updateCommand(token_vector);
+					Commands.updateCommand(token_arrayList);
 					break tokenloop;
 				case "DELETE":
 					System.out.println("DELETE ROW invoked");
-					Commands.deleteCommand(token_vector);
+					Commands.deleteCommand(token_arrayList);
 					break tokenloop;
 				case "SHOW":
 					System.out.println("SHOW invoked");
-					Commands.showCommand(token_vector);
+					Commands.showCommand(token_arrayList);
 					break tokenloop;
 				case "OPEN":
 					System.out.println("OPEN invoked");
-					Commands.openCommand(token_vector);
+					Commands.openCommand(token_arrayList);
 					break tokenloop;
 				case "WRITE":
 					System.out.println("OPEN invoked");
-					Commands.writeCommand(token_vector);
+					Commands.writeCommand(token_arrayList);
 					break tokenloop;
 				case "CLOSE":
 					System.out.println("CLOSE invoked");
-					Commands.closeCommand(token_vector);
+					Commands.closeCommand(token_arrayList);
 					break tokenloop;
 				case "EXIT":
 					System.out.println("EXIT invoked");
@@ -112,74 +112,74 @@ public class Grammar {
 		}
 	}
 
-	public static Integer skipTokens(Vector<String> token_vector, String token) {
-		for (int i = 0; i < token_vector.size(); i++) {
-			if (!token_vector.get(i).equalsIgnoreCase(token)) {
+	public static Integer skipTokens(ArrayList<String> token_arrayList, String token) {
+		for (int i = 0; i < token_arrayList.size(); i++) {
+			if (!token_arrayList.get(i).equalsIgnoreCase(token)) {
 				return i;
 			}
 		}
 		return 0;
 	}
 
-	public static Integer skipToToken(Vector<String> token_vector, Integer token_index, String token) {
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equalsIgnoreCase(token)) {
+	public static Integer skipToToken(ArrayList<String> token_arrayList, Integer token_index, String token) {
+		for (int i = token_index; i < token_arrayList.size(); i++) {
+			if (token_arrayList.get(i).equalsIgnoreCase(token)) {
 				return i;
 			}
 		}
 		return 0;
 	}
 
-	public static Vector<String> retrieveTokens(Vector<String> token_vector, Integer token_index, String token, Boolean value) {
-		Vector<String> temp_vector = new Vector<String>();
+	public static ArrayList<String> retrieveTokens(ArrayList<String> token_arrayList, Integer token_index, String token, Boolean value) {
+		ArrayList<String> temp_vector = new ArrayList<String>();
 
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals(token)) {
+		for (int i = token_index; i < token_arrayList.size(); i++) {
+			if (token_arrayList.get(i).equals(token)) {
 				token_index = i + 1;
 				if (value) {
-					temp_vector.add(token_vector.get(i));			
+					temp_vector.add(token_arrayList.get(i));			
 				}
 				break;
 			}
 			else {
-				temp_vector.add(token_vector.get(i));
+				temp_vector.add(token_arrayList.get(i));
 			}
 		}
 		return temp_vector;
 	}
 
-	public static Table evaluateExpression(Vector<String> token_vector) {
+	public static Table evaluateExpression(ArrayList<String> token_arrayList) {
 		// Start off by evaluating the expression
-		for (int i = 0; i < token_vector.size(); i++) {
-			String token = token_vector.get(i);
+		for (int i = 0; i < token_arrayList.size(); i++) {
+			String token = token_arrayList.get(i);
 			switch(token.toLowerCase()) {
 				case "select":
 					System.out.println("SELECT invoked");
-					return Queries.selectQuery(token_vector);
+					return Queries.selectQuery(token_arrayList);
 				case "project":
 					System.out.println("PROJECT invoked");
-					return Queries.projectQuery(token_vector);
+					return Queries.projectQuery(token_arrayList);
 				case "rename":
 					System.out.println("RENAME invoked");
-					return Queries.renameQuery(token_vector);
+					return Queries.renameQuery(token_arrayList);
 				case "+":
 					System.out.println("SET UNION invoked");
-					return Queries.setUnionQuery(token_vector);
+					return Queries.setUnionQuery(token_arrayList);
 				case "-":
 					System.out.println("SET DIFFERENCE invoked");
-					return Queries.setDifferenceQuery(token_vector);
+					return Queries.setDifferenceQuery(token_arrayList);
 				case "*":
 					System.out.println("CROSS PRODUCT invoked");
-					return Queries.crossProductQuery(token_vector);
+					return Queries.crossProductQuery(token_arrayList);
 				case "join":
 					System.out.println("NATURAL JOIN invoked");
-					return Queries.naturalJoinQuery(token_vector);
+					return Queries.naturalJoinQuery(token_arrayList);
 			}
 		}
 
 		// If no expression is found, check if it is just a relation name
-		if (isRelationName(token_vector)) {
-			Table retrieved_table = Engine.relations_database.get(token_vector.get(0));
+		if (isRelationName(token_arrayList)) {
+			Table retrieved_table = Engine.relations_database.get(token_arrayList.get(0));
 			return retrieved_table;
 		}
 		// No relation name or expression found
@@ -188,13 +188,13 @@ public class Grammar {
 		}
 	}
  
-	public static Boolean isRelationName(Vector<String> token_vector) {
+	public static Boolean isRelationName(ArrayList<String> token_arrayList) {
 		Boolean value = true;
 		Integer token_index = 0;
 
 		// Remove leading parentheses
-		for (int i = token_index; i < token_vector.size(); i++) {
-			if (token_vector.get(i).equals("(")) {
+		for (int i = token_index; i < token_arrayList.size(); i++) {
+			if (token_arrayList.get(i).equals("(")) {
 				token_index = i + 1;
 			}
 			else {
@@ -204,9 +204,9 @@ public class Grammar {
 
 		// Check if next token is a relation name
 		String[] algebraic_expressions = {"select", "project", "rename", "+", "-", "*", "JOIN"};
-		for (int i = token_index; i < token_vector.size(); i++) {
+		for (int i = token_index; i < token_arrayList.size(); i++) {
 			for (String expression : algebraic_expressions) {
-				if (token_vector.get(i).equals(expression)) {
+				if (token_arrayList.get(i).equals(expression)) {
 					value = false; // Algebraic expression found
 				}
 			}
@@ -214,21 +214,21 @@ public class Grammar {
 		return value;
 	}
 
-	public static String getRelationName(Vector<String> token_vector) {
+	public static String getRelationName(ArrayList<String> token_arrayList) {
 		String relation_name = "";
 
-		if (token_vector.contains("CREATE") ||
-			token_vector.contains("SELECT") ||
-			token_vector.contains("PROJECT") ||
-			token_vector.contains("+") ||
-			token_vector.contains("-") ||
-			token_vector.contains("*") ||
-			token_vector.contains("JOIN")) {
+		if (token_arrayList.contains("CREATE") ||
+			token_arrayList.contains("SELECT") ||
+			token_arrayList.contains("PROJECT") ||
+			token_arrayList.contains("+") ||
+			token_arrayList.contains("-") ||
+			token_arrayList.contains("*") ||
+			token_arrayList.contains("JOIN")) {
 				System.out.println("Nested table detected in getRelationName");
 				System.out.println("(This shouldn't happen!)");
 		}
 		else {
-			for (String token : token_vector) {
+			for (String token : token_arrayList) {
 				if (token.equals("OPEN") ||
 					token.equals("CLOSE") ||
 					token.equals("WRITE") ||

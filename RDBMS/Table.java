@@ -6,7 +6,7 @@ public class Table implements Serializable {
 	public ArrayList<Row> relation = new ArrayList<Row>();
 	public String relation_name;
 	public ArrayList<Attribute> attributes;
-	public ArrayList<String> attribute_names;
+	public ArrayList<String> attribute_names = new ArrayList<String>();
 	public ArrayList<String> keys;
 	public ArrayList<Integer> key_indices = new ArrayList<Integer>();
 
@@ -61,7 +61,7 @@ public class Table implements Serializable {
 // =============================================================================
 
 	public void addRow(Row new_row) {
-		if (new_row.size != 0) {
+		if (new_row.size() != 0) {
 			relation.add(new_row);
 			System.out.println("Inserted row with key " + new_row.key + " in table " + relation_name);
 		}
@@ -228,7 +228,7 @@ public class Table implements Serializable {
 		Boolean all_values_are_valid = true;
 
 		// The row is either missing a value or contains too many
-		if (attributes.size() != row.size) {
+		if (attributes.size() != row.size()) {
 			all_values_are_valid = false;
 		}
 

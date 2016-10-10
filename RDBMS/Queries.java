@@ -3,125 +3,125 @@ import java.io.*;
 
 public class Queries {
 
-	public static void queryQuery(Vector<String> token_vector) {
+	public static void queryQuery(ArrayList<String> token_ArrayList) {
 
 		// Skip leading parentheses
-		Integer token_index = Grammar.skipTokens(token_vector, "(");
+		Integer token_index = Grammar.skipTokens(token_ArrayList, "(");
 
 		// Get the new relation name
 		String relation_name = "";
-		Vector<String> relation_name_vector = Grammar.retrieveTokens(token_vector, token_index, "<-", false);
-		for (String string : relation_name_vector) {
+		ArrayList<String> relation_name_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, "<-", false);
+		for (String string : relation_name_ArrayList) {
 			relation_name += string + " ";
 		}
 		relation_name = relation_name.trim();
-		token_index += relation_name_vector.size() + 1;
+		token_index += relation_name_ArrayList.size() + 1;
 
-		// Get the expression vector
-		Vector<String> expression_vector = Grammar.retrieveTokens(token_vector, token_index, ";", true);
+		// Get the expression ArrayList
+		ArrayList<String> expression_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
 
 		System.out.println("Table Name: " + relation_name);
-		System.out.println("Expressions List (or table name): " + expression_vector);
+		System.out.println("Expressions List (or table name): " + expression_ArrayList);
 
 		// Evaluate and create the table
-		Table expression_table = Grammar.evaluateExpression(expression_vector);
+		Table expression_table = Grammar.evaluateExpression(expression_ArrayList);
 		Engine.relations_database.put(relation_name, expression_table);
 	}
 
-	public static Table selectQuery(Vector<String> token_vector) {
+	public static Table selectQuery(ArrayList<String> token_ArrayList) {
 
 		// Skip to the condition
 		Integer token_index = 0;
-		token_index = Grammar.skipToToken(token_vector, token_index, "select");
-		token_index = Grammar.skipToToken(token_vector, token_index, "(") + 1;
+		token_index = Grammar.skipToToken(token_ArrayList, token_index, "select");
+		token_index = Grammar.skipToToken(token_ArrayList, token_index, "(") + 1;
 
-		// Get the condition vector
-		Vector<String> condition_vector = Grammar.retrieveTokens(token_vector, token_index, ")", false);
-		token_index += condition_vector.size() + 1;
+		// Get the condition ArrayList
+		ArrayList<String> condition_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, ")", false);
+		token_index += condition_ArrayList.size() + 1;
 
-		// Get the expression vector
-		Vector<String> expression_vector = Grammar.retrieveTokens(token_vector, token_index, ";", true);
+		// Get the expression ArrayList
+		ArrayList<String> expression_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
 
-		System.out.println("Conditions List:" + condition_vector);
-		System.out.println("Expressions List (or table name): " + expression_vector);
+		System.out.println("Conditions List:" + condition_ArrayList);
+		System.out.println("Expressions List (or table name): " + expression_ArrayList);
 
 		// Evaluate and create the table
-		Table expression_table = Grammar.evaluateExpression(expression_vector);
+		Table expression_table = Grammar.evaluateExpression(expression_ArrayList);
 		Engine.relations_database.put("Temp Expression Table", expression_table);
-		Table selection_table = Engine.selection("Temp Expression Table", condition_vector);
+		Table selection_table = Engine.selection("Temp Expression Table", condition_ArrayList);
 		return selection_table;
 	}
 
-	public static Table projectQuery(Vector<String> token_vector){
+	public static Table projectQuery(ArrayList<String> token_ArrayList){
 
 		// Skip to the condition
 		Integer token_index = 0;
-		token_index = Grammar.skipToToken(token_vector, token_index, "project");
-		token_index = Grammar.skipToToken(token_vector, token_index, "(") + 1;
+		token_index = Grammar.skipToToken(token_ArrayList, token_index, "project");
+		token_index = Grammar.skipToToken(token_ArrayList, token_index, "(") + 1;
 
-		// Get the attribute list vector
-		Vector<String> attribute_list_vector = Grammar.retrieveTokens(token_vector, token_index, ")", false);
-		token_index += attribute_list_vector.size() + 1;
+		// Get the attribute list ArrayList
+		ArrayList<String> attribute_list_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, ")", false);
+		token_index += attribute_list_ArrayList.size() + 1;
 
-		// Get the expression vector
-		Vector<String> expression_vector = Grammar.retrieveTokens(token_vector, token_index, ";", true);
+		// Get the expression ArrayList
+		ArrayList<String> expression_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
 
-		System.out.println("Attributes List:" + attribute_list_vector);
-		System.out.println("Expressions List (or table name): " + expression_vector);
+		System.out.println("Attributes List:" + attribute_list_ArrayList);
+		System.out.println("Expressions List (or table name): " + expression_ArrayList);
 
 		// Evaluate and create the table
-		Table expression_table = Grammar.evaluateExpression(expression_vector);
+		Table expression_table = Grammar.evaluateExpression(expression_ArrayList);
 		Engine.relations_database.put("Temp Expression Table", expression_table);
-		Table selection_table = Engine.projection("Temp Expression Table", attribute_list_vector);
+		Table selection_table = Engine.projection("Temp Expression Table", attribute_list_ArrayList);
 		return selection_table;
 	}
 
-	public static Table renameQuery(Vector<String> token_vector) {
+	public static Table renameQuery(ArrayList<String> token_ArrayList) {
 
 		// Skip to the attribute list
 		Integer token_index = 0;
-		token_index = Grammar.skipToToken(token_vector, token_index, "rename") + 1;
-		token_index = Grammar.skipToToken(token_vector, token_index, "(") + 1;
+		token_index = Grammar.skipToToken(token_ArrayList, token_index, "rename") + 1;
+		token_index = Grammar.skipToToken(token_ArrayList, token_index, "(") + 1;
 
-		// Get the attribute list vector
-		Vector<String> attribute_list_vector = Grammar.retrieveTokens(token_vector, token_index, ")", false);
-		token_index += attribute_list_vector.size() + 1;
+		// Get the attribute list ArrayList
+		ArrayList<String> attribute_list_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, ")", false);
+		token_index += attribute_list_ArrayList.size() + 1;
 
-		// Get the expression vector
-		Vector<String> expression_vector = Grammar.retrieveTokens(token_vector, token_index, ";", true);
+		// Get the expression ArrayList
+		ArrayList<String> expression_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
 
-		System.out.println("Attributes List:" + attribute_list_vector);
-		System.out.println("Expressions List (or table name): " + expression_vector);
+		System.out.println("Attributes List:" + attribute_list_ArrayList);
+		System.out.println("Expressions List (or table name): " + expression_ArrayList);
 
 		// Evaluate and create the table
-		Table expression_table = Grammar.evaluateExpression(expression_vector);
+		Table expression_table = Grammar.evaluateExpression(expression_ArrayList);
 		Engine.relations_database.put("Temp Expression Table", expression_table);
-		Table rename_table = Engine.rename("Temp Expression Table", attribute_list_vector);
+		Table rename_table = Engine.rename("Temp Expression Table", attribute_list_ArrayList);
 		return rename_table;
 	}
 
-	public static Table setUnionQuery(Vector<String> token_vector) {
+	public static Table setUnionQuery(ArrayList<String> token_ArrayList) {
 
 		// Remove leading parentheses
-		Integer token_index = Grammar.skipTokens(token_vector, "(");
+		Integer token_index = Grammar.skipTokens(token_ArrayList, "(");
 
 		// Store the first expression
-		Vector<String> expression_vector1 = Grammar.retrieveTokens(token_vector, token_index, "+", false);
-		token_index += expression_vector1.size() + 1;
+		ArrayList<String> expression_ArrayList1 = Grammar.retrieveTokens(token_ArrayList, token_index, "+", false);
+		token_index += expression_ArrayList1.size() + 1;
 
 		// Store the second expression
-		Vector<String> expression_vector2 = Grammar.retrieveTokens(token_vector, token_index, ";", true);
+		ArrayList<String> expression_ArrayList2 = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
 
-		System.out.println("First Expression:" + expression_vector1);
-		System.out.println("Second Expression:" + expression_vector2);
+		System.out.println("First Expression:" + expression_ArrayList1);
+		System.out.println("Second Expression:" + expression_ArrayList2);
 
 		// Evaluate first expression
-		Table expression_table1 = Grammar.evaluateExpression(expression_vector1);
+		Table expression_table1 = Grammar.evaluateExpression(expression_ArrayList1);
 		Engine.relations_database.put("Temp Expression Table1", expression_table1);
 		String relation_name1 = "Temp Expression Table1";
 
 		// Evaluate second expression
-		Table expression_table2 = Grammar.evaluateExpression(expression_vector2);
+		Table expression_table2 = Grammar.evaluateExpression(expression_ArrayList2);
 		Engine.relations_database.put("Temp Expression Table2", expression_table2);
 		String relation_name2 = "Temp Expression Table2";
 
@@ -130,28 +130,28 @@ public class Queries {
 		return set_union_table;
 	}
 
-	public static Table setDifferenceQuery(Vector<String> token_vector){
+	public static Table setDifferenceQuery(ArrayList<String> token_ArrayList){
 
 		// Remove leading parentheses
-		Integer token_index = Grammar.skipTokens(token_vector, "(");
+		Integer token_index = Grammar.skipTokens(token_ArrayList, "(");
 
 		// Store the first expression
-		Vector<String> expression_vector1 = Grammar.retrieveTokens(token_vector, token_index, "-", false);
-		token_index += expression_vector1.size() + 1;
+		ArrayList<String> expression_ArrayList1 = Grammar.retrieveTokens(token_ArrayList, token_index, "-", false);
+		token_index += expression_ArrayList1.size() + 1;
 
 		// Store the second expression
-		Vector<String> expression_vector2 = Grammar.retrieveTokens(token_vector, token_index, ";", true);
+		ArrayList<String> expression_ArrayList2 = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
 
-		System.out.println("First Expression:" + expression_vector1);
-		System.out.println("Second Expression:" + expression_vector2);
+		System.out.println("First Expression:" + expression_ArrayList1);
+		System.out.println("Second Expression:" + expression_ArrayList2);
 
 		// Evaluate first expression
-		Table expression_table1 = Grammar.evaluateExpression(expression_vector1);
+		Table expression_table1 = Grammar.evaluateExpression(expression_ArrayList1);
 		Engine.relations_database.put("Temp Expression Table1", expression_table1);
 		String relation_name1 = "Temp Expression Table1";
 
 		// Evaluate second expression
-		Table expression_table2 = Grammar.evaluateExpression(expression_vector2);
+		Table expression_table2 = Grammar.evaluateExpression(expression_ArrayList2);
 		Engine.relations_database.put("Temp Expression Table2", expression_table2);
 		String relation_name2 = "Temp Expression Table2";
 
@@ -160,28 +160,28 @@ public class Queries {
 		return set_difference_table;	
 	}
 
-	public static Table crossProductQuery(Vector<String> token_vector){
+	public static Table crossProductQuery(ArrayList<String> token_ArrayList){
 
 		// Remove leading parentheses
-		Integer token_index = Grammar.skipTokens(token_vector, "(");
+		Integer token_index = Grammar.skipTokens(token_ArrayList, "(");
 
 		// Store the first expression
-		Vector<String> expression_vector1 = Grammar.retrieveTokens(token_vector, token_index, "*", false);
-		token_index += expression_vector1.size() + 1;
+		ArrayList<String> expression_ArrayList1 = Grammar.retrieveTokens(token_ArrayList, token_index, "*", false);
+		token_index += expression_ArrayList1.size() + 1;
 
 		// Store the second expression
-		Vector<String> expression_vector2 = Grammar.retrieveTokens(token_vector, token_index, ";", true);
+		ArrayList<String> expression_ArrayList2 = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
 
-		System.out.println("First Expression:" + expression_vector1);
-		System.out.println("Second Expression:" + expression_vector2);
+		System.out.println("First Expression:" + expression_ArrayList1);
+		System.out.println("Second Expression:" + expression_ArrayList2);
 
 		// Evaluate first expression
-		Table expression_table1 = Grammar.evaluateExpression(expression_vector1);
+		Table expression_table1 = Grammar.evaluateExpression(expression_ArrayList1);
 		Engine.relations_database.put("Temp Expression Table1", expression_table1);
 		String relation_name1 = "Temp Expression Table1";
 
 		// Evaluate second expression
-		Table expression_table2 = Grammar.evaluateExpression(expression_vector2);
+		Table expression_table2 = Grammar.evaluateExpression(expression_ArrayList2);
 		Engine.relations_database.put("Temp Expression Table2", expression_table2);
 		String relation_name2 = "Temp Expression Table2";
 
@@ -190,28 +190,28 @@ public class Queries {
 		return cross_product_table;
 	}
 
-	public static Table naturalJoinQuery(Vector<String> token_vector){
+	public static Table naturalJoinQuery(ArrayList<String> token_ArrayList){
 		
 		// Remove leading parentheses
-		Integer token_index = Grammar.skipTokens(token_vector, "(");
+		Integer token_index = Grammar.skipTokens(token_ArrayList, "(");
 
 		// Store the first expression
-		Vector<String> expression_vector1 = Grammar.retrieveTokens(token_vector, token_index, "JOIN", false);
-		token_index += expression_vector1.size() + 1;
+		ArrayList<String> expression_ArrayList1 = Grammar.retrieveTokens(token_ArrayList, token_index, "JOIN", false);
+		token_index += expression_ArrayList1.size() + 1;
 
 		// Store the second expression
-		Vector<String> expression_vector2 = Grammar.retrieveTokens(token_vector, token_index, ";", true);
+		ArrayList<String> expression_ArrayList2 = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
 
-		System.out.println("First Expression:" + expression_vector1);
-		System.out.println("Second Expression:" + expression_vector2);
+		System.out.println("First Expression:" + expression_ArrayList1);
+		System.out.println("Second Expression:" + expression_ArrayList2);
 
 		// Evaluate first expression
-		Table expression_table1 = Grammar.evaluateExpression(expression_vector1);
+		Table expression_table1 = Grammar.evaluateExpression(expression_ArrayList1);
 		Engine.relations_database.put("Temp Expression Table1", expression_table1);
 		String relation_name1 = "Temp Expression Table1";
 
 		// Evaluate second expression
-		Table expression_table2 = Grammar.evaluateExpression(expression_vector2);
+		Table expression_table2 = Grammar.evaluateExpression(expression_ArrayList2);
 		Engine.relations_database.put("Temp Expression Table2", expression_table2);
 		String relation_name2 = "Temp Expression Table2";
 

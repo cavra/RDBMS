@@ -8,10 +8,6 @@ INSERT INTO animals VALUES FROM ("Joe", "birdbirdbird", "2");
 
 SHOW animals;
 
-UPDATE animals SET kind = "dragon", name = "MASTERRACE" WHERE years > 0
-UPDATE animals SET kind = "8wa", name = "MASTERRACE" WHERE years > 0
-SHOW animals;
-
 dogs <- select (kind == "dog") animals;
 SHOW dogs;
 

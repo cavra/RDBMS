@@ -15,7 +15,7 @@ public class Engine {
 //   keys: An array of attribute names to determine how a key is formed
 // =============================================================================
 
-	public static Table createTable(String relation_name, ArrayList<Attribute> attributes, String[] keys) {
+	public static Table createTable(String relation_name, ArrayList<Attribute> attributes, ArrayList<String> keys) {
 		// Check if the table already exists
 		Table table = relations_database.get(relation_name);
 		if (table != null) {
@@ -67,10 +67,10 @@ public class Engine {
 			System.out.println("Error: Table doesn't exist; failed to insert row.");
 		}
 		else {
-			Row row = new Row(values, table.makeKey(values));
+			Row row = new Row(values, table.createKey(values));
 
 			// Only insert if all values are valid and the key isn't empty
-			if (table.isRowValid(values) && !row.key.equals("")) {
+			if (table.isRowValid(row) && !row.key.equals("")) {
 				table.addRow(row);
 			}
 			// Otherwise, print error message
@@ -98,13 +98,13 @@ public class Engine {
 		}
 		else {
 			// Loop through all the rows of the table
-			for (Row row : table) {
+			for (Row row : table.relation) {
 
 				// Check if it meets the required conditions
-				if (parseConditions(table, row, tokenized_conditions)) {
+				if (parseConditions(table, row.values, tokenized_conditions)) {
 
 					// And only update if all values are valid
-					if (table.isRowValid(values)) {
+					if (table.isRowValid(row)) {
 
 						// Check that the attribute to update exists
 						for (int i = 0; i < values.size(); i++) {
@@ -136,13 +136,13 @@ public class Engine {
 		}
 		else {
 			// Loop through all the rows of the table
-			for (Row row : table) {
+			for (Row row : table.relation) {
 
 				// Check if it meets the required conditions
-				if (parseConditions(table, row, tokenized_conditions)) {
+				if (parseConditions(table, row.values, tokenized_conditions)) {
 
 					// The row meets all conditions, delete it
-					table.deleteRow(row.get(0));
+					table.deleteRow(row.key);
 				}
 			}
 		}
@@ -184,10 +184,10 @@ public class Engine {
 			Table selection_table = new Table("Selection from " + relation_name, table.attributes, table.keys);	
 
 			// Loop through all the rows of the table
-			for (Row row : table) {
+			for (Row row : table.relation) {
 
 				// Check if it meets the required conditions
-				if (parseConditions(table, row, tokenized_conditions)) {
+				if (parseConditions(table, row.values, tokenized_conditions)) {
 
 					// Row has met the condition, add it to the selection table
 					selection_table.addRow(row);
@@ -204,7 +204,7 @@ public class Engine {
 //	 attributes: The list of attributes to keep from the original table
 // =============================================================================
 
-	public static Table projection(String relation_name, ArrayList<Attribute> attributes) {
+	public static Table projection(String relation_name, ArrayList<String> attributes) {
 		// Check if the table exists
 		Table table = relations_database.get(relation_name);
 		if (table == null) {
@@ -212,19 +212,19 @@ public class Engine {
 			return null;
 		}
 		else {
-			Table projection_table = new Table("Projection from " + relation_name, attributes, table.keys);
+			Table projection_table = new Table("Projection from " + relation_name, table.attributes, table.keys);
 
 			// Get the indices of the new attribute columns from the original table
 			ArrayList<Integer> indicies = new ArrayList<Integer>();
-			for (Attribute attribute : attributes) {
-				int i = table.getAttributeIndex(attribute.name);
+			for (String attribute : attributes) {
+				int i = table.getAttributeIndex(attribute);
 				if (i < 0) {
 					indicies.add(i);
 				}
 			}
 
 			// Loop through all the rows of the table
-			for (Row original_row : table) {
+			for (Row original_row : table.relation) {
 
 				// Get the specified attributes values using obtained indices
 				ArrayList<String> projected_values = new ArrayList<String>();
@@ -249,7 +249,7 @@ public class Engine {
 //	 attributes: The list of new, renamed attributes to apply to the relation
 // =============================================================================
 
-	public static Table rename(String relation_name, ArrayList<String> attributes){
+	public static Table rename(String relation_name, ArrayList<String> attributes) {
 		// Check if the table exists
 		Table table = relations_database.get(relation_name);
 		if (table == null) {
@@ -260,232 +260,244 @@ public class Engine {
 			// Get a copy of the current attributes
 			ArrayList<Attribute> new_attributes = table.attributes;
 			// and rename them with the corresponding new attributes
-			for (int i = 0; i < new_attributes.length; i++) {
+			for (int i = 0; i < new_attributes.size() && i < attributes.size(); i++) {
 				new_attributes.get(i).rename(attributes.get(i));
 			}
 
 			// Get an updated primary key ArrayList using the original table's stored indices
-			ArrayList<Integer> new_keys = new ArrayList<Integer>();
+			ArrayList<String> new_keys = new ArrayList<String>();
 			for (int i = 0; i < table.key_indices.size(); i++) {
-				new_keys.add(new_attributes[table.key_indices.get(i)].name);
+				new_keys.add(new_attributes.get(table.key_indices.get(i)).name);
 			}
 
-			Table rename_table = new Table("Renamed from " + relation_name, new_attributes, new_keys);
+			Table rename_table = new Table("Renaming from " + relation_name, new_attributes, new_keys);
 
 			// Add all the original rows to the new table
-			for(int i = 1; i < table.attribute_table.size(); i++){
-				ArrayList<String> row = table.attribute_table.get(i);
+			for(int i = 1; i < table.relation.size(); i++){
+				Row row = table.relation.get(i);
 				rename_table.addRow(row);
 			}
 			return rename_table;
 		}
 	}
 // =============================================================================
-// A function to return a new table, created by taking the union of two tables
-// Parameters: 
-//   relation_name1: The relation name of the first table
-//   relation_name2: The relation name of the second table
-// =============================================================================
-
-	public static Table setUnion(String relation_name1, String relation_name2){
-		Table table1 = relations_database.get(relation_name1);
-		Table table2 = relations_database.get(relation_name2);
-		String union_relation_name = "Set Union from " + relation_name1 + " and " + relation_name2;
-		Table union_table = new Table(union_relation_name, table1.attributes, table1.keys);	
-		
-		// Loop through table 1 and record all non-duplicate rows
-		for (Row row : table1) {
-
-			// Check if the row already exists
-			if (union_table.getRow(row.key) != null) {
-				union_table.addRow(row);
-			}
-		}
-
-		// Loop through table 2 and record all non-duplicate rows
-		for (Row row : table2) {
-
-			// Check if the row already exists
-			if (union_table.getRow(row.key) != null) {
-				union_table.addRow(row);
-			}
-		}
-
-		relations_database.put(new_relation_name, union_table);
-		return union_table;
-	}
-	
-// =============================================================================
-// A function to return a new table, created by taking the difference of two 
+// A function to return a new table, created by taking the union of two other 
 //   tables
 // Parameters: 
+//   new_relation_name: The user-defined relation name to apply to the new table
 //   relation_name1: The relation name of the first table
 //   relation_name2: The relation name of the second table
 // =============================================================================
 
-	public static Table setDifference(String relation_name1, String relation_name2){
+	public static Table setUnion(String new_relation_name, String relation_name1, String relation_name2) {
+		// Check if both tables exists
 		Table table1 = relations_database.get(relation_name1);
 		Table table2 = relations_database.get(relation_name2);
-		String union_relation_name = "Set Difference from " + relation_name1 + " and " + relation_name2;
-		Table difference_table = new Table(new_relation_name, table1.attributes, table1.keys);	
-		
-		// Loop through the first table and record all unique entries
-		for(int i = 1; i < table1.attribute_table.size(); i++) {
-
-			// Check if the row already exists in either table
-			ArrayList<String> temp_row1 = table1.attribute_table.get(i);
-			if(table2.getRow(temp_row1.get(0)).size() != 0 || difference_table.getRow(temp_row1.get(0)).size() != 0) {
-				//System.out.println(temp_row1.get(0) + " was not added");
-			}
-			else {
-				//System.out.println(temp_row1.get(0) + " was added");
-				difference_table.addRow(temp_row1);
-			}
+		if (table1 == null|| table2 == null) {
+			System.out.println("Error: Either one or both tables don't exist; failed to perform Set Union.");
+			return null;
 		}
-		relations_database.put(new_relation_name, difference_table);
-		return difference_table;
+		else {
+			Table union_table = new Table(new_relation_name, table1.attributes, table1.keys);	
+			
+
+			// Loop through table 1 and record all non-duplicate rows
+			for (Row row : table1.relation) {
+
+				// Check if the row already exists
+				if (union_table.getRow(row.key) != null) {
+					union_table.addRow(row);
+				}
+			}
+
+			// Loop through table 2 and record all non-duplicate rows
+			for (Row row : table2.relation) {
+
+				// Check if the row already exists
+				if (union_table.getRow(row.key) != null) {
+					union_table.addRow(row);
+				}
+			}
+
+			relations_database.put(new_relation_name, union_table);
+			return union_table;
+		}
 	}
 	
 // =============================================================================
-// This function below takes in two sets of data and returns every combination of sets, in a newly created table.
+// A function to return a new table, created by taking the difference of two
+//   other tables
+// Parameters: 
+//   new_relation_name: The user-defined relation name to apply to the new table
+//   relation_name1: The relation name of the first table
+//   relation_name2: The relation name of the second table
 // =============================================================================
 
-	public static Table crossProduct(String new_relation_name, String relation_name1, String relation_name2){
+	public static Table setDifference(String new_relation_name, String relation_name1, String relation_name2) {
+		// Check if both tables exists
 		Table table1 = relations_database.get(relation_name1);
 		Table table2 = relations_database.get(relation_name2);
+		if (table1 == null|| table2 == null) {
+			System.out.println("Error: Either one or both tables don't exist; failed to perform Set Difference.");
+			return null;
+		}
+		else {		
+			Table difference_table = new Table(new_relation_name, table1.attributes, table1.keys);	
+			
+			// Loop through the first table's rows
+			for (Row row : table1.relation) {
+				String key = row.key;
 
-		// Check that both tables exist
-		if (table1 == null|| table2 == null){
-			System.out.println("Error: Cannot cross product tables; one doesn't exist.");
+				// If either table2 or the difference table already contain the row, do not add it
+				if (table2.getRow(key) != null || difference_table.getRow(key) != null) {
+					//System.out.println(row.key + " was not added");
+				}
+				// Otherwise, add it
+				else {
+					//System.out.println(row.key + " was added");
+					difference_table.addRow(row);
+				}
+			}
+			relations_database.put(new_relation_name, difference_table);
+			return difference_table;
+		}
+	}
+	
+// =============================================================================
+// A function to return a new table, created by taking the cross product of two
+//   other tables
+// Parameters: 
+//   new_relation_name: The user-defined relation name to apply to the new table
+//   relation_name1: The relation name of the first table
+//   relation_name2: The relation name of the second table
+// =============================================================================
+
+	public static Table crossProduct(String new_relation_name, String relation_name1, String relation_name2) {
+		// Check if both tables exists
+		Table table1 = relations_database.get(relation_name1);
+		Table table2 = relations_database.get(relation_name2);
+		if (table1 == null|| table2 == null) {
+			System.out.println("Error: Either one or both tables don't exist; failed to perform Cross Product.");
+			return null;
 		}
 		else {
-			// Create a new table with the combined data
-			List<Attribute> cp_table_attributes = new ArrayList<Attribute>(table1.attributes.length + table2.attributes.length);
-		    Collections.addAll(cp_table_attributes, table1.attributes);
-		    Collections.addAll(cp_table_attributes, table2.attributes);
-		    Attribute[] cp_table_attributes_arr = cp_table_attributes.toArray(new Attribute[cp_table_attributes.size()]);
-		    String[] cp_p_keys = table1.keys;
+			// Create a new ArrayList with the combined Attributes
+			ArrayList<Attribute> cp_attributes = new ArrayList<Attribute>();
+		    cp_attributes.addAll(table1.attributes);
+		    cp_attributes.addAll(table2.attributes);
 
-			Table cp_table = new Table(new_relation_name, cp_table_attributes_arr, cp_p_keys);
+		    // Create a new ArrayList with the combined keys
+			ArrayList<String> cp_keys = new ArrayList<String>();
+		    cp_keys.addAll(table1.keys);
+		    cp_keys.addAll(table2.keys);
 
-			// Loop through the first and second table and record all combined entries
-			for(int i = 1; i < table1.attribute_table.size(); i++) {
-				ArrayList<String> row1 = table1.attribute_table.get(i);
-				for(int j = 1; j < table2.attribute_table.size(); j++) {
-					ArrayList<String> row2 = table2.attribute_table.get(j);
+			Table cp_table = new Table(new_relation_name, cp_attributes, cp_keys);
 
-					// Copy the ArrayLists so we can change them
-					ArrayList row1_copy = new ArrayList(row1);
-					ArrayList row2_copy = new ArrayList(row2);
+			// Loop through both tables and record all combined rows
+			for (Row row1 : table1.relation) {
+				for (Row row2 : table2.relation) {
 
-					// Get the new key
-					String new_key = (String)row1_copy.get(0) + (String)row2_copy.get(0);
-					row1_copy.set(0, new_key);
-					row2_copy.remove(0);
+					// Create a new ArrayList with the combined values
+					ArrayList<String> new_values = new ArrayList<String>();
+				    new_values.addAll(row1.values);
+				    new_values.addAll(row2.values);
 
-					// Combine their elements
-					ArrayList<String> combined_row = new ArrayList<String>();
-					combined_row.addAll(row1_copy);
-					combined_row.addAll(row2_copy);
-					cp_table.addRow(combined_row);
+					// Create the new key
+					String new_key = (String)row1.key + (String)row2.key;
+
+					// Create the new row
+					Row new_row = new Row(new_values, new_key);
+
+					// Add it to the table
+					cp_table.addRow(new_row);
 				}
 			}
 			relations_database.put(new_relation_name, cp_table);
 			return cp_table;
 		}
-		return null;
 	}
 	
 // =============================================================================
-// This function below takes two tables and their corresponding values in as input. From there,
-// it finds the ID's that the tables' have in common. With that, creates a new table with those common
-// entities, making sure to combine the attributes of each table.
+// A function to return a new table, created by taking the cross product of two
+//   other tables
+// Parameters: 
+//   new_relation_name: The user-defined relation name to apply to the new table
+//   relation_name1: The relation name of the first table
+//   relation_name2: The relation name of the second table
 // =============================================================================
 
-	public static Table naturalJoin(String new_relation_name, String relation_name1, String relation_name2){ 
+	public static Table naturalJoin(String new_relation_name, String relation_name1, String relation_name2) {
+		// Check if both tables exists
 		Table table1 = relations_database.get(relation_name1);
 		Table table2 = relations_database.get(relation_name2);
-		int table1_width = table1.attribute_table.get(0).size();
-		int table2_width = table2.attribute_table.get(0).size();
-		ArrayList<String> new_values = new ArrayList<String>(table1.attributes.length + table2.attributes.length); 
-		
-		// Put table1 values in new_values array
-		for(int i = 0; i < table1_width - 1; i++){ 
-			new_values.add(table1.attribute_table.get(0).get(i+1));
+		if (table1 == null|| table2 == null) {
+			System.out.println("Error: Either one or both tables don't exist; failed to perform Natural Join.");
+			return null;
 		}
-		// Put table2 values in new_values array after table1's values are inserted
-		for(int i = 0; i < table2_width - 1; i++){	
-			new_values.add(table2.attribute_table.get(0).get(i+1));
-		}
+		else {
+			// Create a new ArrayList with the combined Attributes
+			ArrayList<Attribute> nj_attributes = new ArrayList<Attribute>();
+		    nj_attributes.addAll(table1.attributes);
+		    nj_attributes.addAll(table2.attributes);
 
-		for(int i = 0; i < new_values.size(); i++){
-			for(int p = 0; p < new_values.size(); p++){
-				if(i!=p){
-                  if(new_values.elementAt(i).equals(new_values.elementAt(p))){
-                     new_values.removeElementAt(p);
-                  }
-                }
-			}
-		}
-
-		Attribute[] new_values_array = new_values.toArray(new Attribute[new_values.size()]);
-
-		// Create the new table with combined attributes using the p
-		Table nj_table = new Table((new_relation_name), new_values_array, table1.keys); 
-
-		// Iterate through all values of both tables and store them in the new table
-		for(int j = 1; j < table1.attribute_table.size(); j++){
-			ArrayList<String> row1 = table1.attribute_table.get(j);
-			for(int k = 1; k < table2.attribute_table.size(); k++){ 
-				ArrayList<String> row2 = table2.attribute_table.get(k);
-
-				// Compares each primary key of table1 to table2
-				if(row1.get(0).equals(row2.get(0))){ 
-					// A new ArrayList to be added to the joined table (without the key redundancy)
-					ArrayList<String> new_ArrayList = new ArrayList<String>(table1_width+table2_width-1);
-					
-					// Copy the ArrayLists so we can change them
-					ArrayList row1_copy = new ArrayList(row1);
-					ArrayList row2_copy = new ArrayList(row2);
-
-					// Get the new key
-					String new_key = (String)row1_copy.get(0) + (String)row2_copy.get(0);
-					row1_copy.set(0, new_key);
-					row2_copy.remove(0);
-
-					// Combine their elements
-					ArrayList<String> combined_row = new ArrayList<String>();
-					combined_row.addAll(row1_copy);
-					combined_row.addAll(row2_copy);
-
-					for(int i = 0; i < combined_row.size(); i++)
-					{
-						for(int p = 0; p < combined_row.size(); p++)
-						{
-							if(i!=p)
-                    		{
-                        		if(combined_row.elementAt(i).equals(combined_row.elementAt(p)))
-                        		{
-                        			combined_row.removeElementAt(p);
-                        		}
-                   		 	}
+			// Remove the duplicate Attributes
+			for (int i = 0; i < nj_attributes.size(); i++) {
+				for (int p = 0; p < nj_attributes.size(); p++) {
+					if (i != p) {
+						if (nj_attributes.get(i).equals(nj_attributes.get(p))) {
+							nj_attributes.remove(p);
 						}
-					}
-					nj_table.addRow(combined_row);
+	                }
 				}
 			}
+
+			// Create the new table with the joined attributes and table1's keys
+			Table nj_table = new Table(new_relation_name, nj_attributes, table1.keys); 
+
+			// Iterate through all Rows of both tables
+			for (Row row1 : table1.relation) {
+				for (Row row2 : table2.relation) {
+
+					// Compare each primary key of table1 to table2
+					if (row1.key.equals(row2.key)) {
+						
+						// Create a new ArrayList with the combined values
+						ArrayList<String> new_values = new ArrayList<String>();
+					    new_values.addAll(row1.values);
+					    new_values.addAll(row2.values);
+
+						// Get the new key
+						String new_key = (String)row1.key + (String)row2.key;
+
+						// Combine their elements
+						Row combined_row = new Row(new_values, new_key);
+
+						for (int i = 0; i < combined_row.size(); i++) {
+							for (int p = 0; p < combined_row.size(); p++) {
+								if (i != p) {
+	                        		if (combined_row.values.get(i).equals(combined_row.values.get(p))) {
+	                        			combined_row.values.remove(p);
+	                        		}
+	                   		 	}
+							}
+						}
+						nj_table.addRow(combined_row);
+					}
+				}
+			}
+			relations_database.put(new_relation_name, nj_table);
+			return nj_table;
 		}
-		relations_database.put(new_relation_name, nj_table);
-		return nj_table;
 	}
 
 
 // =============================================================================
-// This function below reads through a file and inputs the data. This is important so that the
-// data is not last between sessions.
+// A function to open a table from a serialized file
+// Parameters: 
+//   relation_name: The relation name table to be opened
 // =============================================================================
 
-  	public static void openTable(String relation_name){
+  	public static void openTable(String relation_name) {
 		try {
 			Table read_table = null;
 
@@ -505,22 +517,24 @@ public class Engine {
 			return;
 		}
 		catch(ClassNotFoundException c) {
-			System.out.println("Table data not found");
+			System.out.println("Error: Table data not found. Failed to open.");
 			c.printStackTrace();
 			return;
 		}
   	}
 
 // =============================================================================
-// The function below writes a table's data to a .ser file to save it
+// A function to write a table to a serialized file
+// Parameters: 
+//   relation_name: The relation name table to be written
 // =============================================================================
 
-	public static void writeTable(String relation_name){
+	public static void writeTable(String relation_name) {
 		try {
 			// Check that the table exists
 			Table table = relations_database.get(relation_name);
 			if (table == null){
-				System.out.println("Error: Cannot cross write table; table doesn't exist.");
+				System.out.println("Error: Table doesn't exist. failed to write.");
 			}
 			else {
 				// Create the .ser file
@@ -541,12 +555,13 @@ public class Engine {
 
 	
 // =============================================================================
-// This function below takes in the name of an existing table in the database 
-// and removes it. Does this by calling a deleteTable function
+// A function to close a table 
+// Parameters: 
+//   relation_name: The relation name table to be closed
 // =============================================================================
 
   	// Currently, this is the same as dropTable! Fix this, check piazza for difference
-	public static void closeTable(String relation_name){
+	public static void closeTable(String relation_name) {
 		// Check if the table exists
 		Table table = relations_database.get(relation_name);
 		if(table == null){
@@ -560,27 +575,32 @@ public class Engine {
 	}
 
 // =============================================================================
-// This helper function takes in a given row and a tokenized ArrayList of 
-// conditions. From then, it will apply each condition to the row and return
-// true if a row meets all the conditions
+// A function to parse an ArrayList of tokenized conditions
+// Parameters: 
+//   table: the table
+//   row: the table
+//   token_Arraylist: the table
 // =============================================================================
 
-	public static Boolean parseConditions(Table table, ArrayList<String> row, ArrayList<String> token_ArrayList){
+	public static Boolean parseConditions(Table table, ArrayList<String> row_values, ArrayList<String> token_ArrayList){
 		// Stores 1 complete comparison
 		// e.g. "kind", "==", "dog"
 		ArrayList<String> comparison_ArrayList = new ArrayList<String>();
 		Boolean value = false; // default to false
 
+		System.out.println(row_values);
+		System.out.println(token_ArrayList);
+		
 		for (int i = 0; i < token_ArrayList.size(); i++){
 			// The end of the comparison has been reached
 			if (token_ArrayList.get(i).equals(";") || 
 				token_ArrayList.get(i).equals(")")) {
-				value = evaluateCondition(table, row, comparison_ArrayList);
+				value = evaluateCondition(table, row_values, comparison_ArrayList);
 				break;
 			}
 			else if (i == token_ArrayList.size() - 1) {
 				comparison_ArrayList.add(token_ArrayList.get(i));
-				value = evaluateCondition(table, row, comparison_ArrayList);	
+				value = evaluateCondition(table, row_values, comparison_ArrayList);	
 				break;			
 			}
 			// Handle the && operator
@@ -589,7 +609,7 @@ public class Engine {
 				for (int j = i+1; j < token_ArrayList.size(); j++){
 					and_comparison_ArrayList.add(token_ArrayList.get(j));
 				}
-				value = (evaluateCondition(table, row, comparison_ArrayList) && parseConditions(table, row, and_comparison_ArrayList));
+				value = (evaluateCondition(table, row_values, comparison_ArrayList) && parseConditions(table, row_values, and_comparison_ArrayList));
 				break;
 			}
 			// Handle the || operator
@@ -598,7 +618,7 @@ public class Engine {
 				for (int j = i+1; j < token_ArrayList.size(); j++){
 					or_comparison_ArrayList.add(token_ArrayList.get(j));
 				}
-				value = (evaluateCondition(table, row, comparison_ArrayList) || parseConditions(table, row, or_comparison_ArrayList));
+				value = (evaluateCondition(table, row_values, comparison_ArrayList) || parseConditions(table, row_values, or_comparison_ArrayList));
 				break;
 			}
 			// Handle nested comparisons
@@ -607,7 +627,7 @@ public class Engine {
 				for (int j = i+1; j < token_ArrayList.size(); j++){
 					nested_comparison.add(token_ArrayList.get(j));
 				}
-				value = parseConditions(table, row, nested_comparison);
+				value = parseConditions(table, row_values, nested_comparison);
 			}
 			else {
 				comparison_ArrayList.add(token_ArrayList.get(i));
@@ -619,9 +639,9 @@ public class Engine {
 // =============================================================================
 // =============================================================================
 
-	public static Boolean evaluateCondition(Table table, ArrayList<String> row, ArrayList<String> condition_ArrayList){
-		Integer attribute1_index = table.getAttributeIndex(condition_ArrayList.firstElement()); // kind -> 2
-		Integer attribute2_index = table.getAttributeIndex(condition_ArrayList.lastElement()); // akind -> 2
+	public static Boolean evaluateCondition(Table table, ArrayList<String> row_values, ArrayList<String> condition_ArrayList){
+		Integer attribute1_index = table.getAttributeIndex(condition_ArrayList.get(0)); // kind -> 2
+		Integer attribute2_index = table.getAttributeIndex(condition_ArrayList.get(condition_ArrayList.size() - 1)); // akind -> 2
 		String attribute1 = "";
 		String attribute2 = "";
 		Boolean value = false; // default to false
@@ -630,7 +650,7 @@ public class Engine {
 			attribute1 = condition_ArrayList.get(0);
 		}
 		else {
-			attribute1 = row.get(attribute1_index);
+			attribute1 = row_values.get(attribute1_index);
 		}
 
 		String operator = condition_ArrayList.get(1);
@@ -639,7 +659,7 @@ public class Engine {
 			attribute2 = condition_ArrayList.get(2);
 		}
 		else {
-			attribute2 = row.get(attribute2_index);
+			attribute2 = row_values.get(attribute2_index);
 		}
 
 		// If the attribute exists, and the row meets the condition...
