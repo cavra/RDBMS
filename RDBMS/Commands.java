@@ -115,7 +115,7 @@ public class Commands {
 				}
 			}
 
-			Engine.insertRow(relation_name.trim(), expression_ArrayList);
+			Engine.insertRow(relation_name, expression_ArrayList);
 		}
 		else if (token_ArrayList.get(token_index).equals("RELATION")) {
 			for (int i = token_index; i < token_ArrayList.size(); i++) {
@@ -127,11 +127,11 @@ public class Commands {
 				}
 			}
 			Table expression_table = Grammar.evaluateExpression(expression_ArrayList);
-			for (int i = 1; i < expression_table.relation.size(); i++) {
+			for (int i = 0; i < expression_table.relation.size(); i++) {
 
 				// Get the row from the table and insert it
 				Row row = expression_table.relation.get(i);
-				Engine.insertRow(relation_name.trim(), row.values);
+				Engine.insertRow(relation_name, row.values);
 			}
 		}
 	}

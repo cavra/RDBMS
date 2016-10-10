@@ -15,9 +15,9 @@ public class Server{
 
     public static void main(String args[]) {
         Server server = new Server();
-        // while(true){
-        	server.run();
-        // }
+        while(true){
+          server.run();
+        }
     }
 
     Server(){}
@@ -40,69 +40,70 @@ public class Server{
 
             // The two parts communicate via the input and output streams
             do {
-				try {
-					if (!commanding) {
-						message = (String)in.readObject();
-						System.out.println("Client> " + message);
+        try {
+          if (!commanding) {
+            message = (String)in.readObject();
+            System.out.println("Client> " + message);
 
-						switch(message.toUpperCase()) {
-						    case "HELP":
-						        sendMessage(listCommands());
-						        break;
-						    case "NEW":
-						        commanding = true;
-						        newCommand();
-						        commanding = false;
-						        break;
-						    case "ADD":
-						    case "TRADE":
-						    case "CHANGE":
-						    case "RENAME":
-						    case "REMOVE":
-						    case "PRINT":
-						    case "SAVE":
-						    case "DELETE":
-						    case "QUERY":
-						    case "EXIT":
-						        break;
-						    default:
-						        sendMessage("Invalid Command. Type 'HELP' for list of commands.");
-						        break;
-						}
-					}
-				}
-				catch(ClassNotFoundException classnot) {
-					System.err.println("Data received in unknown format");
-				}          
-			} while (!message.toUpperCase().equals("EXIT"));
+            switch(message.toUpperCase()) {
+                case "HELP":
+                    sendMessage(listCommands());
+                    break;
+                case "NEW":
+                    commanding = true;
+                    newCommand();
+                    //commanding = false;
+                    break;
+                case "ADD":
+                                commanding = true;
+                                addCommand();
+                case "TRADE":
+                case "CHANGE":
+                case "RENAME":
+                case "REMOVE":
+                case "PRINT":
+                                commanding = true;
+                                printCommand();
+                case "SAVE":
+                case "DELETE":
+                case "QUERY":
+                case "EXIT":
+                  exitApplication();
+                default: 
+                    sendMessage("Invalid Command. Input 'HELP' for list of commands.");
+                    break;
+            }
+          }
+        } 
+        catch(ClassNotFoundException classnot) {
+          System.err.println("Data received in unknown format");
+        }          
+      } while (!message.equals("QUIT;"));
         }
         catch(IOException ioException) {
             ioException.printStackTrace();
         }
         finally {
-        	exitApplication();
+          exitApplication();
         }
     }
 
     String listenToSocket() {
         try {
-			// The two parts communicate via the input and output streams
+      // The two parts communicate via the input and output streams
             do {
-				try {
-					message = (String)in.readObject();
-					System.out.println("Client> " + message);
-					return message;
-				}
-				catch(ClassNotFoundException classnot) {
-					System.err.println("Data received in unknown format");
-				}            
-			} while (!message.toUpperCase().equals("EXIT")); 
+        try {
+          message = (String)in.readObject();
+          System.out.println("Client> " + message);
+          return message;
+        }
+        catch(ClassNotFoundException classnot) {
+          System.err.println("Data received in unknown format");
+        }            
+      } while (!message.equals("QUIT;")); 
         }
         catch(IOException ioException) {
             ioException.printStackTrace();
-        }
-        finally {
-        	commanding = false;
         }
         return null;
     }
@@ -119,9 +120,9 @@ public class Server{
     }
 
     String listCommands(){
-    	String listedCommandsString = 
-    	"HERE IS A LIST OF COMMANDS YOU MAY USE:" +
-        "\nNEW - Allows the user to create a new entry set for: PLAYER, TEAM, or GAME" +
+      String listedCommandsString = 
+      "HERE IS A LIST OF COMMANDS YOU MAY USE:" +
+        "\nNEW - Allows the user to create a new table for: PLAYER, TEAM, or GAME" +
         "\nADD - Allows the user to insert a new entry for: PLAYER, TEAM, or GAME" +
         "\nREMOVE - Allows the user to delete entries for: PLAYER, TEAM, or a set of the both" +
         "\nTRADE - Allows the user to move players to different teams" +
@@ -135,55 +136,61 @@ public class Server{
     }
 
     void newCommand() {
-       sendMessage("Would you like to create a relation for Sport, Team, or Players?");
-       
-       String input1 = listenToSocket();
-       System.out.println("1st input: " + input1);
-
-       sendMessage("Enter the name of the " + input1);
-       String name = listenToSocket();
-       System.out.println("2nd input: " + name);
-
-       sendMessage("Enter Player Jersey Number: ");
-       String jerseyNumber = listenToSocket();
-       System.out.println("3rd input: " + jerseyNumber);
-
-       sendMessage("Enter Player Position: ");
-       String position = listenToSocket();
-       System.out.println("4th input: " + position);
        sendMessage("Would you like to create a Sport, Team, or Player?");
        String choice = listenToSocket();
        Vector<String> listOfAttr = new Vector<String>();
 
+       int attrNumber = 0;
+       do{
        sendMessage("Enter Number of Attributes for Table: ");
        String numOfAttr = listenToSocket();
-       int attrNumber = Integer.parseInt(numOfAttr);
+       attrNumber = Integer.parseInt(numOfAttr);
+       }while(attrNumber <= 0);
 
        for(int i = 0; i < attrNumber; i++)
        {
+        String typeCheck = "";
+        do{
         sendMessage("Specify Attribute Type for Attribute " + (i+1) + " (VARCHAR(x) or INTEGER): ");
         String attrType = listenToSocket();
+        typeCheck = attrType.substring(0,7);
+        sendMessage(typeCheck);
         sendMessage("Enter Name for Attribute " + (i+1) + ":");
         String attr = listenToSocket();
         listOfAttr.add(attr + " " + attrType);
+        }while(!typeCheck.equalsIgnoreCase("VARCHAR") && !typeCheck.equalsIgnoreCase("INTEGER"));
        }
 
-       String stringAttr = listOfAttr.toString().replace("[","").replace("]","");
+        String stringAttr = listOfAttr.toString().replace("[","").replace("]","");
 
-      sendMessage("Pick 2 Attributes to be the Primary Key.\n" + "Attribute " + 1 + ":" );
-      String pk1 = listenToSocket();
-      sendMessage("Attribute " + 2 + ":" );
-      String pk2 = listenToSocket();
+        sendMessage("Pick 2 Attributes to be the Primary Key.\n" + "Attribute " + 1 + ":" );
+        String pk1 = listenToSocket();
+        sendMessage("Attribute " + 2 + ":" );
+        String pk2 = listenToSocket();
 
-      String create = "CREATE TABLE " + choice + " (" + stringAttr + ")" + " PRIMARY KEY " + "(" + pk1 + ", " + pk2 + ");" ;
-      sendMessage(create);
-      sendMessage("Data Received");
+        String create = "CREATE TABLE " + choice + " (" + stringAttr + ")" + " PRIMARY KEY " + "(" + pk1 + ", " + pk2 + ");" ;
+        sendMessage(create);
+        sendMessage("Data Received");
 
-       sendMessage("Data received.");
-
+        commanding = false;
     }
 
     void addCommand(){
+        sendMessage("Enter name of table for Insert entry: ");
+        String choice = listenToSocket();
+        
+
+        commanding = false;
+
+
+    }
+
+    void printCommand(){
+        sendMessage("Enter name of table for Print: ");
+        String choice = listenToSocket();
+        String show = "SHOW " + choice;
+
+        commanding = false;
 
     }
     void tradeCommand(){
@@ -194,13 +201,12 @@ public class Server{
     }
 
     void exitApplication() {
-	    // Close the connection
+      // Close the connection
         try {
-            System.out.print("Disconnecting Client...");
+            System.out.println("Server connection closed");
             in.close();
             out.close();
             serverSocket.close();
-            System.out.println("Connection closed.");
         }
         catch(IOException ioException){
             ioException.printStackTrace();

@@ -66,7 +66,7 @@ public class Table implements Serializable {
 			System.out.println("Inserted row with key " + new_row.key + " in table " + relation_name);
 		}
 		else {
-			System.out.println("Error: Row with id " + new_row.key + " in table " + relation_name + "doesn't exist; failed to insert");			
+			System.out.println("Error: Row with id " + new_row.key + " in table " + relation_name + " doesn't exist; failed to insert");			
 		}
 	}
 
@@ -83,7 +83,7 @@ public class Table implements Serializable {
 			System.out.println("Deleted row with key " + row_id + " in table " + relation_name);
 		}
 		else {
-			System.out.println("Error: Row with id " + row_id + " in table " + relation_name + "doesn't exist; failed to delete");			
+			System.out.println("Error: Row with id " + row_id + " in table " + relation_name + " doesn't exist; failed to delete");			
 		}
 	}
 
@@ -103,7 +103,7 @@ public class Table implements Serializable {
 			System.out.println("Updated row with key " + row_id + " in table " + relation_name);
 		}
 		else {
-			System.out.println("Error: Row with id " + row_id + " in table " + relation_name + "doesn't exist; failed to update");			
+			System.out.println("Error: Row with id " + row_id + " in table " + relation_name + " doesn't exist; failed to update");			
 		}
 	}
 	
@@ -123,7 +123,7 @@ public class Table implements Serializable {
 		// Print each row
 		for (int i = 0; i < relation.size(); i++) {
 			Row row = relation.get(i);
-			System.out.println(row.key + row.values);
+			System.out.println(row.key + ": " + row.values);
 		}
 	}
 
@@ -212,7 +212,7 @@ public class Table implements Serializable {
 
 		// Print error if attribute not found
 		if (index == -1) {
-			System.out.println("Error: Attribute doesn't exist. Cannot get index.");
+			//System.out.println("Error: " + attribute_name + " doesn't exist in table's attributes. Cannot get index.");
 		}
 		return index;
 	}

@@ -26,6 +26,7 @@ public class Queries {
 		// Evaluate and create the table
 		Table expression_table = Grammar.evaluateExpression(expression_ArrayList);
 		Engine.relations_database.put(relation_name, expression_table);
+		System.out.println("Relation " + relation_name + " received data from Relation " + expression_table.relation_name);
 	}
 
 	public static Table selectQuery(ArrayList<String> token_ArrayList) {
@@ -72,8 +73,8 @@ public class Queries {
 		// Evaluate and create the table
 		Table expression_table = Grammar.evaluateExpression(expression_ArrayList);
 		Engine.relations_database.put("Temp Expression Table", expression_table);
-		Table selection_table = Engine.projection("Temp Expression Table", attribute_list_ArrayList);
-		return selection_table;
+		Table projection_table = Engine.projection("Temp Expression Table", attribute_list_ArrayList);
+		return projection_table;
 	}
 
 	public static Table renameQuery(ArrayList<String> token_ArrayList) {

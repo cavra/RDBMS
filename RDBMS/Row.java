@@ -1,6 +1,7 @@
 import java.util.*;
+import java.io.*;
 
-public class Row {
+public class Row implements Serializable {
 	
 	public ArrayList<String> values = new ArrayList<String>();
 	public String key;
@@ -8,6 +9,8 @@ public class Row {
 // =============================================================================
 // The Row constructor
 // Parameters:
+//   values: The Attribute values that belong to the row
+//   key: The row's Primary Key, created from its attributes
 // =============================================================================
 
 	Row(ArrayList<String> values, String key) {

@@ -212,16 +212,22 @@ public class Engine {
 			return null;
 		}
 		else {
-			Table projection_table = new Table("Projection from " + relation_name, table.attributes, table.keys);
-
 			// Get the indices of the new attribute columns from the original table
 			ArrayList<Integer> indicies = new ArrayList<Integer>();
 			for (String attribute : attributes) {
 				int i = table.getAttributeIndex(attribute);
-				if (i < 0) {
+				if (i >= 0) {
 					indicies.add(i);
 				}
 			}
+
+			// Update the attribute columns
+			ArrayList<Attribute> new_attributes = new ArrayList<Attribute>();
+			for(int i : indicies){
+				new_attributes.add(table.attributes.get(i));
+			}
+
+			Table projection_table = new Table("Projection from " + relation_name, new_attributes, table.keys);
 
 			// Loop through all the rows of the table
 			for (Row original_row : table.relation) {
@@ -257,8 +263,13 @@ public class Engine {
 			return null;
 		}
 		else {
-			// Get a copy of the current attributes
-			ArrayList<Attribute> new_attributes = table.attributes;
+			// Get a deep copy of the current attributes
+			ArrayList<Attribute> new_attributes = new ArrayList<Attribute>();
+			for (Attribute attribute : table.attributes) {
+				Attribute new_attribute = new Attribute(attribute.name, attribute.domain);
+				new_attributes.add(new_attribute);
+			}
+
 			// and rename them with the corresponding new attributes
 			for (int i = 0; i < new_attributes.size() && i < attributes.size(); i++) {
 				new_attributes.get(i).rename(attributes.get(i));
@@ -273,7 +284,7 @@ public class Engine {
 			Table rename_table = new Table("Renaming from " + relation_name, new_attributes, new_keys);
 
 			// Add all the original rows to the new table
-			for(int i = 1; i < table.relation.size(); i++){
+			for(int i = 0; i < table.relation.size(); i++){
 				Row row = table.relation.get(i);
 				rename_table.addRow(row);
 			}
@@ -299,13 +310,12 @@ public class Engine {
 		}
 		else {
 			Table union_table = new Table(new_relation_name, table1.attributes, table1.keys);	
-			
 
 			// Loop through table 1 and record all non-duplicate rows
 			for (Row row : table1.relation) {
 
-				// Check if the row already exists
-				if (union_table.getRow(row.key) != null) {
+				// Only add if it doesn't already exist
+				if (union_table.getRow(row.key) == null) {
 					union_table.addRow(row);
 				}
 			}
@@ -313,8 +323,8 @@ public class Engine {
 			// Loop through table 2 and record all non-duplicate rows
 			for (Row row : table2.relation) {
 
-				// Check if the row already exists
-				if (union_table.getRow(row.key) != null) {
+				// Only add if it doesn't already exist
+				if (union_table.getRow(row.key) == null) {
 					union_table.addRow(row);
 				}
 			}
@@ -579,7 +589,7 @@ public class Engine {
 // Parameters: 
 //   table: the table
 //   row: the table
-//   token_Arraylist: the table
+//   token_ArrayList: the table
 // =============================================================================
 
 	public static Boolean parseConditions(Table table, ArrayList<String> row_values, ArrayList<String> token_ArrayList){
@@ -588,9 +598,6 @@ public class Engine {
 		ArrayList<String> comparison_ArrayList = new ArrayList<String>();
 		Boolean value = false; // default to false
 
-		System.out.println(row_values);
-		System.out.println(token_ArrayList);
-		
 		for (int i = 0; i < token_ArrayList.size(); i++){
 			// The end of the comparison has been reached
 			if (token_ArrayList.get(i).equals(";") || 
@@ -598,6 +605,7 @@ public class Engine {
 				value = evaluateCondition(table, row_values, comparison_ArrayList);
 				break;
 			}
+			// The end of the comparison has been reached, and it's a value
 			else if (i == token_ArrayList.size() - 1) {
 				comparison_ArrayList.add(token_ArrayList.get(i));
 				value = evaluateCondition(table, row_values, comparison_ArrayList);	
@@ -644,7 +652,6 @@ public class Engine {
 		Integer attribute2_index = table.getAttributeIndex(condition_ArrayList.get(condition_ArrayList.size() - 1)); // akind -> 2
 		String attribute1 = "";
 		String attribute2 = "";
-		Boolean value = false; // default to false
 
 		if (attribute1_index < 0) {
 			attribute1 = condition_ArrayList.get(0);
@@ -663,10 +670,7 @@ public class Engine {
 		}
 
 		// If the attribute exists, and the row meets the condition...
-		if (checkCondition(attribute1, operator, attribute2)){
-			value = true;
-		}
-		return value;
+		return checkCondition(attribute1, operator, attribute2);
 	}
 
 // =============================================================================
@@ -674,35 +678,36 @@ public class Engine {
 
 	public static Boolean checkCondition(String attribute1, String operator, String attribute2){
 		String integer_regex = "[0-9]+";
-		Boolean value = false; // default to false
 
 		// INTEGER case
 		if ((attribute1.matches(integer_regex)) && (attribute2.matches(integer_regex))){
 			switch(operator){
 				case ">": 
-					value = (Integer.parseInt(attribute1) > Integer.parseInt(attribute2));
+					return (Integer.parseInt(attribute1) > Integer.parseInt(attribute2));
 				case "<": 
-					value = (Integer.parseInt(attribute1) < Integer.parseInt(attribute2));
+					return (Integer.parseInt(attribute1) < Integer.parseInt(attribute2));
 				case ">=": 
-					value = (Integer.parseInt(attribute1) >= Integer.parseInt(attribute2));
+					return (Integer.parseInt(attribute1) >= Integer.parseInt(attribute2));
 				case "<=": 
-					value = (Integer.parseInt(attribute1) >= Integer.parseInt(attribute2));
+					return (Integer.parseInt(attribute1) >= Integer.parseInt(attribute2));
 				case "==": 
-					value = attribute1.equals(attribute2);
+					return attribute1.equals(attribute2);
 				case "!=": 
-					value = attribute1 != attribute2;
+					return !attribute1.equals(attribute2);
 			}
 		}
 		// VARCHAR case
 		else {
 			switch(operator){
 				case "==": 
-					value = Objects.equals(attribute1, attribute2);
+					return attribute1.equals(attribute2);
 				case "!=": 
-					value = !Objects.equals(attribute1, attribute2);
+					return !attribute1.equals(attribute2);
 			}
 		}
-		return value;
+
+		// If no case is reached, return false
+		return false;
 	}
 
 	public static Boolean tableExists(String relation_name) {

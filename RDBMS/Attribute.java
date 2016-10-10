@@ -1,6 +1,7 @@
 import java.util.*;
+import java.io.*;
 
-public class Attribute {
+public class Attribute implements Serializable {
 	
 	public String name;
 	public String domain;
@@ -80,4 +81,5 @@ public class Attribute {
 	public void rename(String new_attribute_name) {
 		name = new_attribute_name;
 	}
+
 }
