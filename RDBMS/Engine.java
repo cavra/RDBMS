@@ -3,6 +3,7 @@ import java.io.*;
 
 public class Engine {
 
+	// Global Variables
 	static HashMap<String, Table> relations_database = new HashMap<String, Table>(); 
 
 // =============================================================================
@@ -236,11 +237,16 @@ public class Engine {
 					projected_values.add(original_row.values.get(i));
 				}
 
-				// Create a new row with the new data
-				Row projected_row = new Row(projected_values, original_row.key);
+				// Create the new key
+				String projected_key = projection_table.createKey(projected_values);
 
-				// And add it to the projected table
-				projection_table.addRow(projected_row);
+				// Create a new row with the new data
+				Row projected_row = new Row(projected_values, projected_key);
+
+				// And add it to the projected table, if it doesn't already exist
+				if (projection_table.getRow(projected_row.key) == null) {
+					projection_table.addRow(projected_row);
+				}
 			}
 			return projection_table;
 		}

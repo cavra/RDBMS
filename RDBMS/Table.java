@@ -3,6 +3,7 @@ import java.io.*;
 
 public class Table implements Serializable {
 	
+	// Global Variables
 	public ArrayList<Row> relation = new ArrayList<Row>();
 	public String relation_name;
 	public ArrayList<Attribute> attributes;
@@ -35,8 +36,8 @@ public class Table implements Serializable {
 
 // =============================================================================
 // The table destructor
-// A function to delete a table by setting all Relation data to null
-// Java's garbage collector takes care of the rest automatically
+//   A function to delete a table by setting all Relation data to null
+//   Java's garbage collector takes care of the rest automatically
 // =============================================================================
 
 	public void deleteTable() {
