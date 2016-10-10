@@ -64,19 +64,19 @@ public class Server{
                                 break;
                             case 5:
                                 commanding = true;
-                                tradePlayer();
+                            //    tradePlayer();
                                 break;
                             case 6:
                                 commanding = true;
-                                updatePlayer();
+                            //    updatePlayer();
                                 break;
                             case 7:
                                 commanding = true;
-                                updateTeam();
+                            //    updateTeam();
                                 break;
                             case 8:
                                 commanding = true;
-                                viewTeam();
+                            //    viewTeam();
                                 break;
                             case 9:
                                 exitApplication();
@@ -176,6 +176,7 @@ public class Server{
         sendMessage(player_insert);
         commanding = false;
     }
+
     void addTeam() {
        sendMessage("Enter Name of team: ");
        String team_name = listenToSocket();
@@ -218,7 +219,7 @@ public class Server{
          try{
             writer = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream("input.txt"), "utf-8"));
-            writer.write(player_remove);
+            writer.write(player_remove + "\n" + team_remove);
         } catch (IOException ex) {} 
         finally {
             try {writer.close();}
@@ -227,8 +228,6 @@ public class Server{
 
         sendMessage(player_remove);
         sendMessage(team_remove);
-
-
     }
 
     void removeTeam() {
@@ -246,7 +245,7 @@ public class Server{
         try{
             writer = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream("input.txt"), "utf-8"));
-            writer.write(team_delete);
+            writer.write(team_delete + "\n" + sport_delete);
         } catch (IOException ex) {} 
         finally {
             try {writer.close();}
