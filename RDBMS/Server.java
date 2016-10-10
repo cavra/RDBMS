@@ -159,12 +159,22 @@ public class Server{
         String player_name = listenToSocket();
         sendMessage("Enter Jersey number of the player to delete: ");
         String player_jersey = listenToSocket();
+        sendMessage("Enter Team of the player to delete: ");
+        String player_team = listenToSocket();
 
         String player_remove = "DELETE FROM players WHERE name=\"" + player_name +
                                "\"&&jersey_number=\"" + player_jersey + "\"";
 
+        String team_remove = "DELETE FROM " + player_team + " WHERE name=\"" + player_name +
+                               "\"&&jersey_number=\"" + player_jersey + "\"";
+
         sendMessage(player_remove);
+        sendMessage(team_remove);
+
+        // Send to the parser
     }
+
+
 
     void exitApplication() {
         // Close the connection
