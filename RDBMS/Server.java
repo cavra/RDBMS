@@ -120,16 +120,15 @@ public class Server{
         String listedCommandsString = 
         "HERE IS A LIST OF COMMANDS YOU MAY USE:" +
         "\n1.) Add Player - Allows the user to add player to a team." +
-        "\n2.) Add Team- Allows the user to add Team to a Sport." +
-        "\n3.) Add Sport - Allows the user to add a Sport to list of Sports." +
-        "\n4.) Remove Player - Allows the user to remove a player from a team" +
-        "\n5.) Remove Team - Allows user to remove a team from a sport " +
-        "\n6.) Remove Sport - Allows the user to remove a sport from the database. " +
-        "\n7.) Trade Player - Allows the user swap players from 2 teams. " +
-        "\n8.) Update Player - Allows user to change Player's attribute(s). " +
-        "\n9.) Update Team - Allows user to change Team's attribute(s). " +
-        "\n10.) View Team - Allows the user to look at roster for specified team. " +
-        "\n11.) EXIT APP";
+        "\n2.) Add Team - Allows the user to add Team to a Sport." +
+        "\n3.) Remove Player - Allows the user to remove a player from a team" +
+        "\n4.) Remove Team - Allows user to remove a team from a sport " +
+        "\n5.) Remove Sport - Allows the user to remove a sport from the database. " +
+        "\n6.) Trade Player - Allows the user swap players from 2 teams. " +
+        "\n7.) Update Player - Allows user to change Player's attribute(s). " +
+        "\n8.) Update Team - Allows user to change Team's attribute(s). " +
+        "\n9.) View Team - Allows the user to look at roster for specified team. " +
+        "\n10.) EXIT APP";
 
         return listedCommandsString;
     }
@@ -153,9 +152,19 @@ public class Server{
 
         sendMessage(playerInsert);
 
-
        }
 
+    void removePlayer() {
+        sendMessage("Enter Name of the player to delete: ");
+        String player_name = listenToSocket();
+        sendMessage("Enter Jersey number of the player to delete: ");
+        String player_jersey = listenToSocket();
+
+        String player_remove = "DELETE FROM players WHERE name=\"" + player_name +
+                               "\"&&jersey_number=\"" + player_jersey + "\"";
+
+        sendMessage(player_remove);
+    }
 
     void exitApplication() {
         // Close the connection
