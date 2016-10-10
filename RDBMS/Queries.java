@@ -3,14 +3,22 @@ import java.io.*;
 
 public class Queries {
 
-	public static void queryQuery(ArrayList<String> token_ArrayList) {
+// =============================================================================
+// The general query function. Whenever a query is detected, this function is 
+//   the first to be called. It creates a new relation with the values evaluated 
+//   from an expression
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static void queryQuery(ArrayList<String> sql_tokens) {
 
 		// Skip leading parentheses
-		Integer token_index = Grammar.skipTokens(token_ArrayList, "(");
+		Integer token_index = Grammar.skipTokens(sql_tokens, "(");
 
 		// Get the new relation name
 		String relation_name = "";
-		ArrayList<String> relation_name_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, "<-", false);
+		ArrayList<String> relation_name_ArrayList = Grammar.retrieveTokens(sql_tokens, token_index, "<-", false);
 		for (String string : relation_name_ArrayList) {
 			relation_name += string + " ";
 		}
@@ -18,7 +26,7 @@ public class Queries {
 		token_index += relation_name_ArrayList.size() + 1;
 
 		// Get the expression ArrayList
-		ArrayList<String> expression_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
+		ArrayList<String> expression_ArrayList = Grammar.retrieveTokens(sql_tokens, token_index, ";", true);
 
 		System.out.println("Table Name: " + relation_name);
 		System.out.println("Expressions List (or table name): " + expression_ArrayList);
@@ -29,19 +37,27 @@ public class Queries {
 		System.out.println("Relation " + relation_name + " received data from Relation " + expression_table.relation_name);
 	}
 
-	public static Table selectQuery(ArrayList<String> token_ArrayList) {
+// =============================================================================
+// The Select function. Whenever a Selection is detected, this function is 
+//   called. It creates a new relation with the values evaluated from an
+//   expression
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static Table selectQuery(ArrayList<String> sql_tokens) {
 
 		// Skip to the condition
 		Integer token_index = 0;
-		token_index = Grammar.skipToToken(token_ArrayList, token_index, "select");
-		token_index = Grammar.skipToToken(token_ArrayList, token_index, "(") + 1;
+		token_index = Grammar.skipToToken(sql_tokens, token_index, "select");
+		token_index = Grammar.skipToToken(sql_tokens, token_index, "(") + 1;
 
 		// Get the condition ArrayList
-		ArrayList<String> condition_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, ")", false);
+		ArrayList<String> condition_ArrayList = Grammar.retrieveTokens(sql_tokens, token_index, ")", false);
 		token_index += condition_ArrayList.size() + 1;
 
 		// Get the expression ArrayList
-		ArrayList<String> expression_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
+		ArrayList<String> expression_ArrayList = Grammar.retrieveTokens(sql_tokens, token_index, ";", true);
 
 		System.out.println("Conditions List:" + condition_ArrayList);
 		System.out.println("Expressions List (or table name): " + expression_ArrayList);
@@ -53,19 +69,27 @@ public class Queries {
 		return selection_table;
 	}
 
-	public static Table projectQuery(ArrayList<String> token_ArrayList){
+// =============================================================================
+// The Project function. Whenever a Projection is detected, this function is 
+//   called. It creates a new relation with the values evaluated from an
+//   expression
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static Table projectQuery(ArrayList<String> sql_tokens){
 
 		// Skip to the condition
 		Integer token_index = 0;
-		token_index = Grammar.skipToToken(token_ArrayList, token_index, "project");
-		token_index = Grammar.skipToToken(token_ArrayList, token_index, "(") + 1;
+		token_index = Grammar.skipToToken(sql_tokens, token_index, "project");
+		token_index = Grammar.skipToToken(sql_tokens, token_index, "(") + 1;
 
 		// Get the attribute list ArrayList
-		ArrayList<String> attribute_list_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, ")", false);
+		ArrayList<String> attribute_list_ArrayList = Grammar.retrieveTokens(sql_tokens, token_index, ")", false);
 		token_index += attribute_list_ArrayList.size() + 1;
 
 		// Get the expression ArrayList
-		ArrayList<String> expression_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
+		ArrayList<String> expression_ArrayList = Grammar.retrieveTokens(sql_tokens, token_index, ";", true);
 
 		System.out.println("Attributes List:" + attribute_list_ArrayList);
 		System.out.println("Expressions List (or table name): " + expression_ArrayList);
@@ -77,19 +101,27 @@ public class Queries {
 		return projection_table;
 	}
 
-	public static Table renameQuery(ArrayList<String> token_ArrayList) {
+// =============================================================================
+// The Rename function. Whenever a Renaming is detected, this function is 
+//   called. It creates a new relation with the values evaluated from an
+//   expression
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static Table renameQuery(ArrayList<String> sql_tokens) {
 
 		// Skip to the attribute list
 		Integer token_index = 0;
-		token_index = Grammar.skipToToken(token_ArrayList, token_index, "rename") + 1;
-		token_index = Grammar.skipToToken(token_ArrayList, token_index, "(") + 1;
+		token_index = Grammar.skipToToken(sql_tokens, token_index, "rename") + 1;
+		token_index = Grammar.skipToToken(sql_tokens, token_index, "(") + 1;
 
 		// Get the attribute list ArrayList
-		ArrayList<String> attribute_list_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, ")", false);
+		ArrayList<String> attribute_list_ArrayList = Grammar.retrieveTokens(sql_tokens, token_index, ")", false);
 		token_index += attribute_list_ArrayList.size() + 1;
 
 		// Get the expression ArrayList
-		ArrayList<String> expression_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
+		ArrayList<String> expression_ArrayList = Grammar.retrieveTokens(sql_tokens, token_index, ";", true);
 
 		System.out.println("Attributes List:" + attribute_list_ArrayList);
 		System.out.println("Expressions List (or table name): " + expression_ArrayList);
@@ -101,17 +133,25 @@ public class Queries {
 		return rename_table;
 	}
 
-	public static Table setUnionQuery(ArrayList<String> token_ArrayList) {
+// =============================================================================
+// The Set Union function. Whenever a '+' is detected, this function is 
+//   called. It creates a new relation with the values evaluated from an
+//   expression
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static Table setUnionQuery(ArrayList<String> sql_tokens) {
 
 		// Remove leading parentheses
-		Integer token_index = Grammar.skipTokens(token_ArrayList, "(");
+		Integer token_index = Grammar.skipTokens(sql_tokens, "(");
 
 		// Store the first expression
-		ArrayList<String> expression_ArrayList1 = Grammar.retrieveTokens(token_ArrayList, token_index, "+", false);
+		ArrayList<String> expression_ArrayList1 = Grammar.retrieveTokens(sql_tokens, token_index, "+", false);
 		token_index += expression_ArrayList1.size() + 1;
 
 		// Store the second expression
-		ArrayList<String> expression_ArrayList2 = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
+		ArrayList<String> expression_ArrayList2 = Grammar.retrieveTokens(sql_tokens, token_index, ";", true);
 
 		System.out.println("First Expression:" + expression_ArrayList1);
 		System.out.println("Second Expression:" + expression_ArrayList2);
@@ -131,17 +171,25 @@ public class Queries {
 		return set_union_table;
 	}
 
-	public static Table setDifferenceQuery(ArrayList<String> token_ArrayList){
+// =============================================================================
+// The Set Difference function. Whenever a '-' is detected, this function is 
+//   called. It creates a new relation with the values evaluated from an
+//   expression
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static Table setDifferenceQuery(ArrayList<String> sql_tokens){
 
 		// Remove leading parentheses
-		Integer token_index = Grammar.skipTokens(token_ArrayList, "(");
+		Integer token_index = Grammar.skipTokens(sql_tokens, "(");
 
 		// Store the first expression
-		ArrayList<String> expression_ArrayList1 = Grammar.retrieveTokens(token_ArrayList, token_index, "-", false);
+		ArrayList<String> expression_ArrayList1 = Grammar.retrieveTokens(sql_tokens, token_index, "-", false);
 		token_index += expression_ArrayList1.size() + 1;
 
 		// Store the second expression
-		ArrayList<String> expression_ArrayList2 = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
+		ArrayList<String> expression_ArrayList2 = Grammar.retrieveTokens(sql_tokens, token_index, ";", true);
 
 		System.out.println("First Expression:" + expression_ArrayList1);
 		System.out.println("Second Expression:" + expression_ArrayList2);
@@ -161,17 +209,25 @@ public class Queries {
 		return set_difference_table;	
 	}
 
-	public static Table crossProductQuery(ArrayList<String> token_ArrayList){
+// =============================================================================
+// The Cross Product function. Whenever a '*' is detected, this function is 
+//   called. It creates a new relation with the values evaluated from an
+//   expression
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static Table crossProductQuery(ArrayList<String> sql_tokens){
 
 		// Remove leading parentheses
-		Integer token_index = Grammar.skipTokens(token_ArrayList, "(");
+		Integer token_index = Grammar.skipTokens(sql_tokens, "(");
 
 		// Store the first expression
-		ArrayList<String> expression_ArrayList1 = Grammar.retrieveTokens(token_ArrayList, token_index, "*", false);
+		ArrayList<String> expression_ArrayList1 = Grammar.retrieveTokens(sql_tokens, token_index, "*", false);
 		token_index += expression_ArrayList1.size() + 1;
 
 		// Store the second expression
-		ArrayList<String> expression_ArrayList2 = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
+		ArrayList<String> expression_ArrayList2 = Grammar.retrieveTokens(sql_tokens, token_index, ";", true);
 
 		System.out.println("First Expression:" + expression_ArrayList1);
 		System.out.println("Second Expression:" + expression_ArrayList2);
@@ -191,17 +247,25 @@ public class Queries {
 		return cross_product_table;
 	}
 
-	public static Table naturalJoinQuery(ArrayList<String> token_ArrayList){
+// =============================================================================
+// The Natural Join function. Whenever a 'JOIN' is detected, this function is 
+//   called. It creates a new relation with the values evaluated from an
+//   expression
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static Table naturalJoinQuery(ArrayList<String> sql_tokens){
 		
 		// Remove leading parentheses
-		Integer token_index = Grammar.skipTokens(token_ArrayList, "(");
+		Integer token_index = Grammar.skipTokens(sql_tokens, "(");
 
 		// Store the first expression
-		ArrayList<String> expression_ArrayList1 = Grammar.retrieveTokens(token_ArrayList, token_index, "JOIN", false);
+		ArrayList<String> expression_ArrayList1 = Grammar.retrieveTokens(sql_tokens, token_index, "JOIN", false);
 		token_index += expression_ArrayList1.size() + 1;
 
 		// Store the second expression
-		ArrayList<String> expression_ArrayList2 = Grammar.retrieveTokens(token_ArrayList, token_index, ";", true);
+		ArrayList<String> expression_ArrayList2 = Grammar.retrieveTokens(sql_tokens, token_index, ";", true);
 
 		System.out.println("First Expression:" + expression_ArrayList1);
 		System.out.println("Second Expression:" + expression_ArrayList2);

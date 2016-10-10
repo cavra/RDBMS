@@ -3,6 +3,14 @@ import java.io.*;
 
 public class Parser {
 
+// =============================================================================
+// The Main Method call for our RDBMS system. 
+//   Essentially, this takes a input from Standard Input, removes empty or null
+//   lines, and then passes this data to the Grammar to be parsed. 
+// Parameters:
+//   args: Needed Parameter for main method call, not used
+// =============================================================================
+
 	public static void main(String[] args) {
 
 		// Take in from STDin

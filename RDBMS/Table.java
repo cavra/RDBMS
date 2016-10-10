@@ -6,7 +6,6 @@ public class Table implements Serializable {
 	public ArrayList<Row> relation = new ArrayList<Row>();
 	public String relation_name;
 	public ArrayList<Attribute> attributes;
-	public ArrayList<String> attribute_names = new ArrayList<String>();
 	public ArrayList<String> keys;
 	public ArrayList<Integer> key_indices = new ArrayList<Integer>();
 
@@ -23,11 +22,6 @@ public class Table implements Serializable {
 		this.relation_name = relation_name;
 		this.attributes = attributes;
 		this.keys = keys;
-
-		// Record the column names for easy access
-		for (int i = 0; i < attributes.size(); i++) {
-			this.attribute_names.add(attributes.get(i).name);
-		}
 
 		// Record the indexes of the primary keys in the attribute list
 		for (int i = 0; i < attributes.size(); i++) {
@@ -50,7 +44,6 @@ public class Table implements Serializable {
 		key_indices = null;
 		relation_name = null;
 		attributes = null;
-		attribute_names = null;
 		keys = null;
 	}
 

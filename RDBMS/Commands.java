@@ -3,18 +3,26 @@ import java.io.*;
 
 public class Commands {
 
-	public static Table createCommand(ArrayList<String> token_ArrayList) {	
+// =============================================================================
+// The CREATE TABLE function. Whenever "CREATE" is detected, this function is 
+//   called. It creates a new relation with the values evaluated from an
+//   expression
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static Table createCommand(ArrayList<String> sql_tokens) {	
 		ArrayList<Attribute> attributes = new ArrayList<Attribute>();
 		ArrayList<String> attribute_names = new ArrayList<String>();
 		ArrayList<String> attribute_domains = new ArrayList<String>();
 		ArrayList<String> primary_keys = new ArrayList<String>();
 
 		// Start the token index at the begining of the relation name
-		Integer token_index = Grammar.skipToToken(token_ArrayList, 0, "table") + 1;
+		Integer token_index = Grammar.skipToToken(sql_tokens, 0, "table") + 1;
 
 		// Get the new relation name
 		String relation_name = "";
-		ArrayList<String> relation_name_ArrayList = Grammar.retrieveTokens(token_ArrayList, token_index, "(", false);
+		ArrayList<String> relation_name_ArrayList = Grammar.retrieveTokens(sql_tokens, token_index, "(", false);
 		for (String string : relation_name_ArrayList) {
 			relation_name += string + " ";
 		}
@@ -22,25 +30,25 @@ public class Commands {
 		token_index += relation_name_ArrayList.size() + 1;
 
 		// Get the attribute list and their types
-		for (int i = token_index; i < token_ArrayList.size(); i++) {
-			if (token_ArrayList.get(i).equals("PRIMARY")) {
+		for (int i = token_index; i < sql_tokens.size(); i++) {
+			if (sql_tokens.get(i).equals("PRIMARY")) {
 				token_index = i;
 				break;
 			}
-			else if (token_ArrayList.get(i).equals("VARCHAR")) {
-				attribute_domains.add(token_ArrayList.get(i) + " " + token_ArrayList.get(i+2));
+			else if (sql_tokens.get(i).equals("VARCHAR")) {
+				attribute_domains.add(sql_tokens.get(i) + " " + sql_tokens.get(i+2));
 				i = i + 2;
 				continue;
 			}
-			else if (token_ArrayList.get(i).equals("INTEGER")) {
-				attribute_domains.add(token_ArrayList.get(i));
+			else if (sql_tokens.get(i).equals("INTEGER")) {
+				attribute_domains.add(sql_tokens.get(i));
 				continue;
 			}
-			else if (!token_ArrayList.get(i).equals("(") && !token_ArrayList.get(i).equals(")")) {
-				attribute_names.add(token_ArrayList.get(i));
+			else if (!sql_tokens.get(i).equals("(") && !sql_tokens.get(i).equals(")")) {
+				attribute_names.add(sql_tokens.get(i));
 			}
 			else {
-				//System.out.println("Skipping token... " + token_ArrayList.get(i));
+				//System.out.println("Skipping token... " + sql_tokens.get(i));
 			}
 		}
 
@@ -51,19 +59,19 @@ public class Commands {
 		}
 
 		// Get the primary keys list
-		for (int i = token_index; i < token_ArrayList.size(); i++) {
-			if (token_ArrayList.get(i).equals(";")) {
+		for (int i = token_index; i < sql_tokens.size(); i++) {
+			if (sql_tokens.get(i).equals(";")) {
 				token_index = i;
 				break;
 			}
-			else if (token_ArrayList.get(i).equals("PRIMARY") || token_ArrayList.get(i).equals("KEY")) {
+			else if (sql_tokens.get(i).equals("PRIMARY") || sql_tokens.get(i).equals("KEY")) {
 				continue;
 			}
-			else if (!token_ArrayList.get(i).equals("(") && !token_ArrayList.get(i).equals(")")) {
-				primary_keys.add(token_ArrayList.get(i));
+			else if (!sql_tokens.get(i).equals("(") && !sql_tokens.get(i).equals(")")) {
+				primary_keys.add(sql_tokens.get(i));
 			}			
 			else {
-				//System.out.println("Skipping token... " + token_ArrayList.get(i));				
+				//System.out.println("Skipping token... " + sql_tokens.get(i));				
 			}
 		}
 
@@ -76,54 +84,69 @@ public class Commands {
 		return new_table;
 	}
 
-	public static void dropCommand(ArrayList<String> token_ArrayList) {	
-		String relation_name = Grammar.getRelationName(token_ArrayList);
+// =============================================================================
+// The DROP TABLE function. Whenever "DROP" is detected, this function is 
+//   called. It will attempt to drop the specified relation
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static void dropCommand(ArrayList<String> sql_tokens) {	
+		String relation_name = Grammar.getRelationName(sql_tokens);
 		System.out.println("Table Name: " + relation_name);
 		Engine.dropTable(relation_name.trim());
 	}
 
-	public static void insertCommand(ArrayList<String> token_ArrayList) {
+// =============================================================================
+// The INSERT function. Whenever "INSERT" is detected, this function is 
+//   called. It will attempt to add a new row to an existing relation, or add
+//   all rows from another relation to an existing relation
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static void insertCommand(ArrayList<String> sql_tokens) {
 		String relation_name = "";
 		ArrayList<String> expression_ArrayList = new ArrayList<String>();
 
 		Integer token_index = 2;
 
 		// Gets the relation name
-		for (int i = token_index; i < token_ArrayList.size(); i++) {
-			if (token_ArrayList.get(i).equals("VALUES")) {
+		for (int i = token_index; i < sql_tokens.size(); i++) {
+			if (sql_tokens.get(i).equals("VALUES")) {
 				token_index = i + 2;
 				break;
 			}
 			else {
-				relation_name += token_ArrayList.get(i) + " ";
+				relation_name += sql_tokens.get(i) + " ";
 			}
 		}
 		relation_name = relation_name.trim();
 
-		if (token_ArrayList.get(token_index).equals("(")) {
+		if (sql_tokens.get(token_index).equals("(")) {
 			// Get the list of values to be inserted
-			for (int i = token_index; i < token_ArrayList.size(); i++) {
-				if (token_ArrayList.get(i).equals(";")) {
+			for (int i = token_index; i < sql_tokens.size(); i++) {
+				if (sql_tokens.get(i).equals(";")) {
 					token_index = i;
 					break;
 				}
-				else if (!token_ArrayList.get(i).equals("(") && !token_ArrayList.get(i).equals(")")) {
-					expression_ArrayList.add(token_ArrayList.get(i));
+				else if (!sql_tokens.get(i).equals("(") && !sql_tokens.get(i).equals(")")) {
+					expression_ArrayList.add(sql_tokens.get(i));
 				}
 				else {
-					//System.out.println("Skipping token... " + token_ArrayList.get(i));
+					//System.out.println("Skipping token... " + sql_tokens.get(i));
 				}
 			}
 
 			Engine.insertRow(relation_name, expression_ArrayList);
 		}
-		else if (token_ArrayList.get(token_index).equals("RELATION")) {
-			for (int i = token_index; i < token_ArrayList.size(); i++) {
-				if (token_ArrayList.get(i).equals(";")) {
+		else if (sql_tokens.get(token_index).equals("RELATION")) {
+			for (int i = token_index; i < sql_tokens.size(); i++) {
+				if (sql_tokens.get(i).equals(";")) {
 					break;
 				}
 				else {
-					expression_ArrayList.add(token_ArrayList.get(i));
+					expression_ArrayList.add(sql_tokens.get(i));
 				}
 			}
 			Table expression_table = Grammar.evaluateExpression(expression_ArrayList);
@@ -136,7 +159,14 @@ public class Commands {
 		}
 	}
 
-	public static void updateCommand(ArrayList<String> token_ArrayList) {
+// =============================================================================
+// The UPDATE function. Whenever "UPDATE" is detected, this function is 
+//   called. It will attempt to update an existing row from an existing relation
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static void updateCommand(ArrayList<String> sql_tokens) {
 		String relation_name = "";
 		ArrayList<String> attributes = new ArrayList<String>();
 		ArrayList<String> values = new ArrayList<String>();
@@ -144,35 +174,35 @@ public class Commands {
 
 		Integer token_index = 1;
 		// Get the relation name
-		for (int i = token_index; i < token_ArrayList.size(); i++) {
-			if (token_ArrayList.get(i).equals("SET")) {
+		for (int i = token_index; i < sql_tokens.size(); i++) {
+			if (sql_tokens.get(i).equals("SET")) {
 				token_index = i;
 				break;
 			}
 			else {
-				relation_name += token_ArrayList.get(i) + " ";
+				relation_name += sql_tokens.get(i) + " ";
 			}
 		}
 		relation_name = relation_name.trim();
 
 		// Get the set of data
 		Integer old_token_index = token_index;
-		for (int i = old_token_index; i < token_ArrayList.size() - 1; i++) {
-			if (token_ArrayList.get(i).equals("WHERE")) {
+		for (int i = old_token_index; i < sql_tokens.size() - 1; i++) {
+			if (sql_tokens.get(i).equals("WHERE")) {
 				token_index = i + 1;
 				break;
 			}
-			else if (token_ArrayList.get(i+1).equals("=")) {
-				attributes.add(token_ArrayList.get(i));
-				values.add(token_ArrayList.get(i+2));
+			else if (sql_tokens.get(i+1).equals("=")) {
+				attributes.add(sql_tokens.get(i));
+				values.add(sql_tokens.get(i+2));
 			}
 			else {
 				continue;
 			}
 		}
 
-		for (int i = token_index; i < token_ArrayList.size(); i++) {
-			condition_ArrayList.add(token_ArrayList.get(i));
+		for (int i = token_index; i < sql_tokens.size(); i++) {
+			condition_ArrayList.add(sql_tokens.get(i));
 		}
 
 		System.out.println("Table name:" + relation_name);
@@ -183,25 +213,32 @@ public class Commands {
 		Engine.updateRow(relation_name, attributes, values, condition_ArrayList);
 	}
 
-	public static void deleteCommand(ArrayList<String> token_ArrayList) {
+// =============================================================================
+// The DELETE function. Whenever "DELETE" is detected, this function is 
+//   called. It will attempt to delete an existing row from an existing relation
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static void deleteCommand(ArrayList<String> sql_tokens) {
 		String relation_name = "";
 		ArrayList<String> condition_ArrayList = new ArrayList<String>();
 
 		Integer token_index = 2;
 		// Get the relation name
-		for (int i = token_index; i < token_ArrayList.size(); i++) {
-			if (token_ArrayList.get(i).equals("WHERE")) {
+		for (int i = token_index; i < sql_tokens.size(); i++) {
+			if (sql_tokens.get(i).equals("WHERE")) {
 				token_index = i + 1;
 				break;
 			}
 			else {
-				relation_name += token_ArrayList.get(i) + " ";
+				relation_name += sql_tokens.get(i) + " ";
 			}
 		}
 		relation_name = relation_name.trim();
 
-		for (int i = token_index; i < token_ArrayList.size(); i++) {
-			condition_ArrayList.add(token_ArrayList.get(i));
+		for (int i = token_index; i < sql_tokens.size(); i++) {
+			condition_ArrayList.add(sql_tokens.get(i));
 		}
 
 		System.out.println("Table name:" + relation_name);
@@ -210,29 +247,66 @@ public class Commands {
 		Engine.deleteRow(relation_name, condition_ArrayList);
 	}
 
-	public static void showCommand(ArrayList<String> token_ArrayList) {
-		String relation_name = Grammar.getRelationName(token_ArrayList);
+// =============================================================================
+// The SHOQ function. Whenever "SHOW" is detected, this function is 
+//   called. It will attempt to print an existing relation
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static void showCommand(ArrayList<String> sql_tokens) {
+		String relation_name = Grammar.getRelationName(sql_tokens);
 		System.out.println("Table Name: " + relation_name);
 		Engine.show(relation_name.trim());
 	}
 
-	public static void openCommand(ArrayList<String> token_ArrayList) {	
-		String relation_name = Grammar.getRelationName(token_ArrayList);
+// =============================================================================
+// The OPEN function. Whenever "OPEN" is detected, this function is 
+//   called. It will attempt to read in an existing table from the table_data
+//   directory
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static void openCommand(ArrayList<String> sql_tokens) {	
+		String relation_name = Grammar.getRelationName(sql_tokens);
 		System.out.println("Table Name: " + relation_name);
 		Engine.openTable(relation_name.trim()); // Close table???
 	}
 
-	public static void writeCommand(ArrayList<String> token_ArrayList) {
-		String relation_name = Grammar.getRelationName(token_ArrayList);
+// =============================================================================
+// The WRITE function. Whenever "WRITE" is detected, this function is 
+//   called. It will attempt to write an existing table to the table_data
+//   directory
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static void writeCommand(ArrayList<String> sql_tokens) {
+		String relation_name = Grammar.getRelationName(sql_tokens);
 		System.out.println("Table Name: " + relation_name);
 		Engine.writeTable(relation_name.trim());
 	}
 
-	public static void closeCommand(ArrayList<String> token_ArrayList) {	
-		String relation_name = Grammar.getRelationName(token_ArrayList);
+// =============================================================================
+// The CLOSE function. Whenever "CLOSE" is detected, this function is 
+//   called. It will delete a table from the local database, not the saved files
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static void closeCommand(ArrayList<String> sql_tokens) {	
+		String relation_name = Grammar.getRelationName(sql_tokens);
 		System.out.println("Table Name: " + relation_name);
 		Engine.closeTable(relation_name.trim());
 	}
+
+// =============================================================================
+// The EXIT function. Whenever "EXIT" is detected, this function is 
+//   called. It will call the methods to end the program
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
 
 	public static void exitCommand() {
 		System.out.println("Program ending");

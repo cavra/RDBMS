@@ -25,7 +25,7 @@ a <- rename (aname, akind) (project (name, kind) animals);
 SHOW a;
 SHOW animals;
 
-b <- a * animals;
+b <- a JOIN animals;
 SHOW b;
 
 common_names <- project (name) (select (aname == name && akind != kind) (a * animals));

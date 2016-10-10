@@ -5,8 +5,6 @@ public class Engine {
 
 	static HashMap<String, Table> relations_database = new HashMap<String, Table>(); 
 
-	public static void main(String[] args) {}
-
 // =============================================================================
 // A function to create a new relation and add it to the database
 // Parameters: 
@@ -585,11 +583,14 @@ public class Engine {
 	}
 
 // =============================================================================
-// A function to parse an ArrayList of tokenized conditions
+// A function to parse an ArrayList of tokenized conditions. This is the first 
+//   step of a 3 step process. This stage will break apart the tokenized 
+//   conditions into individual conditions that will be evaluated in the next
+//   step. 
 // Parameters: 
-//   table: the table
-//   row: the table
-//   token_ArrayList: the table
+//   table: The table containing the rows to check against a condition
+//   row_values: The attribute values for the row we are checking.
+//   token_ArrayList: The tokenized conditions, containing all conditions
 // =============================================================================
 
 	public static Boolean parseConditions(Table table, ArrayList<String> row_values, ArrayList<String> token_ArrayList){
@@ -645,6 +646,13 @@ public class Engine {
 	}
 
 // =============================================================================
+// This is the second step of a 3 step process. This stage will determine what
+//   parts of the row to look at, either an attribute column or a specified 
+//    value. 
+// Parameters: 
+//   table: The table containing the rows to check against a condition
+//   row_values: The attribute values for the row we are checking.
+//   token_ArrayList: A single tokenized condition
 // =============================================================================
 
 	public static Boolean evaluateCondition(Table table, ArrayList<String> row_values, ArrayList<String> condition_ArrayList){
@@ -674,6 +682,13 @@ public class Engine {
 	}
 
 // =============================================================================
+// This is the last step of the 3 step process. This stage will look at the 
+//   specified attribute value and the value from the row, and use the operator
+//   to determine if it meets the condition or not.
+// Parameters: 
+//   attribtue1: The first, specified value we are checking against
+//   operator: The operator that tells us how to compare the two values
+//   attribtue2: The value from the row
 // =============================================================================
 
 	public static Boolean checkCondition(String attribute1, String operator, String attribute2){
