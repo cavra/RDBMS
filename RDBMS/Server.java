@@ -253,8 +253,48 @@ public class Server{
         }
         sendMessage(team_delete);
         sendMessage(sport_delete);
+    }
 
+    void tradePlayer() {
+        sendMessage("Enter first player's TEAM: ");
+        String team1 = listenToSocket();
+        sendMessage("Enter first player's NAME: ");
+        String player1 = listenToSocket();
+        sendMessage("Enter first player's JERSEY NUMBER: ");
+        String jersey1 = listenToSocket();
+        sendMessage("Enter second player's TEAM: ");
+        String team2 = listenToSocket();
+        sendMessage("Enter second player's NAME: ");
+        String player2 = listenToSocket();
+        sendMessage("Enter second player's JERSEY NUMBER: ");
+        String jersey2 = listenToSocket();
 
+        String trade1 = "INSERT INTO " + team2 + " VALUES FROM RELATION select (name=\"" +
+                        player1 + "\"&&jersey_number=\"" + jersey1 + "\") " + team1;
+
+        String trade2 = "INSERT INTO " + team1 + " VALUES FROM RELATION select (name=\"" + 
+                        player2 + "\"&&jersey_number=\"" + jersey2 + "\") " + team2;
+
+        String delete1 = "DELETE FROM " + team1 + " WHERE name=\"" + player1 + "\"&&jersey_number=\"" +
+                         jersey1 + "\"";
+
+        String delete2 = "DELETE FROM " + team2 + " WHERE name=\"" + player2 + "\"&&jersey_number=\"" +
+                         jersey2 + "\"";
+
+        try{
+            writer = new BufferedWriter(new OutputStreamWriter(
+            new FileOutputStream("input.txt"), "utf-8"));
+            writer.write(trade1 + "\n" + trade2 + "\n" + delete1 + "\n" + delete2);
+        } catch (IOException ex) {} 
+        finally {
+            try {writer.close();}
+            catch (Exception ex) {}
+        }
+
+        sendMessage(trade1);
+        sendMessage(trade2);
+        sendMessage(delete1);
+        sendMessage(delete2);
     }
 
     void exitApplication() {
