@@ -17,7 +17,7 @@ public class Grammar {
 	Grammar(String line) {
 
 		// Tokenize the input and store in a vector
-		String delimiters = "(){};= \t\n\r\f";
+		String delimiters = "(){};=<> \t\n\r\f";
 		StringTokenizer st = new StringTokenizer(line, delimiters, true);
 		while (st.hasMoreTokens()) {
 			String token = st.nextToken();
@@ -27,9 +27,16 @@ public class Grammar {
 			 }
 		}
 
-		// Reconnect all double operators
 		String[] operators = {"!", "<", ">", "="};
 		for (int i = 1; i < sql_tokens.size(); i++) {
+
+			// Reconnect the query signs
+			if (sql_tokens.get(i-1).equals("<") && sql_tokens.get(i).equals("-")) {
+				sql_tokens.set(i-1, "<-");
+				sql_tokens.remove(i);
+			}
+
+			// Reconnect the double operators
 			for (String operator : operators) {
 				if (sql_tokens.get(i-1).equals(operator) && sql_tokens.get(i).equals("=")) {
 					sql_tokens.set(i-1, operator + "=");

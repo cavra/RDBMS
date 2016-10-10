@@ -21,8 +21,10 @@ public class Parser {
 		while (file_input.hasNextLine()) {
 			String line = file_input.nextLine();
 
-			// If it's not empty or null, record it
-			if (line != null && !line.isEmpty()) {
+				// If it's not empty or null, and is valid, record it
+			if (line != null && 
+				!line.isEmpty() &&
+				line.contains(";")) {
 				input_vector.add(line);
 			}
 		}
@@ -46,8 +48,10 @@ public class Parser {
 			while (file_input.hasNextLine()) {
 				String line = file_input.nextLine();
 
-				// If it's not empty or null, record it
-				if (line != null && !line.isEmpty()) {
+				// If it's not empty or null, and is valid, record it
+				if (line != null && 
+					!line.isEmpty() &&
+					line.contains(";")) {
 					input_vector.add(line);
 				}
 			}

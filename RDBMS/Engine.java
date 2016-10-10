@@ -4,7 +4,7 @@ import java.io.*;
 public class Engine {
 
 	// Global Variables
-	static HashMap<String, Table> relations_database = new HashMap<String, Table>(); 
+	static HashMap<String, Table> relations_database = new HashMap<String, Table>();
 
 // =============================================================================
 // A function to create a new relation and add it to the database
@@ -458,7 +458,7 @@ public class Engine {
 			for (int i = 0; i < nj_attributes.size(); i++) {
 				for (int p = 0; p < nj_attributes.size(); p++) {
 					if (i != p) {
-						if (nj_attributes.get(i).equals(nj_attributes.get(p))) {
+						if (nj_attributes.get(i).name.equals(nj_attributes.get(p).name)) {
 							nj_attributes.remove(p);
 						}
 	                }
@@ -486,6 +486,7 @@ public class Engine {
 						// Combine their elements
 						Row combined_row = new Row(new_values, new_key);
 
+						// Remove the duplicate values
 						for (int i = 0; i < combined_row.size(); i++) {
 							for (int p = 0; p < combined_row.size(); p++) {
 								if (i != p) {
@@ -497,6 +498,9 @@ public class Engine {
 						}
 						nj_table.addRow(combined_row);
 					}
+					else {
+						System.out.println("Row with key: " + row1.key + " did not match row with key: " + row2.key);
+						System.out.println("Failed to join");					}
 				}
 			}
 			relations_database.put(new_relation_name, nj_table);
@@ -527,12 +531,13 @@ public class Engine {
 			relations_database.put(relation_name, read_table);
 		}
 		catch(IOException i) {
-			i.printStackTrace();
+			System.out.println("Error: Table data not found. Failed to open.");
+			//i.printStackTrace();
 			return;
 		}
 		catch(ClassNotFoundException c) {
 			System.out.println("Error: Table data not found. Failed to open.");
-			c.printStackTrace();
+			//c.printStackTrace();
 			return;
 		}
   	}
@@ -548,7 +553,7 @@ public class Engine {
 			// Check that the table exists
 			Table table = relations_database.get(relation_name);
 			if (table == null){
-				System.out.println("Error: Table doesn't exist. failed to write.");
+				System.out.println("Error: Table doesn't exist. Failed to write.");
 			}
 			else {
 				// Create the .ser file

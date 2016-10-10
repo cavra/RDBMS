@@ -21,18 +21,11 @@ INSERT INTO animals3 VALUES FROM ("Reed", "lizard", "yes");
 INSERT INTO animals3 VALUES FROM ("Jason", "otter", "yes");
 SHOW animals3;
 
-UPDATE animals SET kind = "feline", years = "500" WHERE kind=="cat";
-DELETE FROM animals WHERE name == "Tweety";
-SHOW animals;
-
-select_test <- select (kind == "dog") animals;
-SHOW select_test;
+rename_test <- rename (rName, rKind, rYears) animals;
+SHOW rename_test;
 
 project_test <- project (kind) animals;
 SHOW project_test;
-
-rename_test <- rename (rName, rKind, rYears) animals;
-SHOW rename_test;
 
 union_test <- animals + animals2;
 SHOW union_test;
