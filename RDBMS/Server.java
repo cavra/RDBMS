@@ -152,6 +152,8 @@ public class Server{
        String player_name = listenToSocket();
        sendMessage("Enter Age of player: ");
        String player_age = listenToSocket();
+       sendMessage("Enter Team of player: ");
+       String player_team = listenToSocket();
        sendMessage("Enter Jersey Number of player: ");
        String jersey_number = listenToSocket();
        sendMessage("Enter Position of player: ");
@@ -164,10 +166,15 @@ public class Server{
         ", " + player_age + ", " + jersey_number + ", " + "\"" + player_position +
         "\"" + ", " + player_points + ")"; 
 
+        String player_insert_team = 
+            "INSERT INTO " + player_team + " VALUES FROM " + "(\"" + player_name + "\"" +
+        ", " + player_age + ", " + jersey_number + ", " + "\"" + player_position +
+        "\"" + ", " + player_points + ")";
+
         try{
             writer = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream("input.txt"), "utf-8"));
-            writer.write(player_insert);
+            writer.write(player_insert  + '\n' + player_insert_team);
         } catch (IOException ex) {} 
         finally {
             try {writer.close();}
@@ -178,6 +185,8 @@ public class Server{
     }
 
     void addTeam() {
+       sendMessage("Enter Sport the team plays: ");
+       String team_sport = listenToSocket();
        sendMessage("Enter Name of team: ");
        String team_name = listenToSocket();
        sendMessage("Enter Location of team: ");
@@ -186,11 +195,13 @@ public class Server{
        String team_insert =
         "INSERT INTO teams VALUES FROM " + "(\"" + team_name + "\"" +
         ", " +  "\"" + team_location + ")"; 
+       String team_insert_sport = 
+        "INSERT INTO " + team_sport + " VALUES FROM " + "(\"" + team_sport + "\"" + ")"; 
 
         try{
             writer = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream("input.txt"), "utf-8"));
-            writer.write(team_insert);
+            writer.write(team_insert + '\n' + team_insert_sport);
         } catch (IOException ex) {} 
         finally {
             try {writer.close();}
@@ -200,7 +211,7 @@ public class Server{
         sendMessage(team_insert);
         commanding = false;
 
-    }       
+    }
 
     void removePlayer() {
         sendMessage("Enter Name of the player to delete: ");
