@@ -123,12 +123,11 @@ public class Server{
         "\n2.) Add Team - Allows the user to add Team to a Sport." +
         "\n3.) Remove Player - Allows the user to remove a player from a team" +
         "\n4.) Remove Team - Allows user to remove a team from a sport " +
-        "\n5.) Remove Sport - Allows the user to remove a sport from the database. " +
-        "\n6.) Trade Player - Allows the user swap players from 2 teams. " +
-        "\n7.) Update Player - Allows user to change Player's attribute(s). " +
-        "\n8.) Update Team - Allows user to change Team's attribute(s). " +
-        "\n9.) View Team - Allows the user to look at roster for specified team. " +
-        "\n10.) EXIT APP";
+        "\n5.) Trade Player - Allows the user swap players from 2 teams. " +
+        "\n6.) Update Player - Allows user to change Player's attribute(s). " +
+        "\n7.) Update Team - Allows user to change Team's attribute(s). " +
+        "\n8.) View Team - Allows the user to look at roster for specified team. " +
+        "\n9.) EXIT APP";
 
         return listedCommandsString;
     }
@@ -174,7 +173,22 @@ public class Server{
         // Send to the parser
     }
 
+    void removeTeam() {
+        sendMessage("Enter Name of the team to delete: ");
+        String team_name = listenToSocket();
+        sendMessage("Enter Sport that the team plays: ");
+        String team_sport = listenToSocket();
 
+        String team_delete = "DELETE FROM teams WHERE name=\"" + team_name +
+                             "\"";
+
+        String sport_delete = "DELETE FROM " + team_sport + " WHERE name=\"" + 
+                              team_name + "\"";
+
+        sendMessage(team_delete);
+        sendMessage(sport_delete);
+
+    }
 
     void exitApplication() {
         // Close the connection
