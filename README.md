@@ -17,53 +17,8 @@ $ java Parser TEXTFILE.txt
 We have several test_xxx.txt files, each to test a certain aspect of our program. These test files correlate with our resubmission changelog for the Parser + Engine. Feel free to edit 
 these text files. They all begin with "test" are are ready to be given to the Parser. 
 
-## Stories
-
-Parser Functionality: 
-
-- [x] Create Table
-- [x] Drop Table
-- [x] Insert Row
-- [x] Update Row
-- [x] Delete Row
-- [x] Show
-- [x] Selection
-- [x] Projection
-- [x] Rename
-- [x] Set Union
-- [x] Set Difference
-- [x] Cross Product
-- [x] Natural Join
-- [x] Write Table
-- [x] Read Table
-- [x] Handles nested conditions
-- [x] Handles nested queries
-
-Engine Functionality: 
-
-- [x] Create Table
-- [x] Drop Table
-- [x] Insert Row
-- [x] Update Row
-- [x] Delete Row
-- [x] Show
-- [x] Selection
-- [x] Projection
-- [x] Rename
-- [x] Set Union
-- [x] Set Difference
-- [x] Cross Product
-- [x] Natural Join
-- [x] Write Table
-- [x] Read Table
-
-Style:
-
-- [x] Program follows typical Java convention as far as we are aware
-- [x] Program is well documented with clear, concise comments
-
 ## Notes
-This group project is only partially complete. As of right now, all we have is the engine and the parser. 
+This group project is only partially complete. 
 
 ## Development Log
 
@@ -211,7 +166,7 @@ Cory Avra - Finish engine and parser, Finish Interactive System
 
 **10/10/16**
 
-Met at annex from 1 - 3<br/>
+Met at annex from 1 - 8<br/>
 @Completed<br/>
 Reed Spivey - Worked on Interactive System<br/>
 Jason Alonzo - Worked on Interactive System<br/>
