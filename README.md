@@ -12,9 +12,10 @@ Reed Spivey<br>
 ## Instructions
 Our program has been developed in compute.cs.tamu.edu, although it should run on all servers. We reccomend using compute. From the RDBMS directory, compile it with the makefile, and then execute it with 
 
-$ java Parser < my_queries.txt 
+$ java Parser <TEXTFILE>.txt 
 
-Feel free to edit the my_queries.txt  
+We have several test_xxx.txt files, each to test a certain aspect of our program. These test files correlate with our resubmission changelog for the Parser + Engine. Feel free to edit 
+these text files. They all begin with "test" are are ready to be given to the Parser. 
 
 ## Stories
 

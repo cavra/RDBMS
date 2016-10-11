@@ -8,32 +8,32 @@ Reed Spivey - 623004372
 
 ## SUBMISSION
 ### Issue:<br>
-	Read me file covers how and where to build
+Read me file covers how and where to build
 ### Changes:
-	We submitted the wrong link before, readme file exists and is found here: https://github.tamu.edu/reedspivey/ComputersAreHardP1D3/blob/master/README.md
+We submitted the wrong link before, readme file exists and is found here: https://github.tamu.edu/reedspivey/ComputersAreHardP1D3/blob/master/README.md
 ### New Grade Estimate: 
-	2/2
+2/2
 
 ## REQUIRED FUNCTIONALITIES
 ### Issue 1:
-	Nested conditions
+Nested conditions
 ### Changes 1:
-	Nested conditions were planned to be handled in the parser. We have now implemented this, and it works. 
+Nested conditions were planned to be handled in the parser. We have now implemented this, and it works. 
 ### New Grade Estimate 1:
-	4/4
+4/4
 ### Issue 2:
-	Nested queries
+Nested queries
 ### Changes 2:
-	Nested queries were planned to be handled in the parser. We have now implemented this, and it (almost) works. 
+Nested queries were planned to be handled in the parser. We have now implemented this, and it (almost) works. 
 ### New Grade Estimate 2:
-	4/4
+4/4
 
 ## DEV LOG
 ### Issue:
-	Dev Log
+Dev Log
 ### Changes:
-	We submitted the wrong link before, The Dev Log is linked and located at the bottom of the README file in the Github repository. It now also contains a TODO list of which members should do what next time we meet. 
+We submitted the wrong link before, The Dev Log is linked and located at the bottom of the README file in the Github repository. It now also contains a TODO list of which members should do what next time we meet. 
 ### New Grade Estimate:
-	8/8
+8/8
 
 ### Overall Estimated Grade: 100/100 
