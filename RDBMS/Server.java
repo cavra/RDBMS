@@ -9,6 +9,7 @@ public class Server {
     ObjectOutputStream out;
     ObjectInputStream in;
     String message;
+    Writer writer;
 
     public static void main(String args[]) {
         Server server = new Server();
@@ -80,6 +81,21 @@ public class Server {
     }
 
     String getRequestedData(String message) {
+
+
+        try {
+            writer = new BufferedWriter(new OutputStreamWriter(
+            new FileOutputStream("input.txt"), "utf-8"));
+            writer.write(message);
+        } 
+        catch (IOException ex) {} 
+        finally {
+            try {writer.close();}
+            catch (Exception ex) {}
+        }
+
+        Parser.readInputFile();
+
         switch (message.toUpperCase()) {
             case "EXIT": 
                 return "EXIT;";

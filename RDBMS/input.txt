@@ -1,2 +1,1 @@
-INSERT INTO players VALUES FROM ("George", 14, 52, "guard", 2)
-INSERT INTO rockets VALUES FROM ("George", 14, 52, "guard", 2)
+SHOW animals;

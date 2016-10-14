@@ -38,7 +38,7 @@ public class Client{
                 try {
                     message = (String)in.readObject();
                     // Check if the server has disconnected already
-                    if (!message.equals("EXIT;")) {
+                    if (!message.toUpperCase().equals("EXIT;")) {
                         System.out.println("Server> " + message);
                         message = generateCommandFromInput();
                         sendMessage(message);
@@ -122,7 +122,39 @@ public class Client{
                 case "ADD PLAYER":
                     command = addPlayer();
                     finished = true;
-                    break;                
+                    break;
+                case "ADD TEAM":
+                    command = addTeam();
+                    finished = true;
+                    break;
+                case "REMOVE PLAYER":
+                    command = removePlayer();
+                    finished = true;
+                    break;
+                case "REMOVE TEAM":
+                    command = removeTeam();
+                    finished = true;
+                    break;
+                case "TRADE PLAYER":
+                    command = tradePlayer();
+                    finished = true;
+                    break;
+                case "UPDATE PLAYER":
+                    command = updatePlayer();
+                    finished = true;
+                    break;
+                case "UPDATE TEAM":
+                    command = updateTeam();
+                    finished = true;
+                    break;
+                case "VIEW PLAYER":
+                    // command = viewPlayer()     
+                    // finished = true;
+                    break;
+                case "VIEW TEAM":
+                    command = viewTeam();
+                    finished = true;
+                    break;
                 case "QUIT":
                     command = "EXIT;";
                     finished = true;
@@ -188,257 +220,195 @@ public class Client{
             ", " + age + ", " + jersey + ", " + "\"" + position +
             "\"" + ", " + points + ")";
 
-            return player_insert;
+            return player_insert + "\n" + player_insert_team;
         }
         return "";
     }
 
-    void addTeam() {
-       System.out.println("Enter Sport the team plays: ");
-       String team_sport = scanner.nextLine();
-       System.out.println("Enter Name of team: ");
-       String team_name = scanner.nextLine();
-       System.out.println("Enter Location of team: ");
-       String team_location = scanner.nextLine();
+    String addTeam() {
+        while(!shouldCancel){
+            String team_sport = getUserInput("Enter Sport the team plays: ");
+            String team_name = getUserInput("Enter Name of team: ");
+            String team_location = getUserInput("Enter Location of team: ");
 
-       String team_insert =
-        "INSERT INTO teams VALUES FROM " + "(\"" + team_name + "\"" +
-        ", " +  "\"" + team_location + ")"; 
-       String team_insert_sport = 
-        "INSERT INTO " + team_sport + " VALUES FROM " + "(\"" + team_sport + "\"" + ")"; 
+            String team_insert =
+            "INSERT INTO teams VALUES FROM " + "(\"" + team_name + "\", \"" + 
+            team_location + ")";
 
-        try{
-            writer = new BufferedWriter(new OutputStreamWriter(
-            new FileOutputStream("input.txt"), "utf-8"));
-            writer.write(team_insert + '\n' + team_insert_sport);
-        } catch (IOException ex) {} 
-        finally {
-            try {writer.close();}
-            catch (Exception ex) {}
+            String team_insert_sport = 
+            "INSERT INTO " + team_sport + " VALUES FROM " + "(\"" + 
+            team_sport + "\"" + ")"; 
+
+            return team_insert + '\n' + team_insert_sport;
         }
-
-        System.out.println(team_insert);
+        return "";
     }
 
-    void removePlayer() {
-        System.out.println("Enter Name of the player to delete: ");
-        String name = scanner.nextLine();
-        System.out.println("Enter Jersey number of the player to delete: ");
-        String player_jersey = scanner.nextLine();
-        System.out.println("Enter Team of the player to delete: ");
-        String team = scanner.nextLine();
+    String removePlayer() {
+        while(!shouldCancel){
+            String name = getUserInput("Enter Name of the player to delete: ");
+            String player_jersey = getUserInput("Enter " + name + "'s jersey number: ");
+            String team = getUserInput("Enter the name of " + name + "'s team: ");
 
-        String player_remove = "DELETE FROM players WHERE name=\"" + name +
-                               "\"&&jersey=\"" + player_jersey + "\"";
+            String player_remove = "DELETE FROM players WHERE name=\"" + name +
+                                   "\"&&jersey=\"" + player_jersey + "\"";
 
-        String team_remove = "DELETE FROM " + team + " WHERE name=\"" + name +
-                               "\"&&jersey=\"" + player_jersey + "\"";
+            String team_remove = "DELETE FROM " + team + " WHERE name=\"" + name +
+                                   "\"&&jersey=\"" + player_jersey + "\"";
 
-         try{
-            writer = new BufferedWriter(new OutputStreamWriter(
-            new FileOutputStream("input.txt"), "utf-8"));
-            writer.write(player_remove + "\n" + team_remove);
-        } catch (IOException ex) {} 
-        finally {
-            try {writer.close();}
-            catch (Exception ex) {}
+            return player_remove + "\n" + team_remove;
         }
-
-        System.out.println(player_remove);
-        System.out.println(team_remove);
+        return "";
     }
 
-    void removeTeam() {
-        System.out.println("Enter Name of the team to delete: ");
-        String team_name = scanner.nextLine();
-        System.out.println("Enter Sport that the team plays: ");
-        String team_sport = scanner.nextLine();
+    String removeTeam() {
+        while(!shouldCancel){
+            String team_name = getUserInput("Enter Name of the team to delete: ");
+            String team_sport = getUserInput("Enter Sport that the team plays: ");
 
-        String team_delete = "DELETE FROM teams WHERE name=\"" + team_name +
-                             "\"";
+            String team_delete = "DELETE FROM teams WHERE name=\"" + team_name +
+                                 "\"";
 
-        String sport_delete = "DELETE FROM " + team_sport + " WHERE name=\"" + 
-                              team_name + "\"";
-
-        try{
-            writer = new BufferedWriter(new OutputStreamWriter(
-            new FileOutputStream("input.txt"), "utf-8"));
-            writer.write(team_delete + "\n" + sport_delete);
-        } catch (IOException ex) {} 
-        finally {
-            try {writer.close();}
-            catch (Exception ex) {}
-        }
-        System.out.println(team_delete);
-        System.out.println(sport_delete);
+            String sport_delete = "DELETE FROM " + team_sport + " WHERE name=\"" + 
+                                  team_name + "\"";
+        
+            return team_delete + "\n" + sport_delete;
+        }  
+        return ""; 
     }
 
-    void tradePlayer() {
-        System.out.println("Enter first player's TEAM: ");
-        String team1 = scanner.nextLine();
-        System.out.println("Enter first player's NAME: ");
-        String player1 = scanner.nextLine();
-        System.out.println("Enter first player's JERSEY NUMBER: ");
-        String jersey1 = scanner.nextLine();
-        System.out.println("Enter second player's TEAM: ");
-        String team2 = scanner.nextLine();
-        System.out.println("Enter second player's NAME: ");
-        String player2 = scanner.nextLine();
-        System.out.println("Enter second player's JERSEY NUMBER: ");
-        String jersey2 = scanner.nextLine();
+    String tradePlayer() {
+        while(!shouldCancel){
+            String player1 = getUserInput("Enter first player's name: ");
+            String team1 = getUserInput("Enter " + player1 + "'s team name: ");
+            String jersey1 = getUserInput("Enter " + player1 + "'s jersey number: ");
+            String player2 = getUserInput("Enter second player's name: ");
+            String team2 = getUserInput("Enter " + player2 + "'s team name: ");
+            String jersey2 = getUserInput("Enter " + player2 + "'s jersey number: ");
 
-        String trade1 = "INSERT INTO " + team2 + " VALUES FROM RELATION select (name=\"" +
-                        player1 + "\"&&jersey=\"" + jersey1 + "\") " + team1;
+            String trade1 = "INSERT INTO " + team2 + " VALUES FROM RELATION select (name=\"" +
+                            player1 + "\"&&jersey=\"" + jersey1 + "\") " + team1;
 
-        String trade2 = "INSERT INTO " + team1 + " VALUES FROM RELATION select (name=\"" + 
-                        player2 + "\"&&jersey=\"" + jersey2 + "\") " + team2;
+            String trade2 = "INSERT INTO " + team1 + " VALUES FROM RELATION select (name=\"" + 
+                            player2 + "\"&&jersey=\"" + jersey2 + "\") " + team2;
 
-        String delete1 = "DELETE FROM " + team1 + " WHERE name=\"" + player1 + "\"&&jersey=\"" +
-                         jersey1 + "\"";
+            String delete1 = "DELETE FROM " + team1 + " WHERE name=\"" + player1 + "\"&&jersey=\"" +
+                             jersey1 + "\"";
 
-        String delete2 = "DELETE FROM " + team2 + " WHERE name=\"" + player2 + "\"&&jersey=\"" +
-                         jersey2 + "\"";
+            String delete2 = "DELETE FROM " + team2 + " WHERE name=\"" + player2 + "\"&&jersey=\"" +
+                             jersey2 + "\"";
 
-        try{
-            writer = new BufferedWriter(new OutputStreamWriter(
-            new FileOutputStream("input.txt"), "utf-8"));
-            writer.write(trade1 + "\n" + trade2 + "\n" + delete1 + "\n" + delete2);
-        } catch (IOException ex) {} 
-        finally {
-            try {writer.close();}
-            catch (Exception ex) {}
+            return trade1 + "\n" + trade2 + "\n" + delete1 + "\n" + delete2;
         }
-
-        System.out.println(trade1);
-        System.out.println(trade2);
-        System.out.println(delete1);
-        System.out.println(delete2);
+        return "";
     }
 
-    void updatePlayer() {
-        Vector<String> attr_list = new Vector<String>();
+    String updatePlayer() {
+        while(!shouldCancel){
+            Vector<String> attr_list = new Vector<String>();
 
-        System.out.println("Enter NAME of the player to be updated: ");
-        String name = scanner.nextLine();
-        System.out.println("Enter JERSEY NUMBER of the player to be updated: ");
-        String player_jersey = scanner.nextLine();
-        System.out.println("Enter TEAM NAME of the player to be updated: ");
-        String team = scanner.nextLine();
+            String name = getUserInput("Enter name of the player to be updated: ");
+            String player_jersey = getUserInput("Enter " + name + "'s jersey number: ");
+            String team = getUserInput("Enter " + name + "'s team name: ");
 
-        System.out.println("Update PLAYER NAME (Type \"NO\" to continue without updating): ");
-        String update_name = scanner.nextLine();
-        if(update_name.toLowerCase() != "no"){
-            String temp = "name=\"" + update_name + "\"";
-            attr_list.add(temp);
+            String update_name = getUserInput("Update PLAYER NAME (Type \"NO\" to continue without updating): ");
+            if(update_name.toLowerCase() != "no"){
+                String temp = "name=\"" + update_name + "\"";
+                attr_list.add(temp);
+            }
+
+            String update_jersey = getUserInput("Update JERSEY NUMBER (Type \"NO\" to continue without updating: ");
+            if(update_jersey != "NO" && update_jersey != "no" && update_jersey != "No"){
+                String temp = "jersey=\"" + update_jersey + "\"";
+                attr_list.add(temp);
+            }
+
+            String update_age = getUserInput("Update AGE (Type \"NO\" to continue without updating: ");
+            if(update_age != "NO" && update_age != "No" && update_age != "no"){
+                String temp = "age=\"" + update_age + "\"";
+                attr_list.add(temp);
+            }
+
+            String update_points = getUserInput("Update POINTS SCORED (Type \"NO\" to continue without updating: ");
+            if(update_points != "NO" && update_points != "No" && update_points != "no"){
+                String temp = "points_scored=\"" + update_points + "\"";
+                attr_list.add(temp);
+            }
+
+            String update_position = getUserInput("Update POSITION (Type \"NO\" to continue without updating: ");
+            if(update_position.toLowerCase() != "no"){
+                String temp = "position=\"" + update_position + "\"";
+                attr_list.add(temp);
+            }
+
+            String update_players = "UPDATE players SET ";
+            String update_team = "UPDATE " + team + " SET ";
+            for(int i = 0; i < attr_list.size()-1; i++){
+                update_players += attr_list.get(i) + ", ";
+                update_team += attr_list.get(i) + ", ";
+            }
+            update_players += attr_list.get(attr_list.size()-1);
+            update_players += " WHERE name=\"" + name + "\"&&jersey=\"" +
+                              player_jersey + "\"";
+
+            update_team += attr_list.get(attr_list.size()-1);
+            update_team += " WHERE name=\"" + name + "\"&&jersey=\"" +
+                              player_jersey + "\"";
+
+            return update_players + '\n' + update_team;
         }
-
-        System.out.println("Update JERSEY NUMBER (Type \"NO\" to continue without updating: ");
-        String update_jersey = scanner.nextLine();
-        if(update_jersey != "NO" && update_jersey != "no" && update_jersey != "No"){
-            String temp = "jersey=\"" + update_jersey + "\"";
-            attr_list.add(temp);
-        }
-
-        System.out.println("Update AGE (Type \"NO\" to continue without updating: ");
-        String update_age = scanner.nextLine();
-        if(update_age != "NO" && update_age != "No" && update_age != "no"){
-            String temp = "age=\"" + update_age + "\"";
-            attr_list.add(temp);
-        }
-
-        System.out.println("Update POINTS SCORED (Type \"NO\" to continue without updating: ");
-        String update_points = scanner.nextLine();
-        if(update_points != "NO" && update_points != "No" && update_points != "no"){
-            String temp = "points_scored=\"" + update_points + "\"";
-            attr_list.add(temp);
-        }
-
-        System.out.println("Update POSITION (Type \"NO\" to continue without updating: ");
-        String update_position = scanner.nextLine();
-        if(update_position.toLowerCase() != "no"){
-            String temp = "position=\"" + update_position + "\"";
-            attr_list.add(temp);
-        }
-
-
-        String update_players = "UPDATE players SET ";
-        String update_team = "UPDATE " + team + " SET ";
-        for(int i = 0; i < attr_list.size()-1; i++){
-            update_players += attr_list.get(i) + ", ";
-            update_team += attr_list.get(i) + ", ";
-        }
-        update_players += attr_list.get(attr_list.size()-1);
-        update_players += " WHERE name=\"" + name + "\"&&jersey=\"" +
-                          player_jersey + "\"";
-
-        update_team += attr_list.get(attr_list.size()-1);
-        update_team += " WHERE name=\"" + name + "\"&&jersey=\"" +
-                          player_jersey + "\"";
-
-        System.out.println(update_players);
-        System.out.println(update_team);
-
-        try{
-            writer = new BufferedWriter(new OutputStreamWriter(
-            new FileOutputStream("input.txt"), "utf-8"));
-            writer.write(update_players + "\n" + update_team);
-        } catch (IOException ex) {} 
-        finally {
-            try {writer.close();}
-            catch (Exception ex) {}
-        }
+        return "";
     }
 
-    void updateTeam(){
-        Vector<String> attr_list = new Vector<String>();
+    String updateTeam(){
+        while(!shouldCancel){
+            Vector<String> attr_list = new Vector<String>();
 
-        System.out.println("Enter the NAME of the team to be updated: ");
-        String team_name = scanner.nextLine();
-        System.out.println("Enter the CITY LOCATION of the team to be updated: ");
-        String team_location = scanner.nextLine();
-        System.out.println("Enter the SPORT played by the team: ");
-        String team_sport = scanner.nextLine();
+            String team_name = getUserInput("Enter the name of the team of be updated: ");
+            String team_location = getUserInput("Enter the city where the " + team_name + "'s play: ");
+            String team_sport = getUserInput("Enter the sport that the " + team_name + "'s play: ");
 
-        System.out.println("Update TEAM LOCATION (Type \"NO\" to continue without updating: ");
-        String update_location = scanner.nextLine();
-        if(update_location.toLowerCase() != "no"){
-            String temp = "team_location=\"" + update_location +"\"";
-            attr_list.add(temp);
+            String update_location = getUserInput("Update TEAM LOCATION (Type \"NO\" to continue without updating: ");
+            if(update_location.toLowerCase() != "no"){
+                String temp = "team_location=\"" + update_location +"\"";
+                attr_list.add(temp);
+            }
+
+            String update_name = getUserInput("Update TEAM NAME (Type \"NO\" to continue without updating: ");
+            if(update_location.toLowerCase() != "no"){
+                String temp = "team_name=\"" + update_location + "\"";
+                attr_list.add(temp);
+            }
+
+            String update_team = "UPDATE teams SET ";
+            String update_sport = "UPDATE " + team_sport + " SET ";
+            for(int i = 0; i < attr_list.size()-1; i++){
+                update_team += attr_list.get(i) + ", ";
+                update_sport += attr_list.get(i) + ", ";
+            }
+            update_team += attr_list.get(attr_list.size()-1);
+            update_team += " WHERE team_name=\"" + team_name + "\"&&team_location=\"" +
+                              team_location + "\"";
+
+            update_sport += attr_list.get(attr_list.size()-1);
+            update_sport += " WHERE name=\"" + team_name + "\"&&team_location=\"" +
+                              team_location + "\"";
+
+            return update_team + "\n" + update_sport;
         }
-
-        System.out.println("Update TEAM NAME (Type \"NO\" to continue without updating: ");
-        String update_name = scanner.nextLine();
-        if(update_location.toLowerCase() != "no"){
-            String temp = "team_name=\"" + update_location + "\"";
-            attr_list.add(temp);
-        }
-
-        String update_team = "UPDATE teams SET ";
-        String update_sport = "UPDATE " + team_sport + " SET ";
-        for(int i = 0; i < attr_list.size()-1; i++){
-            update_team += attr_list.get(i) + ", ";
-            update_sport += attr_list.get(i) + ", ";
-        }
-        update_team += attr_list.get(attr_list.size()-1);
-        update_team += " WHERE team_name=\"" + team_name + "\"&&team_location=\"" +
-                          team_location + "\"";
-
-        update_sport += attr_list.get(attr_list.size()-1);
-        update_sport += " WHERE name=\"" + team_name + "\"&&team_location=\"" +
-                          team_location + "\"";
-
-        System.out.println(update_team);
-        System.out.println(update_sport);
-
-        try{
-            writer = new BufferedWriter(new OutputStreamWriter(
-            new FileOutputStream("input.txt"), "utf-8"));
-            writer.write(update_team + "\n" + update_sport);
-        } catch (IOException ex) {} 
-        finally {
-            try {writer.close();}
-            catch (Exception ex) {}
-        }
+        return "";
     }
-
+    
+    String viewTeam() {
+        while (!shouldCancel){
+            String team = getUserInput("Enter the team name: ");
+            
+            String view_command = "SHOW " + team + ";";
+            return view_command;
+        }
+        return "";
+    }
 }
+
+
+
