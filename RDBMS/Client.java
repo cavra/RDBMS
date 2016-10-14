@@ -167,6 +167,11 @@ public class Client{
     String addPlayer() {
         while (!shouldCancel) {
             String name = getUserInput("What is the new player's name? ");
+
+            if (name.toUpperCase().equals("CANCEL")) {
+                break;
+            }
+
             String age = getUserInput("How old is " + name + "? ");
             String team = getUserInput("What team does " + name + " play for? ");
             String jersey = getUserInput("What is " + name + "\'s Jersey Number? ");
