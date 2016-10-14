@@ -152,8 +152,8 @@ public class Client{
                     // finished = true;
                     break;
                 case "VIEW TEAM":
-                    // command = viewTeam()
-                    // finished = true;
+                    command = viewTeam();
+                    finished = true;
                     break;
                 case "QUIT":
                     command = "EXIT;";
@@ -393,13 +393,15 @@ public class Client{
         }
         return "";
     }
-    /*
+    
     String viewTeam() {
-        String team = getUserInput("Enter the team name: ");
-
-        String view_command = "SHOW select (" + ")" + team;
+        while (!shouldCancel){
+            String team = getUserInput("Enter the team name: ");
+            
+            String view_command = "SHOW project (name, jersey_number) " + team;
+        }
+        return "";
     }
-    */
 }
 
 
