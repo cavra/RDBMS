@@ -256,7 +256,7 @@ public class Commands {
 // =============================================================================
 
 	public static void showCommand(ArrayList<String> sql_tokens) {
-		// Get the expression ArrayList
+		// Get the expression ArrayList (or relation name)
 		ArrayList<String> expression_ArrayList = Grammar.retrieveTokens(sql_tokens, 1, ";", true);
 
 		// Evaluate and create the table

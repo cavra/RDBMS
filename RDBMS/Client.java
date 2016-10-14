@@ -213,12 +213,12 @@ public class Client{
             String player_insert =
             "INSERT INTO players VALUES FROM " + "(\"" + name + "\"" +
             ", " + age + ", " + jersey + ", " + "\"" + position +
-            "\"" + ", " + points + ")"; 
+            "\"" + ", " + points + ");"; 
 
             String player_insert_team = 
             "INSERT INTO " + team + " VALUES FROM " + "(\"" + name + "\"" +
             ", " + age + ", " + jersey + ", " + "\"" + position +
-            "\"" + ", " + points + ")";
+            "\"" + ", " + points + ");";
 
             return player_insert + "\n" + player_insert_team;
         }
@@ -233,11 +233,11 @@ public class Client{
 
             String team_insert =
             "INSERT INTO teams VALUES FROM " + "(\"" + team_name + "\", \"" + 
-            team_location + ")";
+            team_location + ");";
 
             String team_insert_sport = 
             "INSERT INTO " + team_sport + " VALUES FROM " + "(\"" + 
-            team_sport + "\"" + ")"; 
+            team_sport + "\"" + ");"; 
 
             return team_insert + '\n' + team_insert_sport;
         }

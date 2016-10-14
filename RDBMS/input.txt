@@ -1,1 +1,2 @@
-SHOW animals;
+INSERT INTO players VALUES FROM ("John", 10, 1, "All", 0);
+INSERT INTO Homeschool VALUES FROM ("John", 10, 1, "All", 0);
