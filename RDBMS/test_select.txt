@@ -12,3 +12,5 @@ select_test1 <- select (kind == "dog" && years<0) animals;
 select_test2 <- select (kind == "dog" && years>0) animals;
 
 SHOW select_test2;
+
+SHOW select (kind == "dog" && years>0) animals;

@@ -249,15 +249,22 @@ public class Commands {
 
 // =============================================================================
 // The SHOQ function. Whenever "SHOW" is detected, this function is 
-//   called. It will attempt to print an existing relation
+//   called. It will attempt to print an existing relation or one defined by an 
+//   expression
 // Parameters: 
 //   sql_tokens: An ArrayList containining tokenized psuedo-SQL
 // =============================================================================
 
 	public static void showCommand(ArrayList<String> sql_tokens) {
-		String relation_name = Grammar.getRelationName(sql_tokens);
-		System.out.println("Table Name: " + relation_name);
-		Engine.show(relation_name.trim());
+		// Get the expression ArrayList
+		ArrayList<String> expression_ArrayList = Grammar.retrieveTokens(sql_tokens, 1, ";", true);
+
+		// Evaluate and create the table
+		Table expression_table = Grammar.evaluateExpression(expression_ArrayList);
+		Engine.relations_database.put(expression_table.relation_name, expression_table);
+
+		System.out.println("Table Name: " + expression_table.relation_name);
+		Engine.show(expression_table.relation_name);
 	}
 
 // =============================================================================
