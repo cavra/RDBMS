@@ -399,6 +399,7 @@ public class Client{
             String team = getUserInput("Enter the team name: ");
             
             String view_command = "SHOW project (name, jersey_number) " + team;
+            return view_command;
         }
         return "";
     }
