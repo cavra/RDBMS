@@ -1,1 +1,1 @@
-SHOW animals;
+CREATE TABLE sports (name VARCHAR(20), playing_surface VARCHAR(20), country_created VARCHAR(20)) PRIMARY KEY (name, playing_surface);
