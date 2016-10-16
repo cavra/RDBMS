@@ -1,6 +1,1 @@
-<<<<<<< HEAD
-INSERT INTO players VALUES FROM ("John", 10, 1, "All", 0);
-INSERT INTO Homeschool VALUES FROM ("John", 10, 1, "All", 0);
-=======
-CREATE TABLE sports (name VARCHAR(20), playing_surface VARCHAR(20), country_created VARCHAR(20)) PRIMARY KEY (name, playing_surface);
->>>>>>> 085a92eb693bc1063947689e3accaf450d15dbcd
+CREATE TABLE teams (name VARCHAR(20), location VARCHAR(20), venue VARCHAR(20), wins INTEGER, losses INTEGER, ties INTEGER) PRIMARY KEY (location, name);

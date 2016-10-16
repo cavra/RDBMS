@@ -17,12 +17,12 @@ public class Grammar {
 	Grammar(String line) {
 
 		// Tokenize the input and store in a vector
-		String delimiters = "(){};=<> \t\n\r\f";
+		String delimiters = "(){};=<>, \t\n\r\f";
 		StringTokenizer st = new StringTokenizer(line, delimiters, true);
 		while (st.hasMoreTokens()) {
 			String token = st.nextToken();
-			if (!token.trim().isEmpty() && !token.equals(",")) {
-				token = token.replaceAll(",", "");
+			if (!token.trim().isEmpty() && !token.trim().equals(",")) {
+				token = token.replaceAll(",", ""); // Remove all commas
 				sql_tokens.add(token);
 			 }
 		}

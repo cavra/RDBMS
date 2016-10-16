@@ -33,12 +33,12 @@ public class Client{
             // Welcome the user only once, out here
             welcomeUser();
 
-            //Create global tables that store all sports, teams, and playesr created"
+            // Create global tables that store all sports, teams, and playesr created"
             String global_teams = "CREATE TABLE teams (name VARCHAR(20), location VARCHAR(20), venue VARCHAR(20), wins INTEGER, " +
             "losses INTEGER, ties INTEGER) PRIMARY KEY (location, name);";
             sendMessage(global_teams);
 
-            String global_players = "CREATE TABLE players (name VARCHAR(20), age INTEGER, jersey_number INTEGER, points_scored INTEGER) " +
+            String global_players = "CREATE TABLE players (name VARCHAR(20), age INTEGER, jersey number INTEGER, position VARCHAR(20), points_scored INTEGER) " +
             "PRIMARY KEY (name, jersey_number);";
             sendMessage(global_players);
 
@@ -182,7 +182,6 @@ public class Client{
                     break;
             }
         }
-
         return command;
     }
 
@@ -211,28 +210,30 @@ public class Client{
                     break;
             }
         }
+
+        input = input.trim();
+        input = input.replaceAll(" ", "_");
         return input;
     }
 
     String addPlayer() {
         while (!shouldCancel) {
+
+            // Get the required information from the user
             String name = getUserInput("What is the new player's name? ");
-
-            if (name.toUpperCase().equals("CANCEL")) {
-                break;
-            }
-
             String age = getUserInput("How old is " + name + "? ");
             String team = getUserInput("What team does " + name + " play for? ");
             String jersey = getUserInput("What is " + name + "\'s Jersey Number? ");
             String position = getUserInput("What is " + name + "\'s position? ");
             String points = getUserInput("How many points has " + name + " scored? ");
 
+            // Insert the player information into the players table
             String player_insert =
             "INSERT INTO players VALUES FROM " + "(\"" + name + "\"" +
             ", " + age + ", " + jersey + ", " + "\"" + position +
             "\"" + ", " + points + ");"; 
 
+            // Insert the players information into the player's team table
             String player_insert_team = 
             "INSERT INTO " + team + " VALUES FROM " + "(\"" + name + "\"" +
             ", " + age + ", " + jersey + ", " + "\"" + position +
@@ -251,6 +252,7 @@ public class Client{
                 break;
             }
 
+            // Get the required information from the user
             String team_name = getUserInput("Enter Name of team: ");
             String team_location = getUserInput("Enter Location of team: ");
             String venue = getUserInput("Enter the name of the " + team_name + "'s venue (ex. Kyle Field): ");
@@ -258,24 +260,17 @@ public class Client{
             String total_losses = getUserInput("Enter " + team_name + "'s total losses: ");
             String total_ties = getUserInput("Enter " + team_name + "'s total ties: ");
 
-            // Each team table consists of a list of players on said team
+            // Create a table for the new team's players, if this is the first case of the team
             String team_table = "CREATE TABLE " + team_name + "(name VARCHAR(20), age INTEGER, jersey_number INTEGER, points_scored INTEGER) " +
             "PRIMARY KEY (name, jersey_number);"; 
            
-
+           // Insert the team information into the teams table
             String team_insert =
-<<<<<<< HEAD
-            "INSERT INTO teams VALUES FROM " + "(\"" + team_name + "\", \"" + 
-            team_location + ");";
-
-            String team_insert_sport = 
-            "INSERT INTO " + team_sport + " VALUES FROM " + "(\"" + 
-            team_sport + "\"" + ");"; 
-=======
             "INSERT INTO teams VALUES FROM (\"" + team_name + "\", \"" + 
             team_location + "\", \"" + venue + "\", \"" + total_wins + "\", \"" +
             total_losses + "\", \"" + total_ties + "\", \"" + ");";
 
+            // Insert the team information into the sports table
             String team_insert_sport = 
             "INSERT INTO " + team_sport + " VALUES FROM (\"" + team_name + "\", \"" + 
             team_location + "\", \"" + venue + "\", \"" + total_wins + "\", \"" +
@@ -295,7 +290,6 @@ public class Client{
             // Each sport table consist of a list of teams playing said sport
             String sport_table = "CREATE TABLE " + name + "(name VARCHAR(20), location VARCHAR(20), venue VARCHAR(20), wins INTEGER, " +
             "losses INTEGER, ties INTEGER) PRIMARY KEY (location, name);";
->>>>>>> 085a92eb693bc1063947689e3accaf450d15dbcd
 
             String insert_sport = "INSERT INTO sports VALUES FROM (\"" + name + "\", \"" +
             playing_surface + "\", \"" + country + "\");";
