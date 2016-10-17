@@ -2,4 +2,3 @@ teams
 sports
 players
 Basketball
-Football

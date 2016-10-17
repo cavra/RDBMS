@@ -255,7 +255,7 @@ public class Commands {
 //   sql_tokens: An ArrayList containining tokenized psuedo-SQL
 // =============================================================================
 
-	public static void showCommand(ArrayList<String> sql_tokens) {
+	public static String showCommand(ArrayList<String> sql_tokens) {
 		// Get the expression ArrayList (or relation name)
 		ArrayList<String> expression_ArrayList = Grammar.retrieveTokens(sql_tokens, 1, ";", true);
 
@@ -264,7 +264,9 @@ public class Commands {
 		Engine.relations_database.put(expression_table.relation_name, expression_table);
 
 		System.out.println("Table Name: " + expression_table.relation_name);
-		Engine.show(expression_table.relation_name);
+		String show_results = Engine.show(expression_table.relation_name);
+
+		return show_results;
 	}
 
 // =============================================================================

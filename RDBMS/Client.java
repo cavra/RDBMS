@@ -41,7 +41,9 @@ public class Client{
                     message = (String)in.readObject();
                     // Check if the server has disconnected already
                     if (!message.toUpperCase().equals("EXIT;")) {
-                        System.out.println("Server> " + message);
+                        System.out.println("------------------------------------------------------------");
+                        System.out.println(message);
+                        System.out.println("------------------------------------------------------------");
                         message = generateSQL();
                         sendMessage(message);
                     }
@@ -84,6 +86,20 @@ public class Client{
         catch(IOException ioException) {
             ioException.printStackTrace();
         }
+    }
+
+    String getMessage() {
+        try {
+            message = (String)in.readObject();
+            return message;
+        }
+        catch(ClassNotFoundException classNot) {
+            System.err.println("Data received in unknown format");
+        }
+        catch(IOException ioException) {
+            ioException.printStackTrace();
+        }
+        return null;
     }
 
     void resume() {
@@ -449,17 +465,17 @@ public class Client{
                 update_team += attr_list.get(i) + ", ";
             }
             update_players += attr_list.get(attr_list.size()-1);
-            update_players += " WHERE name=\"" + name + "\"&&jersey=\"" + player_jersey + "\";";
+            update_players += " WHERE name ==\"" + name + "\"&& jersey ==\"" + player_jersey + "\";";
 
             update_team += attr_list.get(attr_list.size()-1);
-            update_team += " WHERE name=\"" + name + "\"&&jersey=\"" + player_jersey + "\";";
+            update_team += " WHERE name ==\"" + name + "\"&& jersey ==\"" + player_jersey + "\";";
 
             return update_players + '\n' + update_team;
         }
         return "";
     }
 
-    String updateTeam(){
+    String updateTeam() {
         while(!shouldCancel){
             Vector<String> attr_list = new Vector<String>();
 
@@ -491,11 +507,11 @@ public class Client{
                 update_sport += attr_list.get(i) + ", ";
             }
             update_team += attr_list.get(attr_list.size()-1);
-            update_team += " WHERE team_name=\"" + team_name + "\"&&team_location=\"" +
+            update_team += " WHERE team_name ==\"" + team_name + "\"&&team_location==\"" +
                               team_location + "\";";
 
             update_sport += attr_list.get(attr_list.size()-1);
-            update_sport += " WHERE name=\"" + team_name + "\"&&team_location=\"" +
+            update_sport += " WHERE name==\"" + team_name + "\"&&team_location==\"" +
                               team_location + "\";";
 
             return update_team + "\n" + update_sport;
@@ -535,6 +551,8 @@ public class Client{
 
     String viewAllSports() {
         while (!shouldCancel){
+            //sendMessage("SHOW sports;");
+            //getMessage();
             String view_command = "SHOW sports;";
             return view_command;
         }

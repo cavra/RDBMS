@@ -105,20 +105,32 @@ public class Table implements Serializable {
 // A function to print a relation
 // =============================================================================
 
-	public void show() {
-		// Print the header
-		System.out.print("Key");
+	public String show() {
+		// Store everything in this string
+		String show_result = "";
+
+		// Format the key and the attribute names
+		String key = String.format("%1$-15s", "Key");
+		String header = key;
 		for(int i = 0; i < attributes.size(); i++) {
-			System.out.print(" " + attributes.get(i).name);
+			String attribute = String.format("%1$-14s", attributes.get(i).name);
+			header += attribute;	
+		}
+		show_result += header + "\n";
+
+		// Format each row with its key and values
+		for (Row row : relation) {
+			String key_formatted = String.format("%1$-15s", row.key + ":");
+			String row_formatted = key_formatted;
+			for(String value : row.values) {
+				String value_formatted = String.format("%1$-14s", value);
+				row_formatted += value_formatted;
+			}
+			show_result += row_formatted + "\n";
 		}
 
-		System.out.print("\n");
-
-		// Print each row
-		for (int i = 0; i < relation.size(); i++) {
-			Row row = relation.get(i);
-			System.out.println(row.key + ": " + row.values);
-		}
+		System.out.println(show_result);
+		return show_result;
 	}
 
 // =============================================================================

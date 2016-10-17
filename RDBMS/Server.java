@@ -42,11 +42,8 @@ public class Server {
                     message = (String)in.readObject();
                     // Check if the client has disconnected already
                     if (!message.equals("EXIT;")) {
-                        System.out.println("Client> " + message);
-                        System.out.println("\n----- Engine Output ------------------------------");
-                        message = getRequestedData(message);
-                        System.out.println("--------------------------------------------------\n");
-                        sendMessage(message);
+                        printMessage("Client", message);
+                        parseMessage(message);
                     }
                 }
                 catch(ClassNotFoundException classnot) {
@@ -60,7 +57,7 @@ public class Server {
         finally {
             // Close the connection
             try {
-                getRequestedData("EXIT;");
+                parseMessage("EXIT;");
                 in.close();
                 out.close();
                 serverSocket.close();
@@ -76,33 +73,37 @@ public class Server {
         try {
             out.writeObject(message);
             out.flush();
-            System.out.println("Server> " + message);
+            printMessage("Server", message);
         }
         catch(IOException ioException) {
             ioException.printStackTrace();
         }
     }
 
-    String getRequestedData(String message) {
+    void parseMessage(String message) {
 
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(
-            new FileOutputStream("input.txt"), "utf-8"));
-            writer.write(message);
-        } 
-        catch (IOException ex) {} 
-        finally {
-            try {writer.close();}
-            catch (Exception ex) {}
+        // Note: This string will be NULL unless SHOW is being executed,
+        // which is why it's named "show_results"
+        System.out.println("\nEngine stream:");
+        System.out.println("------------------------------------------------------------");
+        String show_results = Parser.readMessage(message);
+        System.out.println("------------------------------------------------------------");
+
+        // So if it's not NULL, return the SHOW results
+        if (show_results != null && !show_results.equals("")) {
+            sendMessage(show_results);
         }
 
-        Parser.readInputFile();
-
-        switch (message.toUpperCase()) {
-            case "EXIT": 
-                return "EXIT;";
-            default: 
-                return "Input received";
+        // If the message is calling for program exit, return EXIT;
+        if (message.toUpperCase().equals("EXIT")) { 
+            sendMessage("EXIT;");
         }
+    }
+
+    void printMessage(String source, String message) {
+        System.out.println("\n" + source + " stream:");
+        System.out.println("------------------------------------------------------------");
+        System.out.println(message);
+        System.out.println("------------------------------------------------------------");
     }
 }

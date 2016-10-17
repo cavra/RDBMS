@@ -4,7 +4,7 @@ import java.io.*;
 public class Grammar {
    
 	// Global Variables
-	private ArrayList<String> sql_tokens = new ArrayList<String>();
+	private static ArrayList<String> sql_tokens = new ArrayList<String>();
 
 // =============================================================================
 // The Grammar constructor
@@ -14,7 +14,11 @@ public class Grammar {
 //   line: A String received from Standard Input, ready to be tokenized
 // =============================================================================
 
-	Grammar(String line) {
+	Grammar() {}
+
+	public static String parseLine(String line) {
+
+		sql_tokens.clear();
 
 		// Tokenize the input and store in a vector
 		String delimiters = "(){};=<>, \t\n\r\f";
@@ -46,7 +50,7 @@ public class Grammar {
 		}
 
 		// Call the correct method with the tokenized input 
-		callMethod(sql_tokens);
+		return callMethod(sql_tokens);
 	}
 
 // =============================================================================
@@ -55,9 +59,9 @@ public class Grammar {
 //   sql_tokens: An ArrayList containining tokenized psuedo-SQL
 // =============================================================================
 
-	private static void callMethod(ArrayList<String> sql_tokens) {
+	private static String callMethod(ArrayList<String> sql_tokens) {
 
-		System.out.println("\nTokenized ArrayList: " + sql_tokens);
+		System.out.println("Tokenized ArrayList: " + sql_tokens);
 
 		tokenloop:
 		for (String token : sql_tokens) {
@@ -118,8 +122,8 @@ public class Grammar {
 					break tokenloop;
 				case "SHOW":
 					System.out.println("SHOW invoked");
-					Commands.showCommand(sql_tokens);
-					break tokenloop;
+					String show_results = Commands.showCommand(sql_tokens);
+					return show_results; // Return the results
 				case "OPEN":
 					System.out.println("OPEN invoked");
 					Commands.openCommand(sql_tokens);
@@ -138,6 +142,7 @@ public class Grammar {
 					break tokenloop;
 			}
 		}
+		return null;
 	}
 
 // =============================================================================

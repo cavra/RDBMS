@@ -4,7 +4,7 @@ import java.io.*;
 public class Engine {
 
 	// Global Variables
-	static HashMap<String, Table> relations_database = new HashMap<String, Table>();
+	public static HashMap<String, Table> relations_database = new HashMap<String, Table>();
 
 // =============================================================================
 // A function to create a new relation and add it to the database
@@ -166,14 +166,15 @@ public class Engine {
 //   relation_name: The name of the relation to show
 // =============================================================================
 
-	public static void show(String relation_name) {
+	public static String show(String relation_name) {
 		// Check if the table exists
 		Table table = relations_database.get(relation_name);
 		if (table == null) {
 			System.out.println("Error: Table doesn't exist; failed to show.");
+			return null;
 		}
 		else {
-			table.show();
+			return table.show();
 		}
 	}
 	

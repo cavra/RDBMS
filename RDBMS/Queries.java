@@ -34,7 +34,7 @@ public class Queries {
 		// Evaluate and create the table
 		Table expression_table = Grammar.evaluateExpression(expression_ArrayList);
 		Engine.relations_database.put(relation_name, expression_table);
-		System.out.println("Relation " + relation_name + " received data from Relation " + expression_table.relation_name);
+		System.out.println(relation_name + " received data from " + expression_table.relation_name);
 	}
 
 // =============================================================================
