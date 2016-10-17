@@ -1,3 +1,2 @@
-CREATE TABLE Manchester_United(name VARCHAR(20), age INTEGER, jersey_number INTEGER, position VARCHAR(20), points_scored INTEGER) PRIMARY KEY (name, jersey_number);
-INSERT INTO teams VALUES FROM ("Manchester_United", "Manchester", "Old_Trafford", 5, 1, 2);
-INSERT INTO Soccer VALUES FROM ("Manchester_United", "Manchester", "Old_Trafford", 5, 1, 2);
+INSERT INTO players VALUES FROM ("John", 10, 14, "Quarterback", 14);
+INSERT INTO Rockets VALUES FROM ("John", 10, 14, "Quarterback", 14);
