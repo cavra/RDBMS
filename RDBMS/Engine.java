@@ -17,9 +17,14 @@ public class Engine {
 	public static Table createTable(String relation_name, ArrayList<Attribute> attributes, ArrayList<String> keys) {
 		// Check if the table already exists
 		Table table = relations_database.get(relation_name);
+		Table opened_table = openTable(relation_name);
 		if (table != null) {
 			System.out.println("Error: Table already exists. Failed to create.");
 			return table;
+		}
+		else if (opened_table != null) {
+			System.out.println("Error: Table already exists as serialized file. Failed to create.");
+			return opened_table;
 		}
 		else {
 			// Returns a table initialized with ID and specified attributes
@@ -137,6 +142,7 @@ public class Engine {
 			// Loop through all the rows of the table
 			for (Row row : table.relation) {
 
+				System.out.println("test");
 				// Check if it meets the required conditions
 				if (parseConditions(table, row.values, tokenized_conditions)) {
 
@@ -511,11 +517,14 @@ public class Engine {
 
 // =============================================================================
 // A function to open a table from a serialized file
-// Parameters: 
+// Parameters:
 //   relation_name: The relation name table to be opened
 // =============================================================================
 
-  	public static void openTable(String relation_name) {
+  	public static Table openTable(String relation_name) {
+  		if (relation_name.equals("OPEN_ALL_RELATIONS")) {
+  			// do nothing
+  		}
 		try {
 			Table read_table = null;
 
@@ -528,17 +537,19 @@ public class Engine {
 			file_in.close();
 
 			// Store the read-in table in the tables container
+			System.out.println("Table data found. Successfully opened.");
 			relations_database.put(relation_name, read_table);
+			return read_table;
 		}
 		catch(IOException i) {
 			System.out.println("Error: Table data not found. Failed to open.");
 			//i.printStackTrace();
-			return;
+			return null;
 		}
 		catch(ClassNotFoundException c) {
 			System.out.println("Error: Table data not found. Failed to open.");
 			//c.printStackTrace();
-			return;
+			return null;
 		}
   	}
 
@@ -591,6 +602,29 @@ public class Engine {
 			relations_database.remove(relation_name);
 			System.out.println("Dropped table: " + relation_name);
 		}
+	}
+
+// =============================================================================
+// A function to close the database, saving all tables to serialized files
+// =============================================================================
+
+	public static void exit() {
+
+		 // Write all relations to a serialized file
+		relations_database.forEach((relation_name, table) -> writeTable(table.relation_name));
+
+		// Keep a record of all relations in a text file
+		Writer writer;
+		try {
+            writer = new BufferedWriter(new OutputStreamWriter(
+            new FileOutputStream("relations.txt"), "utf-8"));
+			relations_database.forEach((relation_name, table) -> writer.write(table.relation_name));
+        } 
+        catch (IOException ex) {} 
+        finally {
+            try {writer.close();}
+            catch (Exception ex) {}
+        }
 	}
 
 // =============================================================================
@@ -738,7 +772,7 @@ public class Engine {
 
 	public static Boolean tableExists(String relation_name) {
 		Table table = relations_database.get(relation_name);
-		if (table == null){
+		if (table == null) {
 			System.out.println("Error: Table and/or row don't exist.");
 			return false;
 		}

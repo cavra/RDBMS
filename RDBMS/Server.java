@@ -13,9 +13,9 @@ public class Server {
 
     public static void main(String args[]) {
         Server server = new Server();
-        while(true){
+        //while(true){
             server.run();
-        }
+        //}
     }
 
     Server() {}
@@ -43,7 +43,9 @@ public class Server {
                     // Check if the client has disconnected already
                     if (!message.equals("EXIT;")) {
                         System.out.println("Client> " + message);
+                        System.out.println("\n----- Engine Output -----");
                         message = getRequestedData(message);
+                        System.out.println("-------------------------\n");
                         sendMessage(message);
                     }
                 }
@@ -58,6 +60,7 @@ public class Server {
         finally {
             // Close the connection
             try {
+                getRequestedData("EXIT;");
                 in.close();
                 out.close();
                 serverSocket.close();
@@ -82,7 +85,6 @@ public class Server {
 
     String getRequestedData(String message) {
 
-
         try {
             writer = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream("input.txt"), "utf-8"));
@@ -102,5 +104,9 @@ public class Server {
             default: 
                 return "Input received";
         }
+    }
+
+    void resume() {
+        
     }
 }

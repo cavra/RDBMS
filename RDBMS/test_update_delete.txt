@@ -21,10 +21,9 @@ UPDATE animals SET kind = "feline", years = "500" WHERE kind=="cat" && kind=="do
 -- This will succeed
 UPDATE animals SET kind = "4-legged", years = "500" WHERE kind=="cat" || kind=="dog";
 UPDATE animals SET kind = "2-legged" WHERE kind=="bird";
+SHOW animals;
 
 -- This will succeed
 DELETE FROM animals WHERE name == "Tweety" && years==1;
 
 SHOW animals;
-
-EXIT;

@@ -33,7 +33,7 @@ public class Client{
             // Welcome the user only once, out here
             welcomeUser();
 
-            // Create global tables that store all sports, teams, and playesr created"
+            // Create global tables that store all sports, teams, and players
             String global_teams = "CREATE TABLE teams (name VARCHAR(20), location VARCHAR(20), venue VARCHAR(20), wins INTEGER, " +
             "losses INTEGER, ties INTEGER) PRIMARY KEY (location, name);";
             sendMessage(global_teams);
@@ -45,6 +45,11 @@ public class Client{
             String global_sports = "CREATE TABLE sports (name VARCHAR(20), playing_surface VARCHAR(20), " +
             "country_created VARCHAR(20)) PRIMARY KEY (name, playing_surface);";
             sendMessage(global_sports);
+
+            // Open all saved tables
+            String open_all_relations = "CREATE TABLE sports (name VARCHAR(20), playing_surface VARCHAR(20), " +
+            "country_created VARCHAR(20)) PRIMARY KEY (name, playing_surface);";
+            sendMessage(open_all_relations);
 
             // Communicate with the server
             do {
@@ -177,10 +182,10 @@ public class Client{
                     finished = true;
                     break;
                 case "VIEW PLAYER":
-                    // command = viewPlayer()   
+                    // command = viewPlayer();
                     // showHelp();  
                     // finished = true;
-                    break;
+                    // break;
                 case "VIEW TEAM":
                     command = viewTeam();
                     showHelp();
@@ -338,11 +343,11 @@ public class Client{
             String player_jersey = getUserInput("Enter " + name + "'s jersey number: ");
             String team = getUserInput("Enter the name of " + name + "'s team: ");
 
-            String player_remove = "DELETE FROM players WHERE name=\"" + name +
-            "\" && jersey_number=\"" + player_jersey + "\";";
+            String player_remove = "DELETE FROM players WHERE name ==\"" + name +
+            "\" && jersey_number == \"" + player_jersey + "\";";
 
-            String team_remove = "DELETE FROM " + team + " WHERE name=\"" + name +
-            "\" && jersey_number=\"" + player_jersey + "\";";
+            String team_remove = "DELETE FROM " + team + " WHERE name ==\"" + name +
+            "\" && jersey_number ==\"" + player_jersey + "\";";
 
             return player_remove + "\n" + team_remove;
         }
@@ -359,10 +364,10 @@ public class Client{
 
             String team_sport = getUserInput("Enter Sport that the team plays: ");
 
-            String team_delete = "DELETE FROM teams WHERE name=\"" + 
+            String team_delete = "DELETE FROM teams WHERE name ==\"" + 
             team_name + "\";";
 
-            String sport_delete = "DELETE FROM " + team_sport + " WHERE name=\"" + 
+            String sport_delete = "DELETE FROM " + team_sport + " WHERE name ==\"" + 
             team_name + "\";";
 
             String drop_team = "DROP TABLE " + team_name + ";";

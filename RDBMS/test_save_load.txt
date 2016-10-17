@@ -18,5 +18,3 @@ OPEN nonExistingTable;
 
 -- This will succeed
 OPEN animals;
-
-EXIT;

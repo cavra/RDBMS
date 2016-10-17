@@ -1,2 +1,1 @@
-INSERT INTO players VALUES FROM ("John", 10, 14, "Quarterback", 14);
-INSERT INTO Rockets VALUES FROM ("John", 10, 14, "Quarterback", 14);
+EXIT;

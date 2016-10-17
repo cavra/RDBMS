@@ -10,5 +10,3 @@ a <- rename (aname, akind) (project (name, kind) animals);
 common_names <- project (name) (select (aname == name && akind != kind) (a * animals));
 answer <- common_names;
 SHOW answer;
-
-EXIT;

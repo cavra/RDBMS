@@ -317,6 +317,6 @@ public class Commands {
 
 	public static void exitCommand() {
 		System.out.println("Program ending");
-		// end program
+		Engine.exit();
 	}
 }

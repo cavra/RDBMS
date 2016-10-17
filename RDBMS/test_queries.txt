@@ -38,5 +38,3 @@ SHOW product_test;
 
 join_test <- animals JOIN animals3;
 SHOW join_test;
-
-EXIT;
