@@ -9,13 +9,26 @@ Jason Alonzo<br>
 Cory Avra<br>
 Reed Spivey<br>
 
-## Instructions
-Our program has been developed in compute.cs.tamu.edu, although it should run on all servers. We reccomend using compute. From the RDBMS directory, compile it with the makefile, and then execute it with 
+## Build Instructions
+#### TAMU Server: 
+compute.cs.tamu.edu
+
+#### Parser Execution Instructions: 
+From the RDBMS directory, compile with the makefile, and then execute it with:
 
 $ java Parser TEXTFILE.txt 
 
 We have several test_xxx.txt files, each to test a certain aspect of our program. These test files correlate with our resubmission changelog for the Parser + Engine. Feel free to edit 
 these text files. They all begin with "test" are are ready to be given to the Parser. 
+
+#### Server Execution Instructions: 
+From the RDBMS directory, compile with the makefile, and then, with it with two separate command line windows, start the Server in one with:
+
+$ java Server
+
+And start the Client in the other with:
+
+$ java Client
 
 ## Notes
 This group project is only partially complete. 
@@ -175,3 +188,9 @@ Cory Avra - Fixed parser and engine (almost 100% functionality)<br/>
 Reed Spivey - Finish Interactive System<br/>
 Jason Alonzo - Finish Interactive System<br/>
 Cory Avra - Finish engine and parser, Finish Interactive System
+
+**10/12/16**
+
+Met at lab from 11:30 - 12:20<br/>
+@TODO<br/>
+All - Move Server code to Client, make sure engine/parser are 100% functional<br/>
