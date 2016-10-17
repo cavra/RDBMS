@@ -73,11 +73,18 @@ public class Engine {
 		else {
 			Row row = new Row(values, table.createKey(values));
 
-			// Only insert if all values are valid and the key isn't empty
-			if (table.isRowValid(row) && !row.key.equals("")) {
-				table.addRow(row);
+			// Only insert if all values are valid
+			if (table.isRowValid(row) && 
+				!row.key.equals("")) {
+
+				// And if the row doesn't already exist
+				if (table.getRow(row.key) == null) {
+					table.addRow(row);
+				}
+				else {
+					System.out.println("Error: Row already exists with key: " + row.key + "; failed to insert row.");				
+				}
 			}
-			// Otherwise, print error message
 			else {
 				System.out.println("Error: Invalid value detected; failed to insert row.");				
 			}
@@ -523,33 +530,48 @@ public class Engine {
 
   	public static Table openTable(String relation_name) {
   		if (relation_name.equals("OPEN_ALL_RELATIONS")) {
-  			// do nothing
+  						
+			try (BufferedReader br = new BufferedReader(new FileReader("table_data/relations.txt"))) {
+				String line;
+				while ((line = br.readLine()) != null) {
+					openTable(line);
+				}
+			} catch (IOException e) {
+				System.out.println("Failed to open all files; relation.txt doesn't exist.");
+			}
+			return null;
   		}
-		try {
-			Table read_table = null;
+  		else if (!tableExists(relation_name)) {
+			try {
+				Table read_table = null;
 
-			FileInputStream file_in = new FileInputStream("table_data/" + relation_name + ".ser");
-			ObjectInputStream in = new ObjectInputStream(file_in);
+				FileInputStream file_in = new FileInputStream("table_data/" + relation_name + ".ser");
+				ObjectInputStream in = new ObjectInputStream(file_in);
 
-			// Read in the .ser data to a new Table object
-			read_table = (Table)in.readObject(); // warning: [unchecked] unchecked cast
-			in.close();
-			file_in.close();
+				// Read in the .ser data to a new Table object
+				read_table = (Table)in.readObject(); // warning: [unchecked] unchecked cast
+				in.close();
+				file_in.close();
 
-			// Store the read-in table in the tables container
-			System.out.println("Table data found. Successfully opened.");
-			relations_database.put(relation_name, read_table);
-			return read_table;
+				// Store the read-in table in the tables container
+				System.out.println("Table data found. Successfully opened " + relation_name + ".");
+				relations_database.put(relation_name, read_table);
+				return read_table;
+			}
+			catch(IOException i) {
+				System.out.println("Error: Table data not found. Failed to open " + relation_name + ".");
+				//i.printStackTrace();
+				return null;
+			}
+			catch(ClassNotFoundException c) {
+				System.out.println("Error: Table data not found. Failed to open " + relation_name + ".");
+				//c.printStackTrace();
+				return null;
+			}
 		}
-		catch(IOException i) {
-			System.out.println("Error: Table data not found. Failed to open.");
-			//i.printStackTrace();
-			return null;
-		}
-		catch(ClassNotFoundException c) {
-			System.out.println("Error: Table data not found. Failed to open.");
-			//c.printStackTrace();
-			return null;
+		else {
+			System.out.println("Error: Table is already opened. Failed to open " + relation_name + ".");
+			return relations_database.get(relation_name);
 		}
   	}
 
@@ -585,19 +607,18 @@ public class Engine {
 
 	
 // =============================================================================
-// A function to close a table 
-// Parameters: 
+// A function to make the system forget about a table
+// Parameters:
 //   relation_name: The relation name table to be closed
 // =============================================================================
 
-  	// Currently, this is the same as dropTable! Fix this, check piazza for difference
 	public static void closeTable(String relation_name) {
 		// Check if the table exists
 		Table table = relations_database.get(relation_name);
 		if(table == null){
 			System.out.println("Error: Table doesn't exist. Failed to drop.");
 		}
-		else{
+		else {
 			table.deleteTable();
 			relations_database.remove(relation_name);
 			System.out.println("Dropped table: " + relation_name);
@@ -610,19 +631,26 @@ public class Engine {
 
 	public static void exit() {
 
-		 // Write all relations to a serialized file
-		relations_database.forEach((relation_name, table) -> writeTable(table.relation_name));
+		// Write all relations to a serialized file
+		relations_database.forEach((relation_name, table) -> writeTable(relation_name));
 
 		// Keep a record of all relations in a text file
-		Writer writer;
+		ArrayList<String> relation_names = new ArrayList<String>();
+		relations_database.forEach((relation_name, table) -> relation_names.add(relation_name));
+
+		Writer writer = null;
 		try {
             writer = new BufferedWriter(new OutputStreamWriter(
-            new FileOutputStream("relations.txt"), "utf-8"));
-			relations_database.forEach((relation_name, table) -> writer.write(table.relation_name));
-        } 
-        catch (IOException ex) {} 
+            new FileOutputStream("table_data/relations.txt"), "utf-8"));
+            for (String relation_name : relation_names) {
+				writer.write(relation_name + "\n");
+			}
+        }
+        catch (IOException ex) {}
         finally {
-            try {writer.close();}
+            try {
+            	writer.close();
+            }
             catch (Exception ex) {}
         }
 	}

@@ -9,7 +9,6 @@ public class Client{
     ObjectInputStream in;
     String message;
     Scanner scanner = new Scanner(System.in);
-    Writer writer = null;
     Boolean shouldCancel = false;
 
     public static void main(String args[]) {
@@ -30,26 +29,11 @@ public class Client{
             out.flush();
             in = new ObjectInputStream(requestSocket.getInputStream());
 
-            // Welcome the user only once, out here
+            // Welcome the user only once
             welcomeUser();
 
-            // Create global tables that store all sports, teams, and players
-            String global_teams = "CREATE TABLE teams (name VARCHAR(20), location VARCHAR(20), venue VARCHAR(20), wins INTEGER, " +
-            "losses INTEGER, ties INTEGER) PRIMARY KEY (location, name);";
-            sendMessage(global_teams);
-
-            String global_players = "CREATE TABLE players (name VARCHAR(20), age INTEGER, jersey_number INTEGER, position VARCHAR(20), points_scored INTEGER) " +
-            "PRIMARY KEY (name, jersey_number);";
-            sendMessage(global_players);
-
-            String global_sports = "CREATE TABLE sports (name VARCHAR(20), playing_surface VARCHAR(20), " +
-            "country_created VARCHAR(20)) PRIMARY KEY (name, playing_surface);";
-            sendMessage(global_sports);
-
-            // Open all saved tables
-            String open_all_relations = "CREATE TABLE sports (name VARCHAR(20), playing_surface VARCHAR(20), " +
-            "country_created VARCHAR(20)) PRIMARY KEY (name, playing_surface);";
-            sendMessage(open_all_relations);
+            // Open all default and saved tables
+            resume();
 
             // Communicate with the server
             do {
@@ -58,7 +42,7 @@ public class Client{
                     // Check if the server has disconnected already
                     if (!message.toUpperCase().equals("EXIT;")) {
                         System.out.println("Server> " + message);
-                        message = generateCommandFromInput();
+                        message = generateSQL();
                         sendMessage(message);
                     }
                 }
@@ -102,6 +86,26 @@ public class Client{
         }
     }
 
+    void resume() {
+        // Create global tables that store all sports, teams, and players
+        // Note: These only CREATE if they don't already exist as .ser files
+        String global_teams = "CREATE TABLE teams (name VARCHAR(20), location VARCHAR(20), venue VARCHAR(20), wins INTEGER, " +
+        "losses INTEGER, ties INTEGER) PRIMARY KEY (location, name);";
+        sendMessage(global_teams);
+
+        String global_players = "CREATE TABLE players (name VARCHAR(20), age INTEGER, jersey_number INTEGER, position VARCHAR(20), points_scored INTEGER) " +
+        "PRIMARY KEY (name, jersey_number);";
+        sendMessage(global_players);
+
+        String global_sports = "CREATE TABLE sports (name VARCHAR(20), playing_surface VARCHAR(20), " +
+        "country_created VARCHAR(20)) PRIMARY KEY (name, playing_surface);";
+        sendMessage(global_sports);
+
+        // Open all saved tables
+        String open_all_relations = "OPEN OPEN_ALL_RELATIONS;";
+        sendMessage(open_all_relations);
+    }
+
     void welcomeUser() {
         System.out.println("\n-------------------------------------------------------");
         System.out.println("Welcome to the official Aggie Sports Management Client!");
@@ -129,7 +133,7 @@ public class Client{
         System.out.println("-------------------------------------------------------\n");
     }
 
-    String generateCommandFromInput() {
+    String generateSQL() {
         Boolean finished = false;
         String command = "";
 
@@ -143,67 +147,54 @@ public class Client{
                     break;
                 case "ADD PLAYER":
                     command = addPlayer();
-                    showHelp();
                     finished = true;
                     break;
                 case "ADD TEAM":
                     command = addTeam();
-                    showHelp();
                     finished = true;
                     break;
                 case "ADD SPORT":
                     command = addSport();
-                    showHelp();
                     finished = true;
                     break;
                 case "REMOVE PLAYER":
                     command = removePlayer();
-                    showHelp();
                     finished = true;
                     break;
                 case "REMOVE TEAM":
                     command = removeTeam();
-                    showHelp();
                     finished = true;
                     break;
                 case "TRADE PLAYER":
                     command = tradePlayer();
-                    showHelp();
                     finished = true;
                     break;
                 case "UPDATE PLAYER":
                     command = updatePlayer();
-                    showHelp();
                     finished = true;
                     break;
                 case "UPDATE TEAM":
                     command = updateTeam();
-                    showHelp();
                     finished = true;
                     break;
                 case "VIEW PLAYER":
                     // command = viewPlayer();
-                    // showHelp();  
                     // finished = true;
                     // break;
                 case "VIEW TEAM":
                     command = viewTeam();
-                    showHelp();
                     finished = true;
                     break;
                 case "VIEW ALL PLAYERS":
                     command = viewAllPlayers();
-                    showHelp();
                     finished = true;
                     break;
                 case "VIEW ALL TEAMS":
                     command = viewAllTeams();
-                    showHelp();
                     finished = true;
                     break;
                 case "VIEW ALL SPORTS":
                     command = viewAllSports();
-                    showHelp();
                     finished = true;
                     break;
                 case "QUIT":
@@ -211,7 +202,7 @@ public class Client{
                     finished = true;
                     break;
                 default:
-                    System.out.println("Client> Invalid input");
+                    System.out.println("Client> Invalid input (type 'Help' to see a list of valid input)");
                     break;
             }
         }

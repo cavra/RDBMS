@@ -13,7 +13,7 @@ public class Server {
 
     public static void main(String args[]) {
         Server server = new Server();
-        //while(true){
+        //while(true) {
             server.run();
         //}
     }
@@ -43,9 +43,9 @@ public class Server {
                     // Check if the client has disconnected already
                     if (!message.equals("EXIT;")) {
                         System.out.println("Client> " + message);
-                        System.out.println("\n----- Engine Output -----");
+                        System.out.println("\n----- Engine Output ------------------------------");
                         message = getRequestedData(message);
-                        System.out.println("-------------------------\n");
+                        System.out.println("--------------------------------------------------\n");
                         sendMessage(message);
                     }
                 }
@@ -104,9 +104,5 @@ public class Server {
             default: 
                 return "Input received";
         }
-    }
-
-    void resume() {
-        
     }
 }
