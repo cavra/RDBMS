@@ -22,7 +22,7 @@ We have several test_xxx.txt files, each to test a certain aspect of our program
 these text files. They all begin with "test" are are ready to be given to the Parser. 
 
 #### Server Execution Instructions: 
-From the RDBMS directory, compile with the makefile, and then, with it with two separate command line windows, start the Server in one with:
+From the RDBMS directory, compile with the makefile, and then, with two separate command line windows, start the Server in one with:
 
 $ java Server
 
