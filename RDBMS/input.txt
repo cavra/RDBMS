@@ -1,1 +1,3 @@
-CREATE TABLE teams (name VARCHAR(20), location VARCHAR(20), venue VARCHAR(20), wins INTEGER, losses INTEGER, ties INTEGER) PRIMARY KEY (location, name);
+CREATE TABLE Manchester_United(name VARCHAR(20), age INTEGER, jersey_number INTEGER, position VARCHAR(20), points_scored INTEGER) PRIMARY KEY (name, jersey_number);
+INSERT INTO teams VALUES FROM ("Manchester_United", "Manchester", "Old_Trafford", 5, 1, 2);
+INSERT INTO Soccer VALUES FROM ("Manchester_United", "Manchester", "Old_Trafford", 5, 1, 2);

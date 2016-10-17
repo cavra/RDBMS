@@ -38,7 +38,7 @@ public class Client{
             "losses INTEGER, ties INTEGER) PRIMARY KEY (location, name);";
             sendMessage(global_teams);
 
-            String global_players = "CREATE TABLE players (name VARCHAR(20), age INTEGER, jersey number INTEGER, position VARCHAR(20), points_scored INTEGER) " +
+            String global_players = "CREATE TABLE players (name VARCHAR(20), age INTEGER, jersey_number INTEGER, position VARCHAR(20), points_scored INTEGER) " +
             "PRIMARY KEY (name, jersey_number);";
             sendMessage(global_players);
 
@@ -117,6 +117,9 @@ public class Client{
         System.out.println("- Update Team - Update a Team's information");
         System.out.println("- View Player -  Examine a specified player's information");
         System.out.println("- View Team -  Examine the roster for specified team");
+        System.out.println("- View All Players - Examine all of the players in the system");
+        System.out.println("- View All Teams - Examine all of the teams in the system");
+        System.out.println("- View All Sports - Examine all of the sports in the system");
         System.out.println("- Quit - Exits the program");
         System.out.println("-------------------------------------------------------\n");
     }
@@ -135,42 +138,67 @@ public class Client{
                     break;
                 case "ADD PLAYER":
                     command = addPlayer();
+                    showHelp();
                     finished = true;
                     break;
                 case "ADD TEAM":
                     command = addTeam();
+                    showHelp();
                     finished = true;
                     break;
                 case "ADD SPORT":
                     command = addSport();
+                    showHelp();
                     finished = true;
                     break;
                 case "REMOVE PLAYER":
                     command = removePlayer();
+                    showHelp();
                     finished = true;
                     break;
                 case "REMOVE TEAM":
                     command = removeTeam();
+                    showHelp();
                     finished = true;
                     break;
                 case "TRADE PLAYER":
                     command = tradePlayer();
+                    showHelp();
                     finished = true;
                     break;
                 case "UPDATE PLAYER":
                     command = updatePlayer();
+                    showHelp();
                     finished = true;
                     break;
                 case "UPDATE TEAM":
                     command = updateTeam();
+                    showHelp();
                     finished = true;
                     break;
                 case "VIEW PLAYER":
-                    // command = viewPlayer()     
+                    // command = viewPlayer()   
+                    // showHelp();  
                     // finished = true;
                     break;
                 case "VIEW TEAM":
                     command = viewTeam();
+                    showHelp();
+                    finished = true;
+                    break;
+                case "VIEW ALL PLAYERS":
+                    command = viewAllPlayers();
+                    showHelp();
+                    finished = true;
+                    break;
+                case "VIEW ALL TEAMS":
+                    command = viewAllTeams();
+                    showHelp();
+                    finished = true;
+                    break;
+                case "VIEW ALL SPORTS":
+                    command = viewAllSports();
+                    showHelp();
                     finished = true;
                     break;
                 case "QUIT":
@@ -229,15 +257,15 @@ public class Client{
 
             // Insert the player information into the players table
             String player_insert =
-            "INSERT INTO players VALUES FROM " + "(\"" + name + "\"" +
-            ", " + age + ", " + jersey + ", " + "\"" + position +
-            "\"" + ", " + points + ");"; 
+            "INSERT INTO players VALUES FROM (\"" + name + "\", " + 
+            age + ", " + jersey + ", \"" + position +
+            "\", " + points + ");"; 
 
             // Insert the players information into the player's team table
             String player_insert_team = 
-            "INSERT INTO " + team + " VALUES FROM " + "(\"" + name + "\"" +
-            ", " + age + ", " + jersey + ", " + "\"" + position +
-            "\"" + ", " + points + ");";
+            "INSERT INTO " + team + " VALUES FROM (\"" + name + "\", " + 
+            age + ", " + jersey + ", \"" + position +
+            "\", " + points + ");";
 
             return player_insert + "\n" + player_insert_team;
         }
@@ -255,26 +283,26 @@ public class Client{
             // Get the required information from the user
             String team_name = getUserInput("Enter Name of team: ");
             String team_location = getUserInput("Enter Location of team: ");
-            String venue = getUserInput("Enter the name of the " + team_name + "'s venue (ex. Kyle Field): ");
+            String venue = getUserInput("Enter the name of " + team_name + "'s venue (ex. Kyle Field): ");
             String total_wins = getUserInput("Enter " + team_name + "'s total wins: ");
             String total_losses = getUserInput("Enter " + team_name + "'s total losses: ");
             String total_ties = getUserInput("Enter " + team_name + "'s total ties: ");
 
             // Create a table for the new team's players, if this is the first case of the team
-            String team_table = "CREATE TABLE " + team_name + "(name VARCHAR(20), age INTEGER, jersey_number INTEGER, points_scored INTEGER) " +
-            "PRIMARY KEY (name, jersey_number);"; 
+            String team_table = "CREATE TABLE " + team_name + "(name VARCHAR(20), age INTEGER, jersey_number INTEGER, position VARCHAR(20), " +
+            "points_scored INTEGER) PRIMARY KEY (name, jersey_number);"; 
            
            // Insert the team information into the teams table
             String team_insert =
             "INSERT INTO teams VALUES FROM (\"" + team_name + "\", \"" + 
-            team_location + "\", \"" + venue + "\", \"" + total_wins + "\", \"" +
-            total_losses + "\", \"" + total_ties + "\", \"" + ");";
+            team_location + "\", \"" + venue + "\", " + total_wins + ", " +
+            total_losses + ", " + total_ties + ");";
 
             // Insert the team information into the sports table
             String team_insert_sport = 
             "INSERT INTO " + team_sport + " VALUES FROM (\"" + team_name + "\", \"" + 
-            team_location + "\", \"" + venue + "\", \"" + total_wins + "\", \"" +
-            total_losses + "\", \"" + total_ties + "\", \");";
+            team_location + "\", \"" + venue + "\", " + total_wins + ", " +
+            total_losses + ", " + total_ties + ");";
 
             return team_table + "\n" + team_insert + "\n" + team_insert_sport;
         }
@@ -311,10 +339,10 @@ public class Client{
             String team = getUserInput("Enter the name of " + name + "'s team: ");
 
             String player_remove = "DELETE FROM players WHERE name=\"" + name +
-            "\"&&jersey=\"" + player_jersey + "\";";
+            "\" && jersey_number=\"" + player_jersey + "\";";
 
             String team_remove = "DELETE FROM " + team + " WHERE name=\"" + name +
-            "\"&&jersey=\"" + player_jersey + "\";";
+            "\" && jersey_number=\"" + player_jersey + "\";";
 
             return player_remove + "\n" + team_remove;
         }
@@ -488,6 +516,30 @@ public class Client{
             }
             
             String view_command = "SHOW " + team + ";";
+            return view_command;
+        }
+        return "";
+    }
+
+    String viewAllPlayers() {
+        while (!shouldCancel){
+            String view_command = "SHOW players;";
+            return view_command;
+        }
+        return "";
+    }
+
+    String viewAllTeams() {
+        while (!shouldCancel){
+            String view_command = "SHOW teams;";
+            return view_command;
+        }
+        return "";
+    }
+
+    String viewAllSports() {
+        while (!shouldCancel){
+            String view_command = "SHOW sports;";
             return view_command;
         }
         return "";
