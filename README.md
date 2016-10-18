@@ -16,9 +16,9 @@ compute.cs.tamu.edu
 #### Parser Execution Instructions: 
 From the RDBMS directory, compile with the makefile, and then execute it with:
 
-$ java Parser TEXTFILE.txt 
+$ java Parser TEST_xxxxx.txt 
 
-We have several test_xxx.txt files, each to test a certain aspect of our program. These test files correlate with our resubmission changelog for the Parser + Engine. Feel free to edit 
+We have several TEST_xxxxx.txt files, each to test a certain aspect of our program. These test files correlate with our resubmission changelog for the Parser + Engine. Feel free to edit 
 these text files. They all begin with "test" are are ready to be given to the Parser. 
 
 #### Server Execution Instructions: 
