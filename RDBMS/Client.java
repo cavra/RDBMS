@@ -36,6 +36,9 @@ public class Client{
             // Open all default and saved tables
             resume();
 
+            // Show the help menu up front
+            showHelp();
+            
             // Communicate with the server
             while (checkStream) {
                 readMessage();
@@ -47,6 +50,7 @@ public class Client{
         catch(IOException ioException) {
             // ioException.printStackTrace();
             System.err.println("Input stream is empty!");
+            checkStream = false;
         }
         finally {
             disconnect();

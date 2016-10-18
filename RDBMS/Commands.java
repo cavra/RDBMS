@@ -261,12 +261,18 @@ public class Commands {
 
 		// Evaluate and create the table
 		Table expression_table = Grammar.evaluateExpression(expression_ArrayList);
-		Engine.relations_database.put(expression_table.relation_name, expression_table);
+		if (expression_table != null) {
+			Engine.relations_database.put(expression_table.relation_name, expression_table);
 
-		System.out.println("Table Name: " + expression_table.relation_name);
-		String show_results = Engine.show(expression_table.relation_name);
+			System.out.println("Table Name: " + expression_table.relation_name);
+			String show_results = Engine.show(expression_table.relation_name);
 
-		return show_results;
+			return show_results;
+		}
+		else {
+			System.out.println("Table doesn't exist; failed to call Engine.show()");
+			return null;
+		}
 	}
 
 // =============================================================================

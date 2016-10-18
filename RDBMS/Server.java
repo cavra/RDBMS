@@ -57,6 +57,8 @@ public class Server {
         finally {
             // Close the connection
             try {
+                printMessage("Server", "Closing connection");
+                sendMessage("EXIT;");
                 parseMessage("EXIT;");
                 in.close();
                 out.close();
@@ -90,8 +92,13 @@ public class Server {
         System.out.println("------------------------------------------------------------\n");
 
         // So if it's not NULL, return the SHOW results
-        if (show_results != null && !show_results.equals("")) {
-            sendMessage(show_results);
+        if (message.indexOf("SHOW") >= 0) {
+            if (show_results != null && !show_results.equals("")) {
+                sendMessage(show_results);
+            }
+            else {
+                sendMessage("Table doesn't exist");
+            }
         }
         // If the message is calling for program exit, return EXIT;
         else if (message.toUpperCase().equals("EXIT")) { 
