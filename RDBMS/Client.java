@@ -73,6 +73,7 @@ public class Client{
         catch(IOException ioException) {
             // ioException.printStackTrace();
             System.err.println("Input stream is empty!");
+            checkStream = false;
         }
         // finally {
         //     disconnect();
