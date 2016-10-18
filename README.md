@@ -5,9 +5,9 @@
 **RDBMS** is the second programming assignment for CSCE 315 at Texas A&M, compromising of 3 parts: an engine, a parser, and an interactive system. See the DesignDocuments.pdf in the design_documents directory for detailed designs. Compare the development log below with the commit history for a detailed list of our meetings and productivity. [Here](http://ecologylab.net/courses/studio/assignments/team1.html) are the guidelines for the project. 
 
 ## Members
-Jason Alonzo<br>
-Cory Avra<br>
-Reed Spivey<br>
+Jason Alonzo - 124000224
+Cory Avra - 423005091
+Reed Spivey - 623004372
 
 ## Build Instructions
 #### TAMU Server: 
