@@ -94,6 +94,7 @@ public class Table implements Serializable {
 		Row row = getRow(row_id);
 		if (row != null) {
 			row.values.set(attribute_index, new_attribute);
+			row.key = createKey(row.values);
 			System.out.println("Updated row with key " + row_id + " in table " + relation_name);
 		}
 		else {
@@ -111,14 +112,13 @@ public class Table implements Serializable {
 		Vector<Integer> attribute_lengths = new Vector<Integer>();
 
 		// Get the maximum length of the table's keys
-		Integer key_length = 0;
+		Integer key_length = 6; // Minimum value
 		for (Row row : relation) {
 			if (row.key.length() > key_length) {
 				key_length = row.key.length();
 			}
 		}
-		// Accomodate for colon and spacing
-		key_length += 2; 
+		key_length += 2; // Padding
 
 		// Format the key and the attribute names
 		String key = String.format("%1$-" + key_length + "s", "Key");
@@ -128,7 +128,7 @@ public class Table implements Serializable {
 			int attribute_length = attributes.get(i).varchar_length;
 			// Integer case
 			if (attribute_length == 0) {
-				attribute_length = 9;
+				attribute_length = 8;
 			}
 			attribute_lengths.add(attribute_length);
 

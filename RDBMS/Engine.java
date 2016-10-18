@@ -128,9 +128,9 @@ public class Engine {
 		}
 		else {
 			// Loop through all the rows of the table
-			for (Row row : table.relation) {
+			for (int i = 0; i < table.relation.size(); i++) {
+				Row row = table.relation.get(i);
 
-				System.out.println("test");
 				// Check if it meets the required conditions
 				if (parseConditions(table, row.values, tokenized_conditions)) {
 
@@ -623,16 +623,15 @@ public class Engine {
 			// Remove local memory
 			table.deleteTable();
 			relations_database.remove(relation_name);
+		}
 
-			File file = new File("table_data/" + relation_name + ".txt");
-
-    		if (file.delete()) {
-				System.out.println("Dropped table: " + relation_name);
-    		}
-    		else {
-				System.out.println("Error: Serialized table file doesn't exist; Failed to drop " + relation_name + ".");
-    		}
-
+		// Do this regardless whether the table exists in local memory or not
+		File file = new File("table_data/" + relation_name + ".ser");
+		if (file.delete()) {
+			System.out.println("Dropped table: " + relation_name);
+		}
+		else {
+			System.out.println("Error: Serialized table file doesn't exist; Failed to drop " + relation_name + ".");
 		}
 	}
 

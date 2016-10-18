@@ -11,7 +11,6 @@ public class Client {
     private static ObjectInputStream in;
     private static String message;
     private static Scanner scanner = new Scanner(System.in);
-    private static Boolean shouldCancel = false;
     private static Boolean checkStream = true;
 
 // =============================================================================
@@ -69,6 +68,8 @@ public class Client {
     }
 
 // =============================================================================
+// A function to read in a message from the Server via the InputStream and print
+//   it out neatly
 // =============================================================================
 
     private static void readMessage() {
@@ -96,6 +97,9 @@ public class Client {
     }
 
 // =============================================================================
+// A function to send a message to the Server via the OutputStream Socket
+// Parameters:
+//   message: The String to send to the Client
 // =============================================================================
 
     private static void sendMessage(String message) {
@@ -109,6 +113,7 @@ public class Client {
     }
 
 // =============================================================================
+// A function to disconnect from the Server cleanly
 // =============================================================================
 
     private static void disconnect() {
@@ -126,6 +131,7 @@ public class Client {
     }
 
 // =============================================================================
+// A function to print out a welcoming statement on Client startup
 // =============================================================================
 
     private static void welcomeUser() {
@@ -136,22 +142,23 @@ public class Client {
     }
 
 // =============================================================================
+// A function to create/open all tables from the previous session
 // =============================================================================
 
     private static void resume() {
         // Create global tables that store all sports, teams, and players
         // Note: These only CREATE if they don't already exist as .ser files
-        String global_teams = "CREATE TABLE teams (name VARCHAR(15), wins INTEGER, " + 
-        "losses INTEGER, ties INTEGER) PRIMARY KEY (name, wins);";
-        sendMessage(global_teams);
-
-        String global_players = "CREATE TABLE players (name VARCHAR(15), age INTEGER, " + 
-        "jersey INTEGER, position VARCHAR(15)) PRIMARY KEY (name, jersey);";
-        sendMessage(global_players);
-
         String global_sports = "CREATE TABLE sports (name VARCHAR(15), playing_surface VARCHAR(20), " + 
         "country_created VARCHAR(12)) PRIMARY KEY (name, playing_surface);";
         sendMessage(global_sports);
+
+        String global_teams = "CREATE TABLE teams (name VARCHAR(15), sport VARCHAR(15), wins INTEGER, " + 
+        "losses INTEGER, ties INTEGER) PRIMARY KEY (name, wins);";
+        sendMessage(global_teams);
+
+        String global_players = "CREATE TABLE players (name VARCHAR(15), age INTEGER, team VARCHAR(15), " + 
+        "jersey INTEGER, position VARCHAR(15)) PRIMARY KEY (name, jersey);";
+        sendMessage(global_players);
 
         // Open all saved tables
         String open_all_relations = "OPEN OPEN_ALL_RELATIONS;";
@@ -159,40 +166,47 @@ public class Client {
     }
 
 // =============================================================================
+// A function to print out the help menu, which lists all available commands
 // =============================================================================
 
     private static void showHelp() {
         System.out.println("\n------------------------------------------------------------");
         System.out.println("PROGRAM COMMANDS:");
-        System.out.println("- Help - Show this helpful text menu");
-        System.out.println("- Quit - Exits the program");
+        System.out.println("- Help....Show this helpful text menu");
+        System.out.println("- Quit.....Exits the program");
         System.out.println();
         System.out.println("ADD COMMANDS:");
-        System.out.println("- Add Player - Add a new player to a team");
-        System.out.println("- Add Team - Add Team to a Sport");
-        System.out.println("- Add Sport - Add Sport to list of available options");
-        System.out.println();
-        System.out.println("REMOVE COMMANDS:");
-        System.out.println("- Remove Player - Remove a player from a team");
-        System.out.println("- Remove Team - Remove a team from a sport");
+        System.out.println("- Add Sport......Add Sport to the database");
+        System.out.println("- Add Team.......Add Team to a Sport table");
+        System.out.println("- Add Player.....Add a player to a Team table");
         System.out.println();
         System.out.println("UPDATE COMMANDS:");
-        System.out.println("- Update Player - Update a Player's information");
-        System.out.println("- Update Team - Update a Team's information");
+        System.out.println("- Update Team.......Update a Team's information");
+        System.out.println("- Update Player.....Update a Player's information");
+        System.out.println();
+        System.out.println("REMOVE COMMANDS:");
+        System.out.println("- Remove Player.....Remove a player from a team");
         System.out.println();
         System.out.println("VIEW COMMANDS:");
-        System.out.println("- View Player - Examine a specified player's information");
-        System.out.println("- View Team - Examine the roster for specified team");
-        System.out.println("- View All Players - Examine all of the players in the system");
-        System.out.println("- View All Teams - Examine all of the teams in the system");
-        System.out.println("- View All Sports - Examine all of the sports in the system");
+        System.out.println("- View All Sports......Shows all the sports in the database");
+        System.out.println("- View All Teams.......Shows all the teams in the database");
+        System.out.println("- View All Players.....Shows all the players in the database");
+        System.out.println("- View Team............Shows player information for a team");
+        System.out.println("- View Team Roster.....Shows the roster (list of player names) for a team");
+        System.out.println("- View Player..........Shows information for a player");
         System.out.println();
-        System.out.println("APPLICATION COMMANDS:");
-        System.out.println("- Trade Player - Swap players from 2 teams");
+        System.out.println("MANAGER COMMANDS:");
+        System.out.println("- Merge Teams.......Shows a merge between two teams");
+        System.out.println("- Split Teams.......Shows a difference between two teams");
+        System.out.println("- Join Teams........Shows a join between two teams");
+        System.out.println("- Trade Players.....Swap two players from two teams");
         System.out.println("------------------------------------------------------------\n");
     }
 
 // =============================================================================
+// A function that will prompt the user for a command, and then enter that 
+//   command's function when necessary. If an invalid input is given, it will
+//   continue to prompt until 'Quit' is given
 // =============================================================================
 
     private static void promptUser() {
@@ -203,58 +217,84 @@ public class Client {
             String input = scanner.nextLine();
 
             switch (input.toUpperCase()) {
+                // Program commands
                 case "HELP":
                     showHelp();
-                    break;
-                case "ADD PLAYER":
-                    addPlayer();
-                    break;
-                case "ADD TEAM":
-                    addTeam();
-                    break;
-                case "ADD SPORT":
-                    addSport();
-                    break;
-                case "REMOVE PLAYER":
-                    removePlayer();
-                    break;
-                case "REMOVE TEAM":
-                    removeTeam();
-                    break;
-                case "TRADE PLAYER":
-                    tradePlayer();
-                    break;
-                case "UPDATE PLAYER":
-                    updatePlayer();
-                    break;
-                case "UPDATE TEAM":
-                    updateTeam();
-                    break;
-                case "VIEW PLAYER":
-                    viewPlayer();
-                    checkInputStream = true;
-                    break;
-                case "VIEW TEAM":
-                    viewTeam();
-                    checkInputStream = true;
-                    break;
-                case "VIEW ALL PLAYERS":
-                    viewAllPlayers();
-                    checkInputStream = true;
-                    break;
-                case "VIEW ALL TEAMS":
-                    viewAllTeams();
-                    checkInputStream = true;
-                    break;
-                case "VIEW ALL SPORTS":
-                    viewAllSports();
-                    checkInputStream = true;
                     break;
                 case "QUIT":
                     sendMessage("EXIT;");
                     checkInputStream = true;
                     checkStream = false;
                     break;
+
+                // Add commands
+                case "ADD SPORT":
+                    addSport();
+                    break;
+                case "ADD TEAM":
+                    addTeam();
+                    break;
+                case "ADD PLAYER":
+                    addPlayer();
+                    break;
+
+                // Update commands
+                case "UPDATE TEAM":
+                    updateTeam();
+                    break;
+                case "UPDATE PLAYER":
+                    updatePlayer();
+                    break;
+
+                // Remove commands
+                case "REMOVE PLAYER":
+                    removePlayer();
+                    break;
+
+                // View commands
+                case "VIEW ALL SPORTS":
+                    sendMessage("SHOW sports;");
+                    checkInputStream = true;
+                    break;
+                case "VIEW ALL TEAMS":
+                    sendMessage("SHOW teams;");
+                    checkInputStream = true;
+                    break;
+                case "VIEW ALL PLAYERS":
+                    sendMessage("SHOW players;");
+                    checkInputStream = true;
+                    break;
+                case "VIEW TEAM":
+                    viewTeam();
+                    checkInputStream = true;
+                    break;
+                case "VIEW TEAM ROSTER":
+                    viewTeamRoster();
+                    checkInputStream = true;
+                    break;
+                case "VIEW PLAYER":
+                    viewPlayer();
+                    checkInputStream = true;
+                    break;
+
+                // Manager commands
+                case "MERGE TEAMS":
+                    mergeTeams();
+                    checkInputStream = true;
+                    break;
+                case "SPLIT TEAMS":
+                    splitTeams();
+                    checkInputStream = true;
+                    break;
+                case "JOIN TEAMS":
+                    joinTeams();
+                    checkInputStream = true;
+                    break;
+                case "TRADE PLAYERS":
+                    tradePlayer();
+                    break;
+
+                // Invalid input
                 default:
                     System.out.println("Client> Invalid input (type 'Help' to see a list of valid input)");
                     break;
@@ -263,6 +303,11 @@ public class Client {
     }
 
 // =============================================================================
+// A function to ask the user for a specific value. It will perpetually ask
+//   the user for the value until it is given a valid input, or until the user
+//   quits the program.
+// Parameters:
+//   prompt: The String to prompt the user with
 // =============================================================================
 
     private static String getUserInput(String prompt) {
@@ -273,7 +318,7 @@ public class Client {
             System.out.print(prompt);
             input = scanner.nextLine();
 
-            switch (input.toUpperCase()) {
+            switch (input.toUpperCase().trim()) {
                 case "HELP":
                     showHelp();
                     break;
@@ -281,9 +326,7 @@ public class Client {
                     sendMessage("EXIT;");
                     disconnect();
                     System.exit(0);
-                case "CANCEL":
-                    shouldCancel = true;
-                    finished = true;
+                case "":
                     break;
                 default:
                     finished = true;
@@ -297,149 +340,302 @@ public class Client {
     }
 
 // =============================================================================
+// A method to generate an SQL command for adding a sport
+// =============================================================================
+
+    private static void addSport() {
+        // Get the required information from the user
+        String name = getUserInput("What is the name of the sport? ");
+        String playing_surface = getUserInput("What is " + name + "'s playing surface? (Gym, Field, etc.) ");
+        String country = getUserInput("Where did " + name + " originate? ");
+
+       // Generate the SQL command for inserting the team information into the teams table
+        String insert_sport = "INSERT INTO sports VALUES FROM (\"" + name + "\", \"" +
+        playing_surface + "\", \"" + country + "\");";
+
+        // Send the SQL commands to the Server through sockets
+        sendMessage(insert_sport);
+    }
+
+// =============================================================================
+// A method to generate an SQL command for adding a team
+// =============================================================================
+
+    private static void addTeam() {
+        // Get the required information from the user
+        String name = getUserInput("What is the name of the team? ");
+        String sport = getUserInput("Which Sport does " + name + " play? ");
+        String wins = getUserInput("How many wins do the " + name + " have? ");
+        String losses = getUserInput("How many losses do the " + name + " have? ");
+        String ties = getUserInput("How many ties do the " + name + " have? ");
+
+        // Generate the SQL for creating a table for the new team's players
+        String create_team = "CREATE TABLE " + name + "(name VARCHAR(15), age INTEGER, " + 
+        "jersey INTEGER, position VARCHAR(20)) PRIMARY KEY (name, jersey);"; 
+       
+       // Generate the SQL command for inserting the team information into the teams table
+        String insert_teams = "INSERT INTO teams VALUES FROM (\"" + name + "\", \"" + sport + "\"," + wins + ", " 
+        + losses + ", " + ties + ");";
+
+        // Send the SQL commands to the Server through sockets
+        sendMessage(create_team);
+        sendMessage(insert_teams);
+    }
+
+
+// =============================================================================
+// A method to generate an SQL command for adding a player
 // =============================================================================
 
     private static void addPlayer() {
         // Get the required information from the user
         String name = getUserInput("What is the new player's name? ");
-        String age = getUserInput("How old is " + name + "? ");
         String team = getUserInput("What team does " + name + " play for? ");
+        String age = getUserInput("How old is " + name + "? ");
         String jersey = getUserInput("What is " + name + "\'s Jersey Number? ");
         String position = getUserInput("What is " + name + "\'s position? ");
-        String points = getUserInput("How many points has " + name + " scored? ");
 
-        // Insert the player information into the players table
-        String player_insert =
-        "INSERT INTO players VALUES FROM (\"" + name + "\", " + 
-        age + ", " + jersey + ", \"" + position +
-        "\", " + points + ");"; 
+        // Generate the SQL for inserting the player information into the players table
+        String player_insert = "INSERT INTO players VALUES FROM (\"" + name + "\", " + 
+        age + ", \"" + team + "\", " + jersey + ", \"" + position + "\");"; 
 
-        // Insert the players information into the player's team table
-        String player_insert_team = 
-        "INSERT INTO " + team + " VALUES FROM (\"" + name + "\", " + 
-        age + ", " + jersey + ", \"" + position +
-        "\", " + points + ");";
+        // Generate the SQL for inserting the players information into the player's team table
+        String player_insert_team = "INSERT INTO " + team + " VALUES FROM (\"" + name + "\", " + 
+        age + ", " + jersey + ", \"" + position + "\");"; 
 
+        // Send the SQL commands to the Server through sockets
         sendMessage(player_insert);
         sendMessage(player_insert_team);
     }
 
 // =============================================================================
-// =============================================================================
-
-    private static void addTeam() {
-        // Get the required information from the user
-        String team_sport = getUserInput("Enter Sport the team plays: ");
-        String team_name = getUserInput("Enter Name of team: ");
-        String team_location = getUserInput("Enter Location of team: ");
-        String venue = getUserInput("Enter the name of " + team_name + "'s venue (ex. Kyle Field): ");
-        String total_wins = getUserInput("Enter " + team_name + "'s total wins: ");
-        String total_losses = getUserInput("Enter " + team_name + "'s total losses: ");
-        String total_ties = getUserInput("Enter " + team_name + "'s total ties: ");
-
-        // Create a table for the new team's players, if this is the first case of the team
-        String team_table = "CREATE TABLE " + team_name + "(name VARCHAR(20), age INTEGER, jersey_number INTEGER, position VARCHAR(20), " +
-        "points_scored INTEGER) PRIMARY KEY (name, jersey_number);"; 
-       
-       // Insert the team information into the teams table
-        String team_insert =
-        "INSERT INTO teams VALUES FROM (\"" + team_name + "\", \"" + 
-        team_location + "\", \"" + venue + "\", " + total_wins + ", " +
-        total_losses + ", " + total_ties + ");";
-
-        // Insert the team information into the sports table
-        String team_insert_sport = 
-        "INSERT INTO " + team_sport + " VALUES FROM (\"" + team_name + "\", \"" + 
-        team_location + "\", \"" + venue + "\", " + total_wins + ", " +
-        total_losses + ", " + total_ties + ");";
-
-        sendMessage(team_table);
-        sendMessage(team_insert);
-        sendMessage(team_insert_sport);
-    }
-
-// =============================================================================
-// =============================================================================
-
-    private static void addSport() {
-        String name = getUserInput("Enter the name of the sport to create: ");
-        String playing_surface = getUserInput("Enter " + name + "'s playing surface (Gym, Field, etc.): ");
-        String country = getUserInput("Enter the country where " + name + " was created: ");
-
-        // Each sport table consist of a list of teams playing said sport
-        String sport_table = "CREATE TABLE " + name + "(name VARCHAR(20), location VARCHAR(20), venue VARCHAR(20), wins INTEGER, " +
-        "losses INTEGER, ties INTEGER) PRIMARY KEY (location, name);";
-
-        String insert_sport = "INSERT INTO sports VALUES FROM (\"" + name + "\", \"" +
-        playing_surface + "\", \"" + country + "\");";
-
-        sendMessage(sport_table);
-        sendMessage(insert_sport);
-    }
-
-// =============================================================================
+// A method to generate an SQL command for removing for adding a player
 // =============================================================================
 
     private static void removePlayer() {
-        String name = getUserInput("Enter Name of the player to delete: ");
+        // Get the required information from the user
+        String name = getUserInput("What is the name of the player to delete? ");
+        String team = getUserInput("What team does " + name + " play for? ");
+        String jersey = getUserInput("What is " + name + "\'s Jersey Number? ");
 
-        String player_jersey = getUserInput("Enter " + name + "'s jersey number: ");
-        String team = getUserInput("Enter the name of " + name + "'s team: ");
+        // Generate the SQL for deleting a player from the players table
+        String player_remove = "DELETE FROM players " + 
+        " WHERE name == \"" + name + "\" && jersey == " + jersey + ";";
 
-        String player_remove = "DELETE FROM players WHERE name ==\"" + name +
-        "\" && jersey_number == \"" + player_jersey + "\";";
+        // Generate the SQL for deleting a player from the teams table
+        String team_remove = "DELETE FROM " + team +
+        " WHERE name == \"" + name + "\" && jersey == " + jersey + ";";
 
-        String team_remove = "DELETE FROM " + team + " WHERE name ==\"" + name +
-        "\" && jersey_number ==\"" + player_jersey + "\";";
-
+        // Send the SQL commands to the Server through sockets
         sendMessage(player_remove);
         sendMessage(team_remove);
     }
 
 // =============================================================================
+// A method to generate an SQL command for updating for adding a team
 // =============================================================================
 
-    private static void removeTeam() {
-        String team_name = getUserInput("Enter Name of the team to delete: ");
+    private static void updateTeam() {
+        // Get the required information from the user
+        String name = getUserInput("What is the name of the team to update? ");
+        String sport = getUserInput("Which Sport does " + name + " play? ");
+        String wins = getUserInput("How many wins do the " + name + " have? ");
 
-        String team_sport = getUserInput("Enter Sport that the team plays: ");
+        // Determine which attributes to update
+        String attribute_values = getUserInput("Which values do you want to update? " + 
+            "(Pick as many as you like: Name, Sport, Wins, Losses, or Ties) ");
+        String new_attribute_values = "";
+        // Check if the user wants to update this attribute
+        if (attribute_values.toUpperCase().contains("NAME")) {
+            // Previous value exists, comma needed
+            if (!new_attribute_values.trim().isEmpty()) {
+                new_attribute_values += ", ";
+            }
+            // Append the user inputted value
+            new_attribute_values += "name = \"" + getUserInput("What is " + name + "\'s new team name? ") + "\"";
+        }
+        if (attribute_values.toUpperCase().contains("SPORT")) {
+            if (!new_attribute_values.trim().isEmpty()) {
+                new_attribute_values += ", ";
+            }
+            new_attribute_values += "sport = \"" + getUserInput("What sport has " + name + " transferred to? ") + "\"";
+        }
+        if (attribute_values.toUpperCase().contains("WINS")) {
+            if (!new_attribute_values.trim().isEmpty()) {
+                new_attribute_values += ", ";
+            }
+            new_attribute_values += "wins = " + getUserInput("How many wins do the " + name + " have now? ");
+        }
+        if (attribute_values.toUpperCase().contains("LOSSES")) {
+            if (!new_attribute_values.trim().isEmpty()) {
+                new_attribute_values += ", ";
+            }
+            new_attribute_values += "losses = " + getUserInput("How many losses do the " + name + " have now? ");
+        }
+        if (attribute_values.toUpperCase().contains("TIES")) {
+            if (!new_attribute_values.trim().isEmpty()) {
+                new_attribute_values += ", ";
+            }
+            new_attribute_values += "ties = " + getUserInput("How many ties do the " + name + " have now? ");
+        }
 
-        String team_delete = "DELETE FROM teams WHERE name ==\"" + 
-        team_name + "\";";
+        // Generate the SQL for updating the team in the teams table
+        String update_team = "UPDATE teams SET " + new_attribute_values +
+        " WHERE name == \"" + name + "\" && wins == " + wins + ";";
 
-        String sport_delete = "DELETE FROM " + team_sport + " WHERE name ==\"" + 
-        team_name + "\";";
+        // Generate the SQL for updating the team in his sports table
+        String update_sport = "UPDATE " + sport + " SET " + new_attribute_values +
+        " WHERE name == \"" + name + "\" && wins == " + wins + ";";
 
-        String drop_team = "DROP TABLE " + team_name + ";";
-    
-        sendMessage(team_delete);
-        sendMessage(sport_delete);
+        // Send the SQL commands to the Server through sockets
+        sendMessage(update_team);
+        sendMessage(update_sport);
     }
 
 // =============================================================================
+// A method to generate an SQL command for updating for adding a player
+// =============================================================================
+
+    private static void updatePlayer() {
+        // Get the required information from the user
+        String name = getUserInput("What is the name of the player to update? ");
+        String team = getUserInput("What team does " + name + " play for? ");
+        String jersey = getUserInput("What is " + name + "\'s Jersey Number? ");
+
+        // Determine which attributes to update
+        String attribute_values = getUserInput("Which values do you want to update? " + 
+            "(Pick as many as you like: Name, Age, Team, Jersey, or Position) ");
+        String new_attribute_values = "";
+        // Check if the user wants to update this attribute
+        if (attribute_values.toUpperCase().contains("NAME")) {
+            // Previous value exists, comma needed
+            if (!new_attribute_values.trim().isEmpty()) {
+                new_attribute_values += ", ";
+            }
+            // Append the user inputted value
+            new_attribute_values += "name = \"" + getUserInput("What is " + name + "\'s new name? ") + "\"";
+        }
+        if (attribute_values.toUpperCase().contains("AGE")) {
+            if (!new_attribute_values.trim().isEmpty()) {
+                new_attribute_values += ", ";
+            }
+            new_attribute_values += "age = " + getUserInput("How old is " + name + "\'s now? ");
+        }
+        if (attribute_values.toUpperCase().contains("TEAM")) {
+            if (!new_attribute_values.trim().isEmpty()) {
+                new_attribute_values += ", ";
+            }
+            new_attribute_values += "team = \"" + getUserInput("What is " + name + "\'s new team? ") + "\"";
+        }
+        if (attribute_values.toUpperCase().contains("JERSEY")) {
+            if (!new_attribute_values.trim().isEmpty()) {
+                new_attribute_values += ", ";
+            }
+            new_attribute_values += "jersey = " + getUserInput("What is " + name + "\'s new jersey number? ");
+        }
+        if (attribute_values.toUpperCase().contains("POSITION")) {
+            if (!new_attribute_values.trim().isEmpty()) {
+                new_attribute_values += ", ";
+            }
+            new_attribute_values += "position = \"" + getUserInput("What is " + name + "\'s new position? ") + "\"";
+        }
+
+        // Generate the SQL for updating the player in the players table
+        String update_players = "UPDATE players SET " + new_attribute_values +
+        " WHERE name == \"" + name + "\" && jersey == " + jersey + ";";
+
+        // Generate the SQL for updating the player in his team's table
+        String update_team = "UPDATE " + team + " SET " + new_attribute_values +
+        " WHERE name == \"" + name + "\" && jersey == " + jersey + ";";
+
+        // Send the SQL commands to the Server through sockets
+        sendMessage(update_players);
+        sendMessage(update_team);
+    }
+
+
+// =============================================================================
+// A method to generate an SQL command for merging for adding two teams
+// This is the set union method
+// =============================================================================
+
+    private static void mergeTeams() {
+        // Get the required information from the user
+        String name1 = getUserInput("What is the name of the first team you want to merge? ");
+        String name2 = getUserInput("What is the name of the second team you want to merge? ");
+
+        // Generate the SQL for uniting the two teams
+        String join_teams = "SHOW " + name1 + " + " + name2 + ";";
+
+        // Send the SQL commands to the Server through sockets
+        sendMessage(join_teams);
+    }
+
+// =============================================================================
+// A method to generate an SQL command for splitting two teams 
+// This is the set difference method
+// =============================================================================
+
+    private static void splitTeams() {
+        // Get the required information from the user
+        String name1 = getUserInput("What is the name of the primary team? ");
+        String name2 = getUserInput("What is the name of the secondary team -- the one you want to subtract from the primary? ");
+
+        // Generate the SQL for subtracting the two teams
+        String join_teams = "SHOW " + name1 + " - " + name2 + ";";
+
+        // Send the SQL commands to the Server through sockets
+        sendMessage(join_teams);
+    }
+
+// =============================================================================
+// A method to generate an SQL command for joining two teams
+// This is the natural join method
+// =============================================================================
+
+    private static void joinTeams() {
+        // Get the required information from the user
+        String name1 = getUserInput("What is the name of the first team you want to join? ");
+        String name2 = getUserInput("What is the name of the second team you want to join? ");
+
+        // Generate the SQL for joining the two teams
+        String join_teams = "SHOW " + name1 + " JOIN " + name2 + ";";
+
+        // Send the SQL commands to the Server through sockets
+        sendMessage(join_teams);
+    }
+
+
+// =============================================================================
+// A method to generate an SQL command for trading for adding a player
 // =============================================================================
 
     private static void tradePlayer() {
-        String player1 = getUserInput("Enter first player's name: ");
+        // Get the required information from the user
+        String name1 = getUserInput("What is the name of the first player to trade? ");
+        String team1 = getUserInput("What team does " + name1 + " play for? ");
+        String jersey1 = getUserInput("What is " + name1 + "\'s Jersey Number? ");
+        String name2 = getUserInput("What is the name of the second player to trade? ");
+        String team2 = getUserInput("What team does " + name2 + " play for? ");
+        String jersey2 = getUserInput("What is " + name2 + "\'s Jersey Number? ");
 
-        String team1 = getUserInput("Enter " + player1 + "'s team name: ");
-        String jersey1 = getUserInput("Enter " + player1 + "'s jersey number: ");
-        String player2 = getUserInput("Enter second player's name: ");
-        String team2 = getUserInput("Enter " + player2 + "'s team name: ");
-        String jersey2 = getUserInput("Enter " + player2 + "'s jersey number: ");
+        // Generate the SQL for inserting player 1 into the team 2's table
+        String trade1 = "INSERT INTO " + team2 + " VALUES FROM RELATION select (name==\"" +
+        name1 + "\"&&jersey==" + jersey1 + ") " + team1 + ";";
 
-        String trade1 = "INSERT INTO " + team2 + " VALUES FROM RELATION select (name=\"" +
-        player1 + "\"&&jersey=\"" + jersey1 + "\") " + team1 + ";";
+        // Generate the SQL for inserting player 2 into the team 1's table
+        String trade2 = "INSERT INTO " + team1 + " VALUES FROM RELATION select (name==\"" + 
+        name2 + "\"&&jersey==" + jersey2 + ") " + team2 + ";";
 
-        String trade2 = "INSERT INTO " + team1 + " VALUES FROM RELATION select (name=\"" + 
-        player2 + "\"&&jersey=\"" + jersey2 + "\") " + team2 + ";";
+        // Generate the SQL for deleting player 1 from his own table
+        String delete1 = "DELETE FROM " + team1 + " WHERE name==\"" + name1 + "\"&& jersey==" +
+        jersey1 + ";";
 
-        String delete1 = "DELETE FROM " + team1 + " WHERE name=\"" + player1 + "\"&&jersey=\"" +
-        jersey1 + "\";";
+        // Generate the SQL for deleting player 2 from his own table
+        String delete2 = "DELETE FROM " + team2 + " WHERE name==\"" + name2 + "\"&& jersey==" +
+        jersey2 + ";";
 
-        String delete2 = "DELETE FROM " + team2 + " WHERE name=\"" + player2 + "\"&&jersey=\"" +
-        jersey2 + "\";";
-
+        // Send the SQL commands to the Server through sockets
         sendMessage(trade1);
         sendMessage(trade2);
         sendMessage(delete1);
@@ -447,185 +643,53 @@ public class Client {
     }
 
 // =============================================================================
-// =============================================================================
-
-    private static void updatePlayer() {
-        Vector<String> attr_list = new Vector<String>();
-
-        String name = getUserInput("Enter name of the player to be updated: ");
-
-        String player_jersey = getUserInput("Enter " + name + "'s jersey number: ");
-        String team = getUserInput("Enter " + name + "'s team name: ");
-
-        String update_name = getUserInput("Update PLAYER NAME (Type \"NO\" to continue without updating): ");
-        if(update_name.toLowerCase() != "no"){
-            String temp = "name=\"" + update_name + "\"";
-            attr_list.add(temp);
-        }
-
-        String update_jersey = getUserInput("Update JERSEY NUMBER (Type \"NO\" to continue without updating: ");
-        if(update_jersey != "NO" && update_jersey != "no" && update_jersey != "No"){
-            String temp = "jersey=\"" + update_jersey + "\"";
-            attr_list.add(temp);
-        }
-
-        String update_age = getUserInput("Update AGE (Type \"NO\" to continue without updating: ");
-        if(update_age != "NO" && update_age != "No" && update_age != "no"){
-            String temp = "age=\"" + update_age + "\"";
-            attr_list.add(temp);
-        }
-
-        String update_points = getUserInput("Update POINTS SCORED (Type \"NO\" to continue without updating: ");
-        if(update_points != "NO" && update_points != "No" && update_points != "no"){
-            String temp = "points_scored=\"" + update_points + "\"";
-            attr_list.add(temp);
-        }
-
-        String update_position = getUserInput("Update POSITION (Type \"NO\" to continue without updating: ");
-        if(update_position.toLowerCase() != "no"){
-            String temp = "position=\"" + update_position + "\"";
-            attr_list.add(temp);
-        }
-
-        String update_players = "UPDATE players SET ";
-        String update_team = "UPDATE " + team + " SET ";
-        for(int i = 0; i < attr_list.size()-1; i++){
-            update_players += attr_list.get(i) + ", ";
-            update_team += attr_list.get(i) + ", ";
-        }
-        update_players += attr_list.get(attr_list.size()-1);
-        update_players += " WHERE name ==\"" + name + "\"&& jersey ==\"" + player_jersey + "\";";
-
-        update_team += attr_list.get(attr_list.size()-1);
-        update_team += " WHERE name ==\"" + name + "\"&& jersey ==\"" + player_jersey + "\";";
-
-        sendMessage(update_players);
-        sendMessage(update_team);
-    }
-
-// =============================================================================
-// =============================================================================
-
-    private static void updateTeam() {
-        Vector<String> attr_list = new Vector<String>();
-
-        String team_name = getUserInput("Enter the name of the team of be updated: ");
-        String team_location = getUserInput("Enter the city where the " + team_name + "'s play: ");
-        String team_sport = getUserInput("Enter the sport that the " + team_name + "'s play: ");
-
-        String update_location = getUserInput("Update TEAM LOCATION (Type \"NO\" to continue without updating: ");
-        if(update_location.toLowerCase() != "no"){
-            String temp = "team_location=\"" + update_location +"\"";
-            attr_list.add(temp);
-        }
-
-        String update_name = getUserInput("Update TEAM NAME (Type \"NO\" to continue without updating: ");
-        if(update_location.toLowerCase() != "no"){
-            String temp = "team_name=\"" + update_location + "\"";
-            attr_list.add(temp);
-        }
-
-        String update_team = "UPDATE teams SET ";
-        String update_sport = "UPDATE " + team_sport + " SET ";
-        for(int i = 0; i < attr_list.size()-1; i++){
-            update_team += attr_list.get(i) + ", ";
-            update_sport += attr_list.get(i) + ", ";
-        }
-        update_team += attr_list.get(attr_list.size()-1);
-        update_team += " WHERE team_name ==\"" + team_name + "\"&&team_location==\"" +
-                          team_location + "\";";
-
-        update_sport += attr_list.get(attr_list.size()-1);
-        update_sport += " WHERE name==\"" + team_name + "\"&&team_location==\"" +
-                          team_location + "\";";
-
-        sendMessage(update_team);
-        sendMessage(update_sport);
-    }
-
-// =============================================================================
-// =============================================================================
-
-    // Set Union
-    private static void mergeTeams() {
-        String name1 = getUserInput("What is the name of the first team you want to merge? ");
-        String name2 = getUserInput("What is the name of the second team you want to merge? ");
-
-        String join_teams = name1 + " + " + name2;
-        sendMessage(join_teams);
-    }
-
-// =============================================================================
-// =============================================================================
-
-    // Set Difference
-    private static void something1() {
-
-    }
-
-// =============================================================================
-// =============================================================================
-
-    // Natural Join
-    private static void something2() {
-
-    }
-
-// =============================================================================
-// =============================================================================
-
-    // Select
-    private static void viewPlayer() {
-        String name = getUserInput("What is the name of the player you want to query? ");
-        String jersey_number = getUserInput("What is " + name + "'s jersey number? ");
-        
-        String view_player = "SHOW select (name == \"" + name + "\" && jersey == " + jersey_number + ") players;";
-        sendMessage(view_player);
-    }
-
-// =============================================================================
-// =============================================================================
-
-    // Project
-    private static void viewTeamRoster() {
-        String name = getUserInput("What is the name of the team whose roster you want to see? ");
-
-        String view_roster = "SHOW project (name) " + name + ";";
-        sendMessage(view_roster);
-    }
-
-// =============================================================================
+// A method to generate an SQL command for viewing a team
 // =============================================================================
 
     private static void viewTeam() {
-        String team = getUserInput("Enter the team name: ");
+        // Get the required information from the user
+        String team = getUserInput("What is the name of the team you want to view? ");
         
+        // Generate the SQL for showing a team table
         String view_team = "SHOW " + team + ";";
+
+        // Send the SQL commands to the Server through sockets
         sendMessage(view_team);
     }
 
 // =============================================================================
+// A method to generate an SQL command for viewing a team's roster (list of 
+//   player names)
+// This is the projection method
 // =============================================================================
 
-    private static void viewAllPlayers() {
-        String view_players = "SHOW players;";
-        sendMessage(view_players);
+    private static void viewTeamRoster() {
+        // Get the required information from the user
+        String name = getUserInput("What is the name of the team whose roster you want to see? ");
+
+        // Generate the SQL for projecting all player names from a team name
+        String view_roster = "SHOW project (name) " + name + ";";
+
+        // Send the SQL commands to the Server through sockets
+        sendMessage(view_roster);
     }
 
-// =============================================================================
-// =============================================================================
-
-    private static void viewAllTeams() {
-        String view_teams = "SHOW teams;";
-        sendMessage(view_teams);
-    }
 
 // =============================================================================
+// A method to generate an SQL command for viewing a player
+// This is the selection method
 // =============================================================================
 
-    private static void viewAllSports() {
-        String view_sports = "SHOW sports;";
-        sendMessage(view_sports);
+    private static void viewPlayer() {
+        // Get the required information from the user
+        String name = getUserInput("What is the name of the player you want to query? ");
+        String jersey_number = getUserInput("What is " + name + "'s jersey number? ");
+        
+        // Generate the SQL for selecting a player name from the players table
+        String view_player = "SHOW select (name == \"" + name + "\" && jersey == " + jersey_number + ") players;";
+
+        // Send the SQL commands to the Server through sockets
+        sendMessage(view_player);
     }
 
 }

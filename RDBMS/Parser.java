@@ -46,9 +46,7 @@ public class Parser {
 	public static String readMessage(String line) {
 		// If it's not empty or null, and is valid, pass it to the Grammar for parsing
 		if (!line.isEmpty() && line.contains(";")) {
-        	System.out.println("\n------------------------------------------------------------");
 			String results = Grammar.parseLine(line);
-        	System.out.println("------------------------------------------------------------\n");
         	return results;
 		}
 		return null;

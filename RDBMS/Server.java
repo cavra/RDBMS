@@ -108,9 +108,11 @@ public class Server {
 
     private static void parseMessage(String message) {
         System.out.println("Engine stream:");
+        System.out.println("------------------------------------------------------------");
         // This string will be NULL unless SHOW is being executed
         // This where the SQL is sent to the RDBMS
         String show_results = Parser.readMessage(message); 
+        System.out.println("------------------------------------------------------------\n");
 
         // So if it's not NULL, return the SHOW results
         if (message.indexOf("SHOW") >= 0) {

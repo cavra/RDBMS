@@ -137,11 +137,13 @@ public class Commands {
 				}
 			}
 			Table expression_table = Grammar.evaluateExpression(expression_ArrayList);
-			for (int i = 0; i < expression_table.relation.size(); i++) {
+			if (expression_table != null) {
+				for (int i = 0; i < expression_table.relation.size(); i++) {
 
-				// Get the row from the table and insert it
-				Row row = expression_table.relation.get(i);
-				Engine.insertRow(relation_name, row.values);
+					// Get the row from the table and insert it
+					Row row = expression_table.relation.get(i);
+					Engine.insertRow(relation_name, row.values);
+				}
 			}
 		}
 	}

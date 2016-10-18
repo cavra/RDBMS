@@ -30,9 +30,6 @@ And start the Client in the other with:
 
 $ java Client
 
-## Notes
-This group project is only partially complete. 
-
 ## Development Log
 
 #### Week 1: Design Documents
@@ -201,8 +198,9 @@ Met at lab from 11:30 - 12:20<br/>
 Met at Annex from 1-3<br>
 @Completed<br/>
 Reed Spivey - Worked on Remove/Update functions<br/>
-Cory Avra - Worked on SHOW and cleaning code<br/>
+Cory Avra - Finished functionality and cleaned code after pulling an all nighter<br/>
 @TODO<br/>
-Reed Spivey - Finish Interactive System<br/>
-Jason Alonzo - Finish Interactive System<br/>
-Cory Avra - Finish Interactive System, start final report
+Reed Spivey - Write the final report<br/>
+Jason Alonzo - Write the final report<br/>
+Cory Avra - Write the final report
+

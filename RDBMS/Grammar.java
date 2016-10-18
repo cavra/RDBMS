@@ -70,7 +70,7 @@ public class Grammar {
 		tokenloop:
 		for (String token : sql_tokens) {
 			switch(token) {
-				// QUERIES
+				// Queries
 				case "<-":
 					System.out.println("QUERY invoked");
 					Queries.queryQuery(sql_tokens);
@@ -103,7 +103,8 @@ public class Grammar {
 					System.out.println("NATURAL JOIN invoked");
 					Queries.naturalJoinQuery(sql_tokens);
 					break tokenloop;
-				// COMMANDS
+
+				// Commands
 				case "CREATE":
 					System.out.println("CREATE TABLE invoked");
 					Commands.createCommand(sql_tokens);
