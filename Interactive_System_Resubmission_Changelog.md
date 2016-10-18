@@ -77,4 +77,5 @@ New: 5/5
 
 ## Overall Estimated Grade
 Old: 71/100<br>
-New: 100/100 
+New: 100/100 <br>
+We believe this should be our best grade so far, and if that is the case, we request this grade to represent our total grade for this project.
