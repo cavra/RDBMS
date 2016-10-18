@@ -83,12 +83,11 @@ public class Server {
     }
 
     void parseMessage(String message) {
-
-        // Note: This string will be NULL unless SHOW is being executed,
-        // which is why it's named "show_results"
         System.out.println("Engine stream:");
         System.out.println("------------------------------------------------------------");
-        String show_results = Parser.readMessage(message);
+        // This string will be NULL unless SHOW is being executed
+        // This where the SQL is sent to the RDBMS
+        String show_results = Parser.readMessage(message); 
         System.out.println("------------------------------------------------------------\n");
 
         // So if it's not NULL, return the SHOW results
@@ -96,6 +95,7 @@ public class Server {
             if (show_results != null && !show_results.equals("")) {
                 sendMessage(show_results);
             }
+            // However, if a nonexistent table is given to SHOW, return this string
             else {
                 sendMessage("Table doesn't exist");
             }
@@ -105,7 +105,7 @@ public class Server {
             sendMessage("EXIT;");
         }
         else {
-            // do nothing
+            // do nothing, as we only want to send messages in response to the above actions
         }
     }
 

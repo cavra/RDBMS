@@ -33,12 +33,6 @@ public class Client{
             // Welcome the user only once
             welcomeUser();
 
-            // Open all default and saved tables
-            resume();
-
-            // Show the help menu up front
-            showHelp();
-            
             // Communicate with the server
             while (checkStream) {
                 readMessage();
@@ -108,6 +102,20 @@ public class Client{
         }
     }
 
+
+    void welcomeUser() {
+        System.out.println("\n------------------------------------------------------------");
+        System.out.println("Welcome to the official Aggie Sports Management Client!");
+        System.out.println("Type 'help' for a detailed list of commands!");
+        System.out.println("------------------------------------------------------------");
+
+        // Open all default and saved tables
+        resume();
+
+        // Show the help menu up front
+        showHelp();
+    }
+
     void resume() {
         // Create global tables that store all sports, teams, and players
         // Note: These only CREATE if they don't already exist as .ser files
@@ -115,11 +123,11 @@ public class Client{
         "losses INTEGER, ties INTEGER) PRIMARY KEY (location, name);";
         sendMessage(global_teams);
 
-        String global_players = "CREATE TABLE players (name VARCHAR(20), age INTEGER, jersey_number INTEGER, position VARCHAR(20), points_scored INTEGER) " +
+        String global_players = "CREATE TABLE players (name VARCHAR(15), age INTEGER, jersey INTEGER, position VARCHAR(15), points_scored INTEGER) " +
         "PRIMARY KEY (name, jersey_number);";
         sendMessage(global_players);
 
-        String global_sports = "CREATE TABLE sports (name VARCHAR(20), playing_surface VARCHAR(20), " +
+        String global_sports = "CREATE TABLE sports (name VARCHAR(15), playing_surface VARCHAR(15), " +
         "country_created VARCHAR(20)) PRIMARY KEY (name, playing_surface);";
         sendMessage(global_sports);
 
@@ -128,16 +136,10 @@ public class Client{
         sendMessage(open_all_relations);
     }
 
-    void welcomeUser() {
-        System.out.println("\n------------------------------------------------------------");
-        System.out.println("Welcome to the official Aggie Sports Management Client!");
-        System.out.println("Type 'help' for a detailed list of commands!");
-        System.out.println("------------------------------------------------------------\n");
-    }
-
     void showHelp() {
         System.out.println("\n------------------------------------------------------------");
         System.out.println("Here is a list of commands you can use:");
+        System.out.println("- Help - Show this helpful text menu");
         System.out.println("- Add Player - Add a new player to a team");
         System.out.println("- Add Team - Add Team to a Sport");
         System.out.println("- Add Sport - Add Sport to list of available options");

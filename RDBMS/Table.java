@@ -108,13 +108,22 @@ public class Table implements Serializable {
 	public String show() {
 		// Store everything in this string
 		String show_result = "";
+		Vector<Integer> attribute_lengths = new Vector<Integer>();
 
 		// Format the key and the attribute names
 		String key = String.format("%1$-15s", "Key");
 		String header = key;
 		for(int i = 0; i < attributes.size(); i++) {
-			String attribute = String.format("%1$-14s", attributes.get(i).name);
-			header += attribute;	
+			// Get the length for the attribute
+			int attribute_length = attributes.get(i).varchar_length;
+			// Integer case
+			if (attribute_length == 0) {
+				attribute_length = 9;
+			}
+			attribute_lengths.add(attribute_length);
+
+			String attribute = String.format("%1$-" + attribute_length + "s", attributes.get(i).name);
+			header += attribute;
 		}
 		show_result += header;
 
@@ -122,8 +131,9 @@ public class Table implements Serializable {
 		for (Row row : relation) {
 			String key_formatted = String.format("%1$-15s", row.key + ":");
 			String row_formatted = key_formatted;
-			for(String value : row.values) {
-				String value_formatted = String.format("%1$-14s", value);
+			for (int i = 0; i < row.values.size(); i++) {
+				String value = row.values.get(i);
+				String value_formatted = String.format("%1$-" + attribute_lengths.get(i) + "s", value);
 				row_formatted += value_formatted;
 			}
 			show_result += "\n" + row_formatted;
