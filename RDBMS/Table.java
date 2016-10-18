@@ -116,7 +116,7 @@ public class Table implements Serializable {
 			String attribute = String.format("%1$-14s", attributes.get(i).name);
 			header += attribute;	
 		}
-		show_result += header + "\n";
+		show_result += header;
 
 		// Format each row with its key and values
 		for (Row row : relation) {
@@ -126,7 +126,7 @@ public class Table implements Serializable {
 				String value_formatted = String.format("%1$-14s", value);
 				row_formatted += value_formatted;
 			}
-			show_result += row_formatted + "\n";
+			show_result += "\n" + row_formatted;
 		}
 
 		System.out.println(show_result);

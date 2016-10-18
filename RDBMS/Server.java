@@ -9,7 +9,6 @@ public class Server {
     ObjectOutputStream out;
     ObjectInputStream in;
     String message;
-    Writer writer;
 
     public static void main(String args[]) {
         Server server = new Server();
@@ -28,7 +27,7 @@ public class Server {
             // Wait for connection
             System.out.print("Waiting for connection... ");
             connection = serverSocket.accept();
-            System.out.println("Connected to " + connection.getInetAddress().getHostName());
+            System.out.println("Connected to " + connection.getInetAddress().getHostName() + "\n");
 
             // Get Input and Output streams
             out = new ObjectOutputStream(connection.getOutputStream());
@@ -40,7 +39,7 @@ public class Server {
             do {
                 try {
                     message = (String)in.readObject();
-                    // Check if the client has disconnected already
+                    // Check if the client wants to disconnect
                     if (!message.equals("EXIT;")) {
                         printMessage("Client", message);
                         parseMessage(message);
@@ -48,11 +47,12 @@ public class Server {
                 }
                 catch(ClassNotFoundException classnot) {
                     System.err.println("Data received in unknown format");
-                }     
+                }
             } while (!message.toUpperCase().equals("EXIT;"));
         }
         catch(IOException ioException) {
-            ioException.printStackTrace();
+            // ioException.printStackTrace();
+            System.err.println("Input stream is empty!");
         }
         finally {
             // Close the connection
@@ -84,26 +84,28 @@ public class Server {
 
         // Note: This string will be NULL unless SHOW is being executed,
         // which is why it's named "show_results"
-        System.out.println("\nEngine stream:");
+        System.out.println("Engine stream:");
         System.out.println("------------------------------------------------------------");
         String show_results = Parser.readMessage(message);
-        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------\n");
 
         // So if it's not NULL, return the SHOW results
         if (show_results != null && !show_results.equals("")) {
             sendMessage(show_results);
         }
-
         // If the message is calling for program exit, return EXIT;
-        if (message.toUpperCase().equals("EXIT")) { 
+        else if (message.toUpperCase().equals("EXIT")) { 
             sendMessage("EXIT;");
+        }
+        else {
+            // do nothing
         }
     }
 
     void printMessage(String source, String message) {
-        System.out.println("\n" + source + " stream:");
+        System.out.println(source + " stream:");
         System.out.println("------------------------------------------------------------");
         System.out.println(message);
-        System.out.println("------------------------------------------------------------");
+        System.out.println("------------------------------------------------------------\n");
     }
 }
