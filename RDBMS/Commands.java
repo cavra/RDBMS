@@ -85,19 +85,6 @@ public class Commands {
 	}
 
 // =============================================================================
-// The DROP TABLE function. Whenever "DROP" is detected, this function is 
-//   called. It will attempt to drop the specified relation
-// Parameters: 
-//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
-// =============================================================================
-
-	public static void dropCommand(ArrayList<String> sql_tokens) {	
-		String relation_name = Grammar.getRelationName(sql_tokens);
-		System.out.println("Table Name: " + relation_name);
-		Engine.dropTable(relation_name.trim());
-	}
-
-// =============================================================================
 // The INSERT function. Whenever "INSERT" is detected, this function is 
 //   called. It will attempt to add a new row to an existing relation, or add
 //   all rows from another relation to an existing relation
@@ -314,6 +301,19 @@ public class Commands {
 		String relation_name = Grammar.getRelationName(sql_tokens);
 		System.out.println("Table Name: " + relation_name);
 		Engine.closeTable(relation_name.trim());
+	}
+
+// =============================================================================
+// The DROP TABLE function. Whenever "DROP" is detected, this function is 
+//   called. It will attempt to drop the specified relation
+// Parameters: 
+//   sql_tokens: An ArrayList containining tokenized psuedo-SQL
+// =============================================================================
+
+	public static void dropCommand(ArrayList<String> sql_tokens) {	
+		String relation_name = Grammar.getRelationName(sql_tokens);
+		System.out.println("Table Name: " + relation_name);
+		Engine.dropTable(relation_name.trim());
 	}
 
 // =============================================================================

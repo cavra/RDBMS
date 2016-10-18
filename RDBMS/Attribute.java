@@ -3,7 +3,7 @@ import java.io.*;
 
 public class Attribute implements Serializable {
 	
-	// Global Variables
+	// Public Variables
 	public String name;
 	public String domain;
 	public Integer varchar_length = 0;

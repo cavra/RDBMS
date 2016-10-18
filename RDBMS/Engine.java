@@ -3,7 +3,7 @@ import java.io.*;
 
 public class Engine {
 
-	// Global Variables
+	// Public Variables
 	public static HashMap<String, Table> relations_database = new HashMap<String, Table>();
 
 // =============================================================================
@@ -35,25 +35,6 @@ public class Engine {
 
 			System.out.println("Created table: " + relation_name);
 			return new_table;
-		}
-	}
-	
-// =============================================================================
-// A function to remove an existing relation from the database 
-// Parameters:
-//   relation_name: The name of the relation to be dropped
-// =============================================================================
-
-	public static void dropTable(String relation_name) {
-		// Check if the table exists
-		Table table = relations_database.get(relation_name);
-		if (table == null) {
-			System.out.println("Error: Table doesn't exist; Failed to drop.");
-		}
-		else {
-			table.deleteTable();
-			relations_database.remove(relation_name);
-			System.out.println("Dropped table: " + relation_name);
 		}
 	}
 
@@ -157,24 +138,6 @@ public class Engine {
 					table.deleteRow(row.key);
 				}
 			}
-		}
-	}
-
-// =============================================================================
-// A function show an existing relation
-// Parameters: 
-//   relation_name: The name of the relation to show
-// =============================================================================
-
-	public static String show(String relation_name) {
-		// Check if the table exists
-		Table table = relations_database.get(relation_name);
-		if (table == null) {
-			System.out.println("Error: Table doesn't exist; failed to show.");
-			return null;
-		}
-		else {
-			return table.show();
 		}
 	}
 	
@@ -313,7 +276,7 @@ public class Engine {
 // A function to return a new table, created by taking the union of two other 
 //   tables
 // Parameters: 
-//   new_relation_name: The user-defined relation name to apply to the new table
+//   new_relation_name: The parser-defined relation name to apply to the new table
 //   relation_name1: The relation name of the first table
 //   relation_name2: The relation name of the second table
 // =============================================================================
@@ -347,7 +310,6 @@ public class Engine {
 				}
 			}
 
-			relations_database.put(new_relation_name, union_table);
 			return union_table;
 		}
 	}
@@ -356,7 +318,7 @@ public class Engine {
 // A function to return a new table, created by taking the difference of two
 //   other tables
 // Parameters: 
-//   new_relation_name: The user-defined relation name to apply to the new table
+//   new_relation_name: The parser-defined relation name to apply to the new table
 //   relation_name1: The relation name of the first table
 //   relation_name2: The relation name of the second table
 // =============================================================================
@@ -386,7 +348,6 @@ public class Engine {
 					difference_table.addRow(row);
 				}
 			}
-			relations_database.put(new_relation_name, difference_table);
 			return difference_table;
 		}
 	}
@@ -395,7 +356,7 @@ public class Engine {
 // A function to return a new table, created by taking the cross product of two
 //   other tables
 // Parameters: 
-//   new_relation_name: The user-defined relation name to apply to the new table
+//   new_relation_name: The parser-defined relation name to apply to the new table
 //   relation_name1: The relation name of the first table
 //   relation_name2: The relation name of the second table
 // =============================================================================
@@ -440,7 +401,6 @@ public class Engine {
 					cp_table.addRow(new_row);
 				}
 			}
-			relations_database.put(new_relation_name, cp_table);
 			return cp_table;
 		}
 	}
@@ -449,7 +409,7 @@ public class Engine {
 // A function to return a new table, created by taking the cross product of two
 //   other tables
 // Parameters: 
-//   new_relation_name: The user-defined relation name to apply to the new table
+//   new_relation_name: The parser-defined relation name to apply to the new table
 //   relation_name1: The relation name of the first table
 //   relation_name2: The relation name of the second table
 // =============================================================================
@@ -501,8 +461,8 @@ public class Engine {
 						Row combined_row = new Row(new_values, new_key);
 
 						// Remove the duplicate values
-						for (int i = 0; i < combined_row.size(); i++) {
-							for (int p = 0; p < combined_row.size(); p++) {
+						for (int i = 0; i < combined_row.values.size(); i++) {
+							for (int p = 0; p < combined_row.values.size(); p++) {
 								if (i != p) {
 	                        		if (combined_row.values.get(i).equals(combined_row.values.get(p))) {
 	                        			combined_row.values.remove(p);
@@ -513,20 +473,38 @@ public class Engine {
 						nj_table.addRow(combined_row);
 					}
 					else {
-						System.out.println("Row with key: " + row1.key + " did not match row with key: " + row2.key);
-						System.out.println("Failed to join");					}
+						//System.out.println("Row with key: " + row1.key + " did not match row with key: " + row2.key);
+						//System.out.println("Failed to join");					
+					}
 				}
 			}
-			relations_database.put(new_relation_name, nj_table);
 			return nj_table;
 		}
 	}
 
 
 // =============================================================================
+// A function show an existing relation
+// Parameters: 
+//   relation_name: The name of the relation to be shown
+// =============================================================================
+
+	public static String show(String relation_name) {
+		// Check if the table exists
+		Table table = relations_database.get(relation_name);
+		if (table == null) {
+			System.out.println("Error: Table doesn't exist; failed to show " + relation_name + ".");
+			return null;
+		}
+		else {
+			return table.show();
+		}
+	}
+
+// =============================================================================
 // A function to open a table from a serialized file
 // Parameters:
-//   relation_name: The relation name table to be opened
+//   relation_name: The name of the relation to be opened
 // =============================================================================
 
   	public static Table openTable(String relation_name) {
@@ -579,7 +557,7 @@ public class Engine {
 // =============================================================================
 // A function to write a table to a serialized file
 // Parameters: 
-//   relation_name: The relation name table to be written
+//   relation_name: The name of the relation to be written
 // =============================================================================
 
 	public static void writeTable(String relation_name) {
@@ -587,7 +565,10 @@ public class Engine {
 			// Check that the table exists
 			Table table = relations_database.get(relation_name);
 			if (table == null){
-				System.out.println("Error: Table doesn't exist. Failed to write.");
+				System.out.println("Error: Table doesn't exist. Failed to write " + relation_name + ".");
+			}
+			else if (relation_name.contains("Temp")) {
+				System.out.println("Error: is a view. Failed to write " + relation_name + ".");
 			}
 			else {
 				// Create the .ser file
@@ -610,19 +591,48 @@ public class Engine {
 // =============================================================================
 // A function to make the system forget about a table
 // Parameters:
-//   relation_name: The relation name table to be closed
+//   relation_name: The name of the relation to be closed
 // =============================================================================
 
 	public static void closeTable(String relation_name) {
 		// Check if the table exists
 		Table table = relations_database.get(relation_name);
 		if(table == null){
-			System.out.println("Error: Table doesn't exist. Failed to drop.");
+			System.out.println("Error: Table doesn't exist. Failed to close " + relation_name + ".");
 		}
 		else {
 			table.deleteTable();
 			relations_database.remove(relation_name);
-			System.out.println("Dropped table: " + relation_name);
+			System.out.println("Closed table: " + relation_name);
+		}
+	}
+
+// =============================================================================
+// A function to remove an existing relation from the database and disk
+// Parameters:
+//   relation_name: The name of the relation to be dropped
+// =============================================================================
+
+	public static void dropTable(String relation_name) {
+		// Check if the table exists
+		Table table = relations_database.get(relation_name);
+		if (table == null) {
+			System.out.println("Error: Table doesn't exist; Failed to drop " + relation_name + ".");
+		}
+		else {
+			// Remove local memory
+			table.deleteTable();
+			relations_database.remove(relation_name);
+
+			File file = new File("table_data/" + relation_name + ".txt");
+
+    		if (file.delete()) {
+				System.out.println("Dropped table: " + relation_name);
+    		}
+    		else {
+				System.out.println("Error: Serialized table file doesn't exist; Failed to drop " + relation_name + ".");
+    		}
+
 		}
 	}
 
@@ -644,7 +654,11 @@ public class Engine {
             writer = new BufferedWriter(new OutputStreamWriter(
             new FileOutputStream("table_data/relations.txt"), "utf-8"));
             for (String relation_name : relation_names) {
-				writer.write(relation_name + "\n");
+
+            	// Don't save views
+            	if (!relation_name.contains("Temp")) {
+            		writer.write(relation_name + "\n");
+            	}
 			}
         }
         catch (IOException ex) {}
@@ -760,9 +774,9 @@ public class Engine {
 //   specified attribute value and the value from the row, and use the operator
 //   to determine if it meets the condition or not.
 // Parameters: 
-//   attribtue1: The first, specified value we are checking against
+//   attribute1: The first, specified value we are checking against
 //   operator: The operator that tells us how to compare the two values
-//   attribtue2: The value from the row
+//   attribute2: The value from the row
 // =============================================================================
 
 	public static Boolean checkCondition(String attribute1, String operator, String attribute2){
@@ -798,6 +812,13 @@ public class Engine {
 		// If no case is reached, return false
 		return false;
 	}
+
+// =============================================================================
+// A simple function to return True or False based on whether or not a table
+//   exists
+// Parameters: 
+//   relation_name: The relation name of the table to be tested for existence
+// =============================================================================
 
 	public static Boolean tableExists(String relation_name) {
 		Table table = relations_database.get(relation_name);

@@ -3,7 +3,7 @@ import java.io.*;
 
 public class Table implements Serializable {
 	
-	// Global Variables
+	// Public Variables
 	public ArrayList<Row> relation = new ArrayList<Row>();
 	public String relation_name;
 	public ArrayList<Attribute> attributes;
@@ -55,7 +55,7 @@ public class Table implements Serializable {
 // =============================================================================
 
 	public void addRow(Row new_row) {
-		if (new_row.size() != 0) {
+		if (new_row.values.size() != 0) {
 			relation.add(new_row);
 			System.out.println("Inserted row with key " + new_row.key + " in table " + relation_name);
 		}
@@ -102,7 +102,7 @@ public class Table implements Serializable {
 	}
 	
 // =============================================================================
-// A function to print a relation
+// A function to build a String from a relation's data, formatted appropriately
 // =============================================================================
 
 	public String show() {
@@ -110,8 +110,18 @@ public class Table implements Serializable {
 		String show_result = "";
 		Vector<Integer> attribute_lengths = new Vector<Integer>();
 
+		// Get the maximum length of the table's keys
+		Integer key_length = 0;
+		for (Row row : relation) {
+			if (row.key.length() > key_length) {
+				key_length = row.key.length();
+			}
+		}
+		// Accomodate for colon and spacing
+		key_length += 2; 
+
 		// Format the key and the attribute names
-		String key = String.format("%1$-15s", "Key");
+		String key = String.format("%1$-" + key_length + "s", "Key");
 		String header = key;
 		for(int i = 0; i < attributes.size(); i++) {
 			// Get the length for the attribute
@@ -129,7 +139,7 @@ public class Table implements Serializable {
 
 		// Format each row with its key and values
 		for (Row row : relation) {
-			String key_formatted = String.format("%1$-15s", row.key + ":");
+			String key_formatted = String.format("%1$-" + key_length + "s", row.key + ":");
 			String row_formatted = key_formatted;
 			for (int i = 0; i < row.values.size(); i++) {
 				String value = row.values.get(i);
@@ -244,7 +254,7 @@ public class Table implements Serializable {
 		Boolean all_values_are_valid = true;
 
 		// The row is either missing a value or contains too many
-		if (attributes.size() != row.size()) {
+		if (attributes.size() != row.values.size()) {
 			all_values_are_valid = false;
 		}
 

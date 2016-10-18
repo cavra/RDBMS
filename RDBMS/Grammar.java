@@ -3,25 +3,19 @@ import java.io.*;
 
 public class Grammar {
    
-	// Global Variables
-	private static ArrayList<String> sql_tokens = new ArrayList<String>();
-
 // =============================================================================
-// The Grammar constructor
-//   Essentially, this takes a line and tokenizes it, and then figures out which
-//   method to call to parse it. 
+// The general grammar function. Essentially, this takes a line and tokenizes 
+//   it, removing some unnecessary ones and rebuilding others.
 // Parameters:
 //   line: A String received from Standard Input, ready to be tokenized
 // =============================================================================
 
-	Grammar() {}
-
 	public static String parseLine(String line) {
 
-		sql_tokens.clear();
+		ArrayList<String> sql_tokens = new ArrayList<String>();
 
 		// Tokenize the input and store in a vector
-		String delimiters = "(){};=<>, \t\n\r\f";
+		String delimiters = "(){};=<>,&| \t\n\r\f";
 		StringTokenizer st = new StringTokenizer(line, delimiters, true);
 		while (st.hasMoreTokens()) {
 			String token = st.nextToken();
@@ -47,6 +41,16 @@ public class Grammar {
 					sql_tokens.remove(i);
 				}
 			}
+
+			// Reconnect the AND operator
+			String[] logic_operators = {"&", "|"};
+			for (String operator : logic_operators) {
+				if (sql_tokens.get(i-1).equals(operator) && sql_tokens.get(i).equals(operator)) {
+					sql_tokens.set(i-1, operator + operator);
+					sql_tokens.remove(i);
+				}
+			}
+
 		}
 
 		// Call the correct method with the tokenized input 
@@ -104,10 +108,6 @@ public class Grammar {
 					System.out.println("CREATE TABLE invoked");
 					Commands.createCommand(sql_tokens);
 					break tokenloop;
-				case "DROP":
-					System.out.println("DROP TABLE invoked");
-					Commands.dropCommand(sql_tokens);
-					break tokenloop;
 				case "INSERT":
 					System.out.println("INSERT invoked");
 					Commands.insertCommand(sql_tokens);
@@ -135,6 +135,10 @@ public class Grammar {
 				case "CLOSE":
 					System.out.println("CLOSE invoked");
 					Commands.closeCommand(sql_tokens);
+					break tokenloop;
+				case "DROP":
+					System.out.println("DROP TABLE invoked");
+					Commands.dropCommand(sql_tokens);
 					break tokenloop;
 				case "EXIT":
 					System.out.println("EXIT invoked");

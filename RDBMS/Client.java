@@ -3,23 +3,34 @@ import java.util.*;
 import java.net.*;
 import java.util.Scanner;
 
-public class Client{
-    Socket requestSocket;
-    ObjectOutputStream out;
-    ObjectInputStream in;
-    String message;
-    Scanner scanner = new Scanner(System.in);
-    Boolean shouldCancel = false;
-    Boolean checkStream = true;
+public class Client {
+
+    // Private variables
+    private static Socket requestSocket;
+    private static ObjectOutputStream out;
+    private static ObjectInputStream in;
+    private static String message;
+    private static Scanner scanner = new Scanner(System.in);
+    private static Boolean shouldCancel = false;
+    private static Boolean checkStream = true;
+
+// =============================================================================
+// The Main Method call for the Client class. This just starts the Client, which 
+//   attempts to connect to the Server
+// Parameters:
+//   args: Needed Parameter for main method call, not used
+// =============================================================================
 
     public static void main(String args[]) {
-        Client client = new Client();
-        client.run();
+        Client.run();
     }
 
-    Client() {}
+// =============================================================================
+// A function to set up the Client and continually check for input from the 
+//   Server. This is the core of the Client-Server connection
+// =============================================================================
 
-    void run() {
+    private static void run() {
         try {
             // Create a socket to connect to the server
             requestSocket = new Socket("localhost", 52312);
@@ -33,7 +44,13 @@ public class Client{
             // Welcome the user only once
             welcomeUser();
 
-            // Communicate with the server
+            // Open all default and saved tables
+            resume();
+
+            // Show the help menu up front
+            showHelp();
+
+            // Constantly check the input stream
             while (checkStream) {
                 readMessage();
             }
@@ -51,7 +68,10 @@ public class Client{
         }
     }
 
-    void readMessage() {
+// =============================================================================
+// =============================================================================
+
+    private static void readMessage() {
         try {
             message = (String)in.readObject();
             // Check if the server has disconnected already
@@ -73,12 +93,12 @@ public class Client{
             System.err.println("Input stream is empty!");
             checkStream = false;
         }
-        // finally {
-        //     disconnect();
-        // }
     }
 
-    void sendMessage(String message) {
+// =============================================================================
+// =============================================================================
+
+    private static void sendMessage(String message) {
         try {
             out.writeObject(message);
             out.flush();
@@ -88,7 +108,10 @@ public class Client{
         }
     }
 
-    void disconnect() {
+// =============================================================================
+// =============================================================================
+
+    private static void disconnect() {
         // Close the connection
         try {
             System.out.print("Disconnecting from server... ");
@@ -102,33 +125,32 @@ public class Client{
         }
     }
 
+// =============================================================================
+// =============================================================================
 
-    void welcomeUser() {
+    private static void welcomeUser() {
         System.out.println("\n------------------------------------------------------------");
         System.out.println("Welcome to the official Aggie Sports Management Client!");
         System.out.println("Type 'help' for a detailed list of commands!");
         System.out.println("------------------------------------------------------------");
-
-        // Open all default and saved tables
-        resume();
-
-        // Show the help menu up front
-        showHelp();
     }
 
-    void resume() {
+// =============================================================================
+// =============================================================================
+
+    private static void resume() {
         // Create global tables that store all sports, teams, and players
         // Note: These only CREATE if they don't already exist as .ser files
-        String global_teams = "CREATE TABLE teams (name VARCHAR(20), location VARCHAR(20), venue VARCHAR(20), wins INTEGER, " +
-        "losses INTEGER, ties INTEGER) PRIMARY KEY (location, name);";
+        String global_teams = "CREATE TABLE teams (name VARCHAR(15), wins INTEGER, " + 
+        "losses INTEGER, ties INTEGER) PRIMARY KEY (name, wins);";
         sendMessage(global_teams);
 
-        String global_players = "CREATE TABLE players (name VARCHAR(15), age INTEGER, jersey INTEGER, position VARCHAR(15), points_scored INTEGER) " +
-        "PRIMARY KEY (name, jersey_number);";
+        String global_players = "CREATE TABLE players (name VARCHAR(15), age INTEGER, " + 
+        "jersey INTEGER, position VARCHAR(15)) PRIMARY KEY (name, jersey);";
         sendMessage(global_players);
 
-        String global_sports = "CREATE TABLE sports (name VARCHAR(15), playing_surface VARCHAR(15), " +
-        "country_created VARCHAR(20)) PRIMARY KEY (name, playing_surface);";
+        String global_sports = "CREATE TABLE sports (name VARCHAR(15), playing_surface VARCHAR(20), " + 
+        "country_created VARCHAR(12)) PRIMARY KEY (name, playing_surface);";
         sendMessage(global_sports);
 
         // Open all saved tables
@@ -136,28 +158,44 @@ public class Client{
         sendMessage(open_all_relations);
     }
 
-    void showHelp() {
+// =============================================================================
+// =============================================================================
+
+    private static void showHelp() {
         System.out.println("\n------------------------------------------------------------");
-        System.out.println("Here is a list of commands you can use:");
+        System.out.println("PROGRAM COMMANDS:");
         System.out.println("- Help - Show this helpful text menu");
+        System.out.println("- Quit - Exits the program");
+        System.out.println();
+        System.out.println("ADD COMMANDS:");
         System.out.println("- Add Player - Add a new player to a team");
         System.out.println("- Add Team - Add Team to a Sport");
         System.out.println("- Add Sport - Add Sport to list of available options");
+        System.out.println();
+        System.out.println("REMOVE COMMANDS:");
         System.out.println("- Remove Player - Remove a player from a team");
         System.out.println("- Remove Team - Remove a team from a sport");
-        System.out.println("- Trade Player - Swap players from 2 teams");
+        System.out.println();
+        System.out.println("UPDATE COMMANDS:");
         System.out.println("- Update Player - Update a Player's information");
         System.out.println("- Update Team - Update a Team's information");
+        System.out.println();
+        System.out.println("VIEW COMMANDS:");
         System.out.println("- View Player - Examine a specified player's information");
         System.out.println("- View Team - Examine the roster for specified team");
         System.out.println("- View All Players - Examine all of the players in the system");
         System.out.println("- View All Teams - Examine all of the teams in the system");
         System.out.println("- View All Sports - Examine all of the sports in the system");
-        System.out.println("- Quit - Exits the program");
+        System.out.println();
+        System.out.println("APPLICATION COMMANDS:");
+        System.out.println("- Trade Player - Swap players from 2 teams");
         System.out.println("------------------------------------------------------------\n");
     }
 
-    void promptUser() {
+// =============================================================================
+// =============================================================================
+
+    private static void promptUser() {
         Boolean checkInputStream = false;
 
         while (!checkInputStream) {
@@ -193,8 +231,8 @@ public class Client{
                     updateTeam();
                     break;
                 case "VIEW PLAYER":
-                    // viewPlayer();
-                    //checkInputStream = true;
+                    viewPlayer();
+                    checkInputStream = true;
                     break;
                 case "VIEW TEAM":
                     viewTeam();
@@ -224,7 +262,10 @@ public class Client{
         }
     }
 
-    String getUserInput(String prompt) {
+// =============================================================================
+// =============================================================================
+
+    private static String getUserInput(String prompt) {
         Boolean finished = false;
         String input = "";
 
@@ -255,7 +296,10 @@ public class Client{
         return input;
     }
 
-    void addPlayer() {
+// =============================================================================
+// =============================================================================
+
+    private static void addPlayer() {
         // Get the required information from the user
         String name = getUserInput("What is the new player's name? ");
         String age = getUserInput("How old is " + name + "? ");
@@ -280,7 +324,10 @@ public class Client{
         sendMessage(player_insert_team);
     }
 
-    void addTeam() {
+// =============================================================================
+// =============================================================================
+
+    private static void addTeam() {
         // Get the required information from the user
         String team_sport = getUserInput("Enter Sport the team plays: ");
         String team_name = getUserInput("Enter Name of team: ");
@@ -311,7 +358,10 @@ public class Client{
         sendMessage(team_insert_sport);
     }
 
-    void addSport() {
+// =============================================================================
+// =============================================================================
+
+    private static void addSport() {
         String name = getUserInput("Enter the name of the sport to create: ");
         String playing_surface = getUserInput("Enter " + name + "'s playing surface (Gym, Field, etc.): ");
         String country = getUserInput("Enter the country where " + name + " was created: ");
@@ -327,7 +377,10 @@ public class Client{
         sendMessage(insert_sport);
     }
 
-    void removePlayer() {
+// =============================================================================
+// =============================================================================
+
+    private static void removePlayer() {
         String name = getUserInput("Enter Name of the player to delete: ");
 
         String player_jersey = getUserInput("Enter " + name + "'s jersey number: ");
@@ -343,7 +396,10 @@ public class Client{
         sendMessage(team_remove);
     }
 
-    void removeTeam() {
+// =============================================================================
+// =============================================================================
+
+    private static void removeTeam() {
         String team_name = getUserInput("Enter Name of the team to delete: ");
 
         String team_sport = getUserInput("Enter Sport that the team plays: ");
@@ -360,7 +416,10 @@ public class Client{
         sendMessage(sport_delete);
     }
 
-    void tradePlayer() {
+// =============================================================================
+// =============================================================================
+
+    private static void tradePlayer() {
         String player1 = getUserInput("Enter first player's name: ");
 
         String team1 = getUserInput("Enter " + player1 + "'s team name: ");
@@ -387,7 +446,10 @@ public class Client{
         sendMessage(delete2);
     }
 
-    void updatePlayer() {
+// =============================================================================
+// =============================================================================
+
+    private static void updatePlayer() {
         Vector<String> attr_list = new Vector<String>();
 
         String name = getUserInput("Enter name of the player to be updated: ");
@@ -441,11 +503,13 @@ public class Client{
         sendMessage(update_team);
     }
 
-    void updateTeam() {
+// =============================================================================
+// =============================================================================
+
+    private static void updateTeam() {
         Vector<String> attr_list = new Vector<String>();
 
         String team_name = getUserInput("Enter the name of the team of be updated: ");
-
         String team_location = getUserInput("Enter the city where the " + team_name + "'s play: ");
         String team_sport = getUserInput("Enter the sport that the " + team_name + "'s play: ");
 
@@ -478,25 +542,88 @@ public class Client{
         sendMessage(update_team);
         sendMessage(update_sport);
     }
-    
-    void viewTeam() {
+
+// =============================================================================
+// =============================================================================
+
+    // Set Union
+    private static void mergeTeams() {
+        String name1 = getUserInput("What is the name of the first team you want to merge? ");
+        String name2 = getUserInput("What is the name of the second team you want to merge? ");
+
+        String join_teams = name1 + " + " + name2;
+        sendMessage(join_teams);
+    }
+
+// =============================================================================
+// =============================================================================
+
+    // Set Difference
+    private static void something1() {
+
+    }
+
+// =============================================================================
+// =============================================================================
+
+    // Natural Join
+    private static void something2() {
+
+    }
+
+// =============================================================================
+// =============================================================================
+
+    // Select
+    private static void viewPlayer() {
+        String name = getUserInput("What is the name of the player you want to query? ");
+        String jersey_number = getUserInput("What is " + name + "'s jersey number? ");
+        
+        String view_player = "SHOW select (name == \"" + name + "\" && jersey == " + jersey_number + ") players;";
+        sendMessage(view_player);
+    }
+
+// =============================================================================
+// =============================================================================
+
+    // Project
+    private static void viewTeamRoster() {
+        String name = getUserInput("What is the name of the team whose roster you want to see? ");
+
+        String view_roster = "SHOW project (name) " + name + ";";
+        sendMessage(view_roster);
+    }
+
+// =============================================================================
+// =============================================================================
+
+    private static void viewTeam() {
         String team = getUserInput("Enter the team name: ");
         
         String view_team = "SHOW " + team + ";";
         sendMessage(view_team);
     }
 
-    void viewAllPlayers() {
+// =============================================================================
+// =============================================================================
+
+    private static void viewAllPlayers() {
         String view_players = "SHOW players;";
         sendMessage(view_players);
     }
 
-    void viewAllTeams() {
+// =============================================================================
+// =============================================================================
+
+    private static void viewAllTeams() {
         String view_teams = "SHOW teams;";
         sendMessage(view_teams);
     }
 
-    void viewAllSports() {
+// =============================================================================
+// =============================================================================
+
+    private static void viewAllSports() {
         String view_sports = "SHOW sports;";
         sendMessage(view_sports);
     }
