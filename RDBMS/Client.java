@@ -336,6 +336,7 @@ public class Client {
 
         input = input.trim();
         input = input.replaceAll(" ", "_");
+        input = input.replaceAll(";", "");
         return input;
     }
 

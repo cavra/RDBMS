@@ -2,7 +2,7 @@
 
 ## Updated Design Documents
 
-We have updated our Design Documents to reflect what we have actually built. They can be found [here](https://docs.google.com/document/d/1WJr-slwylkafvPg8UwRK5ph_V0THIVFP7vxWbtluEeQ/edit?usp=sharing).
+We have updated our Design Documents to reflect what we have actually built. They can be found in the design_documents [directory](https://github.tamu.edu/reedspivey/ComputersAreHardP1D4/tree/master/design_documents) and in [Google Docs](https://docs.google.com/document/d/1WJr-slwylkafvPg8UwRK5ph_V0THIVFP7vxWbtluEeQ/edit?usp=sharing).
 
 ## Post-Production Notes
 
@@ -16,8 +16,7 @@ Overall, we made a lot of mistakes, but we were able to recover from all of them
 
 ## Representation of Interactive System
 
-Our example session representation can be found [here](needs a url).
-"Show a representation of an example session using your interactive system: show menu, take user input, interactive system's output and messages, etc. Provide a combination of screenshots and explanatory narrative."
+Our example session representation can be found [here](https://docs.google.com/document/d/1Fek1xbwdeCJ0VJMu4jNZfZbaK8SrUSPaCjpYSXI9TXM/edit?usp=sharing).
 
 ## Development Log
 

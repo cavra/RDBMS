@@ -125,6 +125,7 @@ public class Commands {
 				}
 			}
 
+			System.out.println(relation_name + expression_ArrayList);
 			Engine.insertRow(relation_name, expression_ArrayList);
 		}
 		else if (sql_tokens.get(token_index).equals("RELATION")) {
@@ -145,6 +146,9 @@ public class Commands {
 					Engine.insertRow(relation_name, row.values);
 				}
 			}
+		}
+		else {
+			System.out.println("Invalid command detected. Failed to insert row.");
 		}
 	}
 
