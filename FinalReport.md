@@ -2,7 +2,7 @@
 
 ## Updated Design Documents
 
-We have updated our Design Documents to reflect what we have actually built. They can be found in the design_documents [directory](https://github.tamu.edu/reedspivey/ComputersAreHardP1D4/tree/master/design_documents) and in [Google Docs](https://docs.google.com/document/d/1WJr-slwylkafvPg8UwRK5ph_V0THIVFP7vxWbtluEeQ/edit?usp=sharing).
+We have updated our Design Documents to reflect what we have actually built. They can be found in the design documents [directory](https://github.tamu.edu/reedspivey/ComputersAreHardP1D4/tree/master/design_documents) and in [Google Docs](https://docs.google.com/document/d/1WJr-slwylkafvPg8UwRK5ph_V0THIVFP7vxWbtluEeQ/edit?usp=sharing).
 
 ## Post-Production Notes
 
