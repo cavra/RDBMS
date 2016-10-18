@@ -194,3 +194,15 @@ Cory Avra - Finish engine and parser, Finish Interactive System
 Met at lab from 11:30 - 12:20<br/>
 @TODO<br/>
 All - Move Server code to Client, make sure engine/parser are 100% functional<br/>
+
+**10/17/16**
+
+Met at lab from 11:30 - 12:20<br/>
+Met at Annex from 1-3<br>
+@Completed<br/>
+Reed Spivey - Worked on Remove/Update functions<br/>
+Cory Avra - Worked on SHOW and cleaning code<br/>
+@TODO<br/>
+Reed Spivey - Finish Interactive System<br/>
+Jason Alonzo - Finish Interactive System<br/>
+Cory Avra - Finish Interactive System, start final report
